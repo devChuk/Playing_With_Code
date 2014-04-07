@@ -31,5 +31,6 @@ function startsWith(word,prefix) {
 }
 
 function catNames(paragraph) {
+	paragraph.slice(paragraph.indexOf(":"));
 	
 }
