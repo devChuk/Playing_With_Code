@@ -26,3 +26,10 @@ function range(num) {
 //console.log(range(10));
 
 
+function startsWith(word,prefix) {
+	return (word.slice(0,prefix.length) == prefix);
+}
+
+function catNames(paragraph) {
+	
+}
