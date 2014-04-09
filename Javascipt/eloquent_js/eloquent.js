@@ -42,4 +42,23 @@ console.log(paragraph);
 console.log("PROCESSING");
 console.log(catNames(paragraph));
 */
+//lol how can
+//var paragraph = "died 27/04/2006: Black Leclère";
 
+function extractDate(paragraph) {
+	function cookiecut(start,length) {
+		return Number(paragraph.slice(start, start + length));
+	}
+	return new Date(cookiecut(11,4),cookiecut(8,2),cookiecut(5,2));
+}
+//console.log(extractDate(paragraph));
+
+function between(paragraph, start, end) {
+	point1 = paragraph.indexOf(start) + start.length;
+	point2 = paragraph.indexOf(end);
+	return paragraph.slice(point1,
+							(if (point2 < start)
+								return (paragraph.slice(point2)).indexOf(end);
+								);
+}
+console.log(between("bu ] boo [ bah ] gzz", "[ ", " ]"));
