@@ -53,12 +53,9 @@ function extractDate(paragraph) {
 }
 //console.log(extractDate(paragraph));
 
-function between(paragraph, start, end) {
-	point1 = paragraph.indexOf(start) + start.length;
-	point2 = paragraph.indexOf(end);
-	return paragraph.slice(point1,
-							(if (point2 < start)
-								return (paragraph.slice(point2)).indexOf(end);
-								);
-}
-console.log(between("bu ] boo [ bah ] gzz", "[ ", " ]"));
+function between(string, start, end) {
+	var startAt = string.indexOf(start) + start.length;
+  	var endAt = string.indexOf(end, startAt);
+  	return string.slice(startAt, endAt);
+  }
+//console.log(between("bu ] boo [ bah ] gzz", "[ ", " ]"));
