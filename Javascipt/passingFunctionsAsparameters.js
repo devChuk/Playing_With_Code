@@ -41,7 +41,6 @@ function map(_list,Func) {
 	console.log(_list);
 	console.log(ans);
 }
-//SUCCESS.
 
 
 function filter(_list,Func) {
