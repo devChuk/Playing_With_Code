@@ -1,4 +1,4 @@
-
+Let's talk about the compiler.
 
 
 source code --> compiler                                                             --> executable code
@@ -23,7 +23,7 @@ For MDL, we have to take care of these steps, except the optimization step.
 	It LEXES. WE'RE DONE HERE.
 	It's going to identify the tokens of your language.
 		Examples
-				#'s, keywords, acceptable variable/identifier names, 
+				#'s, keywords, acceptable variable/identifier names, parenticies (HOW DO YOU SPELL THAT)
 
 					for, int, true, while, false
 
