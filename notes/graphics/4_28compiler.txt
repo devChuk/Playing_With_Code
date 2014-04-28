@@ -1,0 +1,32 @@
+
+
+
+source code --> compiler                                                             --> executable code
+				|																	|
+				|																	|
+				L-->lexer-->parser-->semantic analyzer-->optimizer-->code generator
+
+
+					token identifier
+
+							syntax analyzer
+
+									provides "meaning". Dividing
+
+														Not all compilers have an optimizer component. Will try to substitute your code with something faster.
+
+																	where your code turns into some semblance of your original source code and becomes 1's and 0's
+
+For MDL, we have to take care of these steps, except the optimization step.
+
+>>Lexer
+	It LEXES. WE'RE DONE HERE.
+	It's going to identify the tokens of your language.
+		Examples
+				#'s, keywords, acceptable variable/identifier names, 
+
+					for, int, true, while, false
+
+								you can't have spaces in variable names, you can't start with a number
+
+It will go through your code and create a list of tokens. Literally a list of tokens.
