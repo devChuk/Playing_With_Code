@@ -73,3 +73,32 @@ function formatDate(date) {
 //SOMETHING TO REMEMBER:
 //If there's a pattern, put a function in a function.
 
+function oldestCat(info) {
+	var oldest = null;
+
+	for (var name in info) {
+    var cat = info[name];
+    if (!("death" in cat) &&
+        (oldest == null || oldest.birth > cat.birth))
+      oldest = cat;
+  }
+  	if (oldest == null)
+    return null;
+  else
+    return oldest.name;
+}
+
+function ranger(num, num2) {
+	var start, end;
+	if (arguments.length < 2) {
+		num2 = num;
+		num = 0;
+	}
+	
+	var list = new Array();
+	for (var i = num; i <= num2; i++)
+			list.push(i);
+	list.forEach(function(entry) {
+		console.log(entry)
+	});
+}
