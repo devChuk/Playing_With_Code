@@ -60,3 +60,16 @@ function between(string, start, end) {
   }
 //console.log(between("bu ] boo [ bah ] gzz", "[ ", " ]"));
 
+function formatDate(date) {
+  function pad(number) {
+    if (number < 10)
+      return "0" + number;
+    else
+      return number;
+  }
+  return pad(date.getDate()) + "/" + pad(date.getMonth() + 1) +
+             "/" + date.getFullYear();
+}
+//SOMETHING TO REMEMBER:
+//If there's a pattern, put a function in a function.
+
