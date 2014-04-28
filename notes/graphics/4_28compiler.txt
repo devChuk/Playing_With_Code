@@ -30,3 +30,22 @@ For MDL, we have to take care of these steps, except the optimization step.
 								you can't have spaces in variable names, you can't start with a number
 
 It will go through your code and create a list of tokens. Literally a list of tokens.
+
+>>Parser
+	While the Lexer knows valid tokens, while the Parser knows the syntax (grammar) of the language. I don't know why I'm capitalizing their names.
+	Takes token list and creates a syntax tree
+
+			(int)main----------------------------------------------return-----1
+					|								|
+					|								|
+			        =------long-----x				print---x
+					 |
+					 +---6
+					 |
+  				 	 |
+					 5										I tried.
+
+>>Semantic Analyzer
+	Takes this tree and apply MEANING to the tree.
+		If it says print, then somewhere else, print must be defined.
+			Thus, the SA attaches the definition to print.
