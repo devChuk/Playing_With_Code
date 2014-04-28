@@ -102,3 +102,13 @@ function ranger(num, num2) {
 		console.log(entry)
 	});
 }
+
+function sum(numbers) {
+	var total = 0;
+	for (var i = 0; i<numbers.length;i++)
+		total += numbers[i];
+	return total;
+}
+
+//CHAPTER 5
+//ERROR HANDLING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
