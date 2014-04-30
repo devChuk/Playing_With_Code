@@ -83,4 +83,6 @@ MDL files
 
  when you see a command, do whatever the comamnd is to the top of the stack.
 
- Look at the main file and put whatever application in there.
+ Look at the main file and put whatever application in there. Get the basic functionality of MDL.
+
+ http://www.stuycs.org/courses/ml6/dw/work/mdlmoredelightfullabor
