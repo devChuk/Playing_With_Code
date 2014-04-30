@@ -49,3 +49,28 @@ It will go through your code and create a list of tokens. Literally a list of to
 	Takes this tree and apply MEANING to the tree.
 		If it says print, then somewhere else, print must be defined.
 			Thus, the SA attaches the definition to print.
+
+
+ Semantic Analyzer
+ Gets the meaning of your code vs the structure (syntax) of the code; proves meaning to the code
+ Links functions when possible; this is where the undefined function  and case mismatch (eg. int x = 5.7)error is caught
+ Create a symbol table - a hash table/list of the identifiers and variables and thier values in your code
+ will also generate a list of operations to be performed sequentially
+ Takes symbol table, the syntax tree, and operations list and sends it to the optimizer
+ Not all compilers have optimizers, and its not always in use.
+ Optimizer takes shortcuts and makes the code better
+ Code generators change code to assembly and to binary, or straight to binary
+ These parts are simpler than the lexer, parser, and semantic analyzer. You need to pay most attention these when writing your own language.
+MDL files
+ The "compiler" with go through the file and generate into images.
+ We need to make tokens, syntax trees, etc with our language
+ ID [a-zA-Z][\.a-zA-Z0-9_]*
+ identify the characters we can use as identifiers (This identifies anything that starts with a letter andd contains numbers and letters)
+ example tokens : push, pop, save, torus, etc.
+ we can also use it to define strings and points
+ Next thing we need is the syntax
+ struct command op[MAX_COMMANDS] is the result of semantic analyzer, op[0] will be first, etc
+ SYMTAB *s is our symbol table
+ %token <CASES> are the grammar rules
+ after these are using command with the cases used.
+ if it doesn't follow these, the "compiler" will throw a syntax error
