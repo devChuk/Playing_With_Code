@@ -113,3 +113,21 @@ function sum(numbers) {
 //CHAPTER 5
 //ERROR HANDLING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+//LOL THERE ARE NO EXERCISES
+
+//CHAPTER 6
+//FUNCTIONAL PROGRAMMING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+function reduce(combine, base, array) {
+  forEach(array, function (element) {
+    base = combine(base, element);
+  });
+  return base;
+}
+
+function countZeroes(numbers) {
+  function counter(total, element) {
+    return total + (element === 0 ? 1 : 0);
+  }
+  return reduce(counter, 0, numbers);
+}
