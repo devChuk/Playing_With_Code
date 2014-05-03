@@ -12,3 +12,7 @@ Steps in Supervised Learning
 
 GOAL:
 	Predict whether it will rain through temperature, visibility, and wind speed.
+
+
+
+Slideshow: bit.ly/ml_workshop
