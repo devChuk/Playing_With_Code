@@ -1,0 +1,11 @@
+MDL Animation Commands
+---------------------------------
+Frames(int n)
+	Sets total # of frames
+baseName(string s)
+														When you name your files:
+														foo01.png
+														foo02.png
+														foo03.png
+
+														animate foo*
