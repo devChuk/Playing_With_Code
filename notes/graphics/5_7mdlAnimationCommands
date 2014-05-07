@@ -3,9 +3,16 @@ MDL Animation Commands
 Frames(int n)
 	Sets total # of frames
 baseName(string s)
-														When you name your files:
-														foo01.png
-														foo02.png
+	sets basename for each frame						When you name your files:
+rotate x 360 (knob)										foo01.png
+	op.rotate.p											foo02.png
 														foo03.png
 
 														animate foo*
+
+0 <= startframe <= endframe < total frames
+-1 <= startvalue <= 1
+		end value
+
+vary startframe, end frame, start value, end value, knob
+	describes how the knob changes.
