@@ -1,1 +1,1 @@
-This folder will have Javascript
+This folder will have Javascript stuffs and answers to EJ exercises.
