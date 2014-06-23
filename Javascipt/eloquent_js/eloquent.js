@@ -196,5 +196,24 @@ function tag(name, content, attributes) {
 }
 
 function image(src) {
+  return tag("img", [], {src: src});
+}
 
+function footnote(number) {
+  return tag("sup", [link("#footnote" + number,
+                          String(number))]);
+}
+
+function renderParagraph(paragraph) {
+  return tag(paragraph.type, map(renderFragment,
+                                  paragraph.content));
+}
+
+function renderfragment(fragment) {
+  if (fragment.type == "reference")
+    return footnote(fragment.number);
+  else if (fragment.type == "emphasized")
+    return tag("em", [fragment.content]);
+  else
+    return fragment.content;
 }
