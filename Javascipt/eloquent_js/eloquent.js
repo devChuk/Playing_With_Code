@@ -217,3 +217,6 @@ function renderfragment(fragment) {
   else
     return fragment.content;
 }
+
+//CHAPTER 7
+//SEARCHING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
