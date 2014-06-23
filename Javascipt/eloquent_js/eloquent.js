@@ -235,3 +235,23 @@ function makeRoads(start) {
   for (var i = 0; i < arguments.length, i += 2)
   makeRoad(start, arguments[i], arguments[i + 1]; 
 }
+
+function member(array, value) {
+  var found = false;
+  forEach(array, function(element) {
+    if (element === value)
+      found = true;
+  });
+  return found;
+}
+
+function filter(test, array) {
+  var results = [];
+  for (var i = 0; i < array.length; i++) {
+    if (test(array[i]))
+      results.push(array[i]);
+
+  return results;
+  }
+}
+
