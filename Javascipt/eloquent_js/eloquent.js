@@ -145,10 +145,49 @@ function processParagraph(paragraph) {
     header++;
   }
 
-  return {type: (header == 0 ? "p" : "h" + header),
-          content: paragraph};
-}
+  return {type: (header == 0 ? "p" : "h" + header), //the ? mark is an inline if statement. pretty neat eh?
+          content: paragraph};                      //basically if (header == 0), set type to "p". Else, return hX.
+}                                                                                                             //where X = # of %s
 
 function splitParagraph(paragraph) {
-  
+
+  function indexOrEnd(character) {                  //returns the index of a character inside text
+    var index = text.indexOf(character);            //if not found, return the length of the text (the end basically)
+    return index == -1 ? text.length : index;
+  }
+
+  function takeNormal() {                           
+    var end = reduce(Math.min, text.length,         //find the length of the text. find the index of the firstmost * or {. The lesser one becomes the End.
+                     map(indexOrEnd, ["*", "{"]));  
+    var part = text.slice(0, end);                  //slice off from beginning to end
+    text = text.slice(end);                         //set text to the fragments left behind
+    return part;                                    //it's self-explanatory fool
+  }
+
+  function takeUpTo(character) {
+    var end = text.indexOf(character, 1);           //the second parameter states where to start the search. This way you won't find an initial * or {}
+    if (end == -1)                                  //if not found. the writer has dun goof
+      throw new Error("Missing closing '" + character + "'");
+    var part = text.slice(1, end);                  //otherwise, same as before.
+    text = text.slice(end + 1);
+    return part;
+  }
+
+  var fragments[];                                  //Fragments are divided by *, {, or }. Yup. It's pretty simple.
+
+  while (paragraph != "") {
+    if (text.charAt(0) == "*") {
+      fragments.push({type: "emphasized",
+                      content: takeUpTo("*")});
+    }
+    else if (text.charAt(0) == "{") {
+      fragments.push({type: "footnote",
+                      content: takeUpTo("}")});
+    }
+    else {
+      fragments.push({type: "normal",
+                      content: takeNormal()});
+    }
+  }
 }
+
