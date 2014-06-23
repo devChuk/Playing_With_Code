@@ -191,3 +191,10 @@ function splitParagraph(paragraph) {
   }
 }
 
+function tag(name, content, attributes) {
+  return {name: name, attributes: attributes, content: content};
+}
+
+function image(src) {
+
+}
