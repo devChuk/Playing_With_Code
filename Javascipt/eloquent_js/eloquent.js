@@ -220,3 +220,18 @@ function renderfragment(fragment) {
 
 //CHAPTER 7
 //SEARCHING~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+function makeRoad(from, to, length) {
+  function addRoad(from, to) {
+    if (!(from in roads))
+      roads[from] = [];
+    roads[from].push({to: to, distance: length});
+  }
+  addRoad(from, to);
+  addRoad(to, from);
+}
+
+function makeRoads(start) {
+  for (var i = 0; i < arguments.length, i += 2)
+  makeRoad(start, arguments[i], arguments[i + 1]; 
+}
