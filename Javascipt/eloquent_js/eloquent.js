@@ -255,3 +255,35 @@ function filter(test, array) {
   }
 }
 
+function possibleRoutes(from, to) {
+  function findRoutes(route) {
+    function notVisited(road) {
+      return !member(route.places, road.to);
+    }
+    function continueRoute(road) {
+      return findRoutes({places: route.places.concat([road.to]),
+                         length: route.length + road.distance});
+    }
+
+    var end = route.places[route.places.length - 1];
+    if (end == to)
+      return [route];
+    else
+      return flatten(map(continueRoute, filter(notVisited,
+                                               roadsFrom(end))));
+  }
+  return findRoutes({places: [from], length: 0});
+}
+
+function shortestRoute(from, to) {
+  var options = possibleRoutes(from, to);
+  var min = options[0];
+  for (var i = 1; i < options.length; i++) {
+    if (min.length > options[i].length) {
+      min = options[i];
+    }
+  }
+  return min;
+}
+//places: {} 
+//length: #
