@@ -286,5 +286,8 @@ function shortestRoute(from, to) {
   return min;
 }
 
+function possibleDirections(point) {
+  
+}
 //places: {} 
 //length: #
