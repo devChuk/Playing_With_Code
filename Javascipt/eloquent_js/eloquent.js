@@ -308,8 +308,21 @@ function samePoint(a, b) {
   return a.x == b.x && a.y == b.y;
 }
 
-function possibleDirections(point) {
+function possibleDirections(a) {
+  
+  function insideMap(point) {
+    return point.x >= 0 && point.x < mapSize &&
+           point.y >= 0 && point.y < mapSize;
+  }
 
+  var results = [];
+  for (var i = -1; i <= 1; i++)
+    for (var j = -1; j <= 1; j++) {
+      var hurr = point(a.x + i, a.y + j);
+      if (insideMap(hurr))
+        results.push(hurr);
+  }
+  return results;
 }
 //places: {} 
 //length: #
