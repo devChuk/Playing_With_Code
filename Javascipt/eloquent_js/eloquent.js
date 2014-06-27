@@ -286,8 +286,30 @@ function shortestRoute(from, to) {
   return min;
 }
 
+function weightedDistance(pointA, pointB) {
+  if (!(Math.abs(pointA.x - pointB.x) == 1) || (Math.abs(pointA.y - pointB.y) == 1))
+    console.log("Error. Looks like these points aren't even touching, fool.")
+    return null
+  var heightDifference = heightAt(pointB) - heightAt(pointA);
+  var climbFactor = (heightDifference < 0 ? 1 : 2);
+  var flatDistance = (pointA.x == pointB.x || pointA.y == pointB.y ? 100 : 141);
+  return flatDistance + climbFactor * Math.abs(heightDifference);
+}
+
+function point(x, y) {
+  return {x: x, y: y};
+}
+
+function addPoints(a, b) {
+  return point(a.x + b.x, a.y + b.y);
+}
+
+function samePoint(a, b) {
+  return a.x == b.x && a.y == b.y;
+}
+
 function possibleDirections(point) {
-  
+
 }
 //places: {} 
 //length: #
