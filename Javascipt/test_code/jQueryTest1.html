@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#Third").click()(function(){
+        $("#First").slideDown("slow");
+        $("#Second").slideDown("slow");
+    });
+});
+
+</script>
+<style>
+#First,#Second
+{
+padding:10px;
+}
+</style>
+</head>
+
+
+<body>
+<div id="First">If you click on me, I will disappear.</div>
+<div id="Second">Click me away!</div>
+<div id="Third">Click me too!</div>
+
+</body>
+</html>
