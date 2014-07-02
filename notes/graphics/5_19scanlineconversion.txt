@@ -1,0 +1,17 @@
+Scanline Conversion
+
+Basically in order to fill in a polygon, just draw lines to fill in the thing. Horizonal from bottom up to the top. There's no reason why you can't do vertical lines.
+
+Call lines of triangle x0, x1, x1.
+Find vertices. BMT
+
+
+
+x0 will always be alone BT
+x1 will be along BM if y < ym
+MT if y > ym
+
+First line drawn BB
+(xb, yb) -> (xb, yb)
+Second line
+(xb + q, yb + 1)) ->(xb + r, yb + 1)
