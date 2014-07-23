@@ -1,0 +1,341 @@
+/* -- Skills Widget -- */
+
+.skills-graph {
+  padding-top: 0.5em;
+}
+
+.skills-graph ul {
+  padding: 0;
+  margin: 0 0 20px 0;
+  list-style-type: none;
+  overflow: hidden;
+}
+
+.skills-graph .bar-wrapper {
+  padding-right: 2.5em;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.skills-graph .bar-container {
+  position: relative;
+  margin-top: 2.5em;
+}
+
+.skills-graph .bar-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: -2.5em;
+  left: 2.5em;
+  z-index: 1;
+}
+
+.skills-graph .bar-background::before,
+.skills-graph .bar-background::after {
+  content: '';
+  position: absolute;
+}
+
+.skills-graph .bar-background::before {
+  width: 100%;
+  height: 2.5em;
+  bottom: -2.5em;
+  right: 1.25em;
+  -webkit-transform: skew(-45deg);
+  -ms-transform: skew(-45deg);
+  transform: skew(-45deg);
+}
+
+.skills-graph .bar-background::after {
+  width: 2.5em;
+  height: 100%;
+  top: 1.25em;
+  right: 100%;
+  -webkit-transform: skew(0deg, -45deg);
+  -ms-transform: skew(0deg, -45deg);
+  transform: skew(0deg, -45deg);
+}
+
+.skills-graph .bar-foreground {
+  z-index: 3;
+}
+
+.skills-graph .bar-foreground,
+.skills-graph .bar-inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.skills-graph .bar-foreground::before,
+.skills-graph .bar-foreground::after,
+.skills-graph .bar-inner::before,
+.skills-graph .bar-inner::after {
+  content: '';
+  position: absolute;
+}
+
+.skills-graph .bar-foreground::before,
+.skills-graph .bar-inner::before {
+  width: 2.5em;
+  height: 100%;
+  top: -1.25em;
+  right: -2.5em;
+  -webkit-transform: skew(0deg, -45deg);
+  -ms-transform: skew(0deg, -45deg);
+  transform: skew(0deg, -45deg);
+}
+
+.skills-graph .bar-foreground::after,
+.skills-graph .bar-inner::after {
+  width: 100%;
+  height: 2.5em;
+  top: -2.5em;
+  right: -1.25em;
+  -webkit-transform: skew(-45deg);
+  -ms-transform: skew(-45deg);
+  transform: skew(-45deg);
+}
+
+.skills-graph .bar-inner {
+  z-index: 2;
+  color: transparent;
+  opacity: 0;
+}
+
+.skills-graph .graph-container > li {
+  position: relative;
+}
+
+.skills-graph .label {
+  display: block;
+  max-width: 100%;
+  position: absolute;
+  left: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding-right: 1.25em;
+  color: #fff;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  -webkit-transition: opacity 0.3 ease;
+  transition: opacity 0.3 ease;
+  z-index: 4;
+}
+
+.skills-graph .label span {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0.2em 0.4em;
+  cursor: help;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skills-graph .graph-container.revealed .bar-inner,
+.skills-graph .graph-container.revealed .label {
+  opacity: 1;
+}
+
+.skills-graph .graph-container,
+.skills-graph .bar-container {
+  font-size: 8px;
+}
+
+.skills-graph .graph-container.vertical {
+  position: relative;
+}
+
+.skills-graph .graph-container.vertical li {
+  float: left;
+  width: 20%;
+}
+
+.skills-graph .graph-container.vertical .label {
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical .bar-container {
+  height: 300px;
+}
+
+.skills-graph .graph-container.vertical .bar-inner {
+  top: auto;
+  height: 5%;
+  min-height: 5em;
+  bottom: 0;
+  -webkit-transition: height 1s ease, opacity 0.3s ease;
+  transition: height 1s ease, opacity 0.3s ease;
+}
+
+.skills-graph .graph-container.vertical .bar-container {
+  margin-right: 1em;
+}
+
+.skills-graph .graph-container.vertical.revealed > li:nth-child(1) .bar-inner {
+  height: 25%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical.revealed > li:nth-child(2) .bar-inner {
+  height: 50%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical.revealed > li:nth-child(3) .bar-inner {
+  height: 75%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical.revealed > li:nth-child(4) .bar-inner {
+  height: 90%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical.revealed > li:nth-child(5) .bar-inner {
+  height: 10%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.vertical::before,
+.skills-graph .graph-container.vertical::after {
+  content: '';
+  display: block;
+  height: 2.5em;
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 1.25em;
+  right: 2.25em;
+  background-color: rgba(54, 64, 69, 0.1);
+  -webkit-transform: skew(-45deg);
+  -ms-transform: skew(-45deg);
+  transform: skew(-45deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.skills-graph .graph-container.vertical::after {
+  background-color: transparent;
+  -webkit-box-shadow: inset 0 -2px 2px rgba(54, 64, 69, 0.1);
+  box-shadow: inset 0 -2px 2px rgba(54, 64, 69, 0.1);
+  z-index: 10;
+}
+
+.skills-graph .graph-container.horizontal {
+  position: relative;
+}
+
+.skills-graph .graph-container.horizontal .label {
+  top: 2.5em;
+}
+
+.skills-graph .graph-container.horizontal .bar-container {
+  height: 6.25em;
+}
+
+.skills-graph .graph-container.horizontal .bar-inner {
+  left: auto;
+  width: 5%;
+  min-width: 5em;
+  height: 100%;
+  -webkit-transition: width 0.8s ease, opacity 0.3s ease;
+  transition: width 0.8s ease, opacity 0.3s ease;
+}
+
+.skills-graph .graph-container.horizontal .bar-container {
+  margin-bottom: 1em;
+}
+
+.skills-graph .graph-container.horizontal.revealed > li:nth-child(1) .bar-inner {
+  width: 25%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.horizontal.revealed > li:nth-child(2) .bar-inner {
+  width: 50%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.horizontal.revealed > li:nth-child(3) .bar-inner {
+  width: 75%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.horizontal.revealed > li:nth-child(4) .bar-inner {
+  width: 90%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.horizontal.revealed > li:nth-child(5) .bar-inner {
+  width: 10%;
+  bottom: 0;
+}
+
+.skills-graph .graph-container.horizontal::before,
+.skills-graph .graph-container.horizontal::after {
+  content: '';
+  display: block;
+  width: 2.5em;
+  position: absolute;
+  top: 1.25em;
+  right: 0;
+  bottom: 2.25em;
+  left: 0;
+  background-color: rgba(54, 64, 69, 0.1);
+  -webkit-transform: skew(0, -45deg);
+  -ms-transform: skew(0, -45deg);
+  transform: skew(0, -45deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.skills-graph .graph-container.horizontal::after {
+  background-color: transparent;
+  -webkit-box-shadow: inset 2px 0 2px rgba(54, 64, 69, 0.1);
+  box-shadow: inset 2px 0 2px rgba(54, 64, 69, 0.1);
+  z-index: 10;
+}
+
+.skills-graph .bar-background {
+  background-color: rgba(115, 133, 140, 0.15);
+}
+
+.skills-graph .bar-background::before {
+  background-color: rgba(115, 133, 140, 0.25);
+}
+
+.skills-graph .bar-background::after {
+  background-color: rgba(115, 133, 140, 0.05);
+}
+
+.skills-graph .bar-foreground::before {
+  background-color: rgba(140, 132, 115, 0.1);
+}
+
+.skills-graph .bar-foreground::after {
+  background-color: rgba(140, 132, 115, 0.15);
+}
+
+.skills-graph .bar-inner {
+  background-color: rgba(127, 0, 255, 0.4);
+}
+
+.skills-graph .bar-inner::before {
+  background-color: rgba(127, 0, 255, 0.5);
+}
+
+.skills-graph .bar-inner::after {
+  background-color: rgba(127, 0, 255, 0.6);
+}

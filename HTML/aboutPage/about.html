@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Brian Chuk | About</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Brian Chuk is a full stack software developer, a tinkerer, and a maker.">
+    <meta property="og:title" content="Brian Chuk | About">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://devChuk.github.io/about.html">
+    <meta property="og:description" content="Brian Chuk is a full stack software developer, a tinkerer, and a maker.">
+    <meta property="og:site_name" content="Brian Chuk">
+    <meta name="twitter:creator" content="@devChuk">
+    <meta name="twitter:card" content="summary">
+
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js?ver=1.8.3'></script>
+    <script src="http://static.tumblr.com/6nxvfxq/fj7mk0r17/modernizr-2.6.2.min.js"></script>
+    <link rel="stylesheet" href="./skills.css">
+    <link rel="shortcut icon" href="./res/img/favicon.ico">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/forms-min.css">
+    <link rel="stylesheet" href="./res/css/main.css">
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.17.2/build/cssreset/cssreset-min.css">
+    <link rel="stylesheet" href="./res/css/buttons.css">
+
+    <style>
+      .skills-graph .label span {
+      font-size: 14px;
+      font-weight: 600; }
+     .skills-graph .graph-container.vertical .bar-container { height: 300px; }
+    </style>
+
+    <script>
+      var options = {};
+    </script>
+
+</head>
+
+<body>
+  <header id="header" class="header header--fixed hide-from-print" role="banner">
+    <div class="container">  
+      <nav id="nav" class="nav-wrapper" role="navigation">
+          <ul class="nav">
+              <li class="nav__item ">
+                  <a class="header__link subdued" href="./blog">
+                      <span style="color:#fff">BLOG</span>
+                  </a>
+              </li>
+              <li class="nav__item ">
+                <a class="header__link subdued" href="./portfolio">
+                    <span style="color:#fff">PORTFOLIO</span>
+                </a>
+              </li>
+              <li class="nav__item ">
+                <a class="header__link subdued" href="./about">
+                    <span style="color:#fff">ABOUT</span>
+                </a>
+              </li>
+              <li class="nav__item ">
+                <a class="header__link subdued" href="./contact.html">
+                    <span style="color:#fff">CONTACT</span>
+                </a>
+              </li>
+          </ul>
+      </nav>
+        
+      <a href="http://devchuk.github.io" class="brand header__link">
+       <img src="https://raw.githubusercontent.com/devChuk/devchuk.github.io/master/res/img/favicon.ico">
+          <b class="brand__forename">Brian Chuk</b>
+      </a>
+    </div>
+  </header>
+
+  <header id="home"></header>
+  <br>
+  <center>
+    <div id="page" class="clearfix" style="margin:6em">    
+     <div id="wrap" style="max-width:1300px;text-align:left">
+        <div id="content" class="full-width front-content">
+            <div id="featured-box">
+              <header class="single-entry-header">
+                <h1 style="font-size:6em;font-weight:bold;letter-spacing: 0.07em;">ABOUT</h1>
+                <hr>
+                <br>
+                <center>
+                  <button class="button button-border-caution" id="whoButton">Who am I?</button>
+                  <button class="button button-border-caution disabled" id="whatButton">What I can do</button>
+                  <button title="Updated actually not yet" class="button button-border-caution" id="resumeButton" data-href="https://drive.google.com/file/d/0B_RTwatU12PgUkFfdlM4dnd0WXc/edit?usp=sharing"id="resumeButton">R&eacute;sum&eacute;</button>
+                </center>
+                <br>
+                <div id="what">
+                  <h1 style="font-size:3em;font-weight:bold;">Experience</h1>
+                  <p style="font-weight:bold">In the Machine</p>
+                  <section id="about" class="site-section dark-on-light">
+                    <div class="section-content">
+                      <div class="widget-content">
+                        <!-- Ardunio/Processing, C, Git Version Control, Java, Linux Bash Scripting, MATLAB, Microsoft Office Suite, Python, Solidworks, Web (HTML5, CSS3, JS, jQuery, etc.)-->
+                        <div id="skills" class data-bars="
+                        Arduino/Processing #de3230 80%, 
+                        C #de3230 90%,
+                        CSS3 #de3230 35%, 
+                        Git_Version_Control #de3230 75%,
+                        HTML5 #de3230 35%, 
+                        Java #de3230 55%,
+                        Javascript #de3230 35%,
+                        Linux_Bash_Scripting #de3230 30%, 
+                        MATLAB #de3230 35%,
+                        Microsoft_Office_Suite #de3230 80%,
+                        Python #de3230 75%,
+                        Solidworks_Design_Software #de3230 45%
+                        " data-orientation="horizontal" data-respond></div>
+                      </div><!-- /.widget-content -->
+                    </div><!-- /.section-content -->
+                  </section><!-- /#about -->
+                  <p style="font-weight:bold">In the Real World</p>
+                                    
+                </div>
+                <div id="who">
+                  <h1 style="font-size:3em;font-weight:bold;">Just call me Chuk.</h1>
+                  <p>Here's what you need to know. I'm <span id="age"></span> years old, and I'm a recent graduate of Stuyvesant High School. Currently, I am studying in New York University for a major in Computer Science and a minor in Electrical Engineering. I love to make awesome things, as you can probably tell just by looking at all the stuff I've created. Don't hesitate to contact me if you have any questions.</p>
+                  <br><br>
+                  <p style="font-weight:bold">My Work During my Years at Stuyvesant High School (outside the classroom)</p>
+                  <li>I was a president of Stuyvesant Science Olympiad, one of the biggest clubs in the school.</li>
+                  <li>I volunteered in the Boaz R. Weinstein Library.</li>
+                  <li>I helped to increase support for Yen Chou in her campaign for State Assembly</li>
+                  <li>I conducted research on <a title="Proportional Integral Derivative">P.I.D</a> controllers in the Mechatronics Lab in New York University.</li>
+                  <li>I became a coxswain in Stuy Crew and taught people how to row.</li>
+                  <li>I was a part of the Stuyvesant Caucus in the Student Union</li>
+                  <br><br>
+                  <p style="font-weight:bold">I'm a Maker, a Tinkerer, and a Hacker</p>
+                  <li>I've built tons of projects, from wooden bicycles to quadcopters.</li>
+                  <li>I participate in hackathons throughout the year, you can view my submissions in my portfolio.</li>
+                  <li>I strongly believe in learning by doing and taking education into your own hands.</li>
+                  <li>That's all for now, and it's just getting started. :)</li>
+                  <br><br>
+                  <center><img src="./res/img/light1.jpg"></center>
+                </div>
+                <div id="placehold">
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                </div>
+              </header><!-- end single-entry-header -->   
+            </div> <!--#feature-->
+          <div class="clear"></div>       
+        </div><!-- end content -->
+      </div>
+    </div>
+  </center>
+
+  <footer id="footer" style="background-color:#de3230;clear:both;text-align:center;" class="container--wide">
+    <a class="footer-social">
+      <!--<span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="http://www.facebook.com/W0odchuk"><i class="fa fa-facebook fa-x"></i></a><span>-->
+      <span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="http://twitter.com/devchuk"><i class="fa fa-twitter fa-x"></i></a></span>
+      <span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="http://github.com/devchuk"><i class="fa fa-github fa-x"></i></a></span>
+      <span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="http://linkedin.com/pub/brian-chuk/9b/579/689/"><i class="fa fa-linkedin fa-x"></i></a></span>
+      <span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="https://news.ycombinator.com/user?id=devchuk"><i class="fa fa-hacker-news fa-x"></i></a></span>
+      <span><a style="padding-top:17px;padding-left:8px;padding-right:17px;padding-bottom:15px;text-align:left;display:block;float:left;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="http://www.youtube.com/channel/UCG78tXHk0lwlFO_Lr64ORaQ"><i class="fa fa-youtube-play fa-x"></i></a></span>
+    </a>
+    <a class="brand header__link" style="padding-right: 10em;">
+      &copy; 2014 Brian Chuk  
+      <img src="https://raw.githubusercontent.com/devChuk/devchuk.github.io/master/res/img/favicon.ico">
+    </a>
+    <a class="footer-up" style="padding-left:17px;text-align:right;display:block;float:right;color:#fff;text-decoration:none;border:0;vertical-align: baseline;"href="#home">
+      <i class="fa fa-arrow-up fa-2x"></i>
+    </a>
+  </footer>
+
+
+  <script src="http://wicky.nillia.ms/headroom.js/assets/scripts/main.js?v=2"></script>
+  <script>
+  //header functions
+  (function() {
+    var header = document.querySelector("#header");
+    if(window.location.hash) {
+      header.classList.add("slide--up");
+    }
+
+    new Headroom(header, {
+      tolerance: 1,
+      offset : 205,
+      classes: {
+        initial: "slide",
+        pinned: "slide--reset",
+        unpinned: "slide--up"
+      }
+    }).init();
+
+  }());
+  //age function
+  document.getElementById("age").innerHTML="INSERT AGE HERE. WIP.";
+
+  //about functions
+  $( document ).ready(function() {
+    $( "#who"  ).hide();
+    $( "#placehold" ).hide();
+  });
+
+  $( "#whoButton" ).click(function() {
+    $( "#placehold" ).show(0).delay(1000).hide(0);
+    $( "#what"  ).delay(300).fadeOut( "fast" );
+    $( "#who" ).delay(600).fadeIn( "fast" );
+    $(this).addClass('disabled');
+    $( "#whatButton" ).removeClass('disabled');
+  });
+
+  $( "#whatButton" ).click(function() {
+    $( "#placehold" ).show(0).delay(1000).hide(0);
+    $( "#who" ).delay(300).fadeOut( "fast" );
+    $( "#what" ).delay(600).fadeIn( "fast" );
+    $(this).addClass('disabled');
+    $( "#whoButton" ).removeClass('disabled');
+  });
+  //resume link
+  $('#resumeButton').click(function(e) {
+        e.preventDefault(); e.stopPropagation();
+        window.location.href = $(e.currentTarget).data().href;
+    });
+  </script>
+
+
+  <script type='text/javascript' src='./res/js/js.js'></script>
+  <script type='text/javascript' src='./res/js/imagesloaded.js'></script>
+  <script type='text/javascript' src='./res/js/helper.js'></script>
+
+  <!-- JavaScript at the bottom -->
+  <script src="http://static.tumblr.com/rmicpth/91hmwbdrj/jquery-1.10.2.min.js"></script>
+  <script src="http://static.tumblr.com/rmicpth/tySmzikjm/plugins.min.js"></script>
+  <script src="./main.min.js"></script>
+  <!-- Google Web Font Loader -->
+  <script>
+    var families = [];
+
+    families.push( 'Source Sans Pro:400,600,400italic,600italic:latin' );
+
+
+
+    WebFontConfig = {
+      google: { families: families },
+      inactive: function() {
+        initialize();
+      },
+      active: function() {
+        initialize();
+      }
+    };
+    // Initialize the app
+    function initialize () {
+      App.init();
+    }
+
+    (function() {
+      var wf = document.createElement('script');
+      wf.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+      wf.type = 'text/javascript';
+      wf.async = 'true';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(wf, s);
+    }());
+  </script>
+</body>
+</html>
