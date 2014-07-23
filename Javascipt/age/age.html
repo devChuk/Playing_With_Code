@@ -1,0 +1,41 @@
+<html>
+<head>
+</head>
+<body >
+
+	<a style="color:#de3230" href="http://google.com"><div id="age"></div></a>
+
+
+	<script language="javascript">
+	<!--
+
+	var years;
+	var bday=7;
+	var bmo=11;
+	var byr=1996;
+
+	function countYears()
+	{
+		var now = new Date();
+		tday=(now.getDate());
+		tmo=(now.getMonth());
+		tyr=(now.getFullYear());
+
+	
+		if((tmo > bmo)||(tmo==bmo & tday>=bday)) {
+			age= byr;
+		}
+		else {
+			age= byr + 1;
+		}
+		return (tyr - age);
+	}
+
+	years=(countYears()).toString();
+
+	document.getElementById("age").innerHTML=years;
+//-->
+</script>
+
+</body>
+</html>
