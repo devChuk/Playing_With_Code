@@ -85,7 +85,7 @@
                 <br>
                 <center style="font-weight:bold">
                   <label>Sort:</label>
-                  <span class="sort" data-sort="random"><button class="button button-border-caution"><i class="fa fa-random" style="padding-right:1em"></i></button></span>
+                  <span class="sort" data-sort="random"><button class="button button-border-caution" id="shuffle"><i class="fa fa-random" style="padding-right:1em"></i></button></span>
                   <span class="sort" data-sort="myorder:desc"><button class="button button-border-caution" id="new">Newest First</button></span>
                   <span class="sort" data-sort="myorder:asc"><button class="button button-border-caution disabled" id="old">Oldest First</button></span>
                   <label>Filter:</label>
@@ -251,7 +251,7 @@
     $( "#old" ).click(function() {
           $(this).addClass('disabled');
           $( "#new" ).removeClass('disabled');
-    });    
+    });
 
     $( "#all" ).click(function() {
           $(this).addClass('disabled');
@@ -270,6 +270,12 @@
           $( "#all" ).removeClass('disabled');
           $( "#hard" ).removeClass('disabled');
     });
+
+    $( "#shuffle" ).click(function() {
+          $( "#old" ).removeClass('disabled');
+          $( "#new" ).removeClass('disabled');
+    });
+
   </script>
 </body>
 </html>
