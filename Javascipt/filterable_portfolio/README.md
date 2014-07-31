@@ -82,10 +82,14 @@ date: 14 January 2014
 img: <IMGREF LINK>
 ---
 
-
-
-
 WARNING: Collections are still an experimenal feature in Jekyll so we'll never know if we might have to redo the entire thing or cry a lot.
 
-SOLUTION: Prepare to cri.
+SOLUTION: Prepare to cry haha.
+
+Alright it's all planned. Let's have a procedure here:
+
+1)Test to see if portfolio is friendly with this html setup. Will have to tweak .css file.
+2)Setup a [collection](http://jekyllrb.com/docs/collections/) with _config.yml and make a dir and yada yada
+3)add js setups and other required stuffs
+4)add plan!
 
