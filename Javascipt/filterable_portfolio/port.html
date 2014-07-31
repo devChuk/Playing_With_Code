@@ -87,9 +87,9 @@
                   <label>Sort:</label>
                   <span class="sort" data-sort="random"><button class="button button-border-caution"><i class="fa fa-random" style="padding-right:1em"></i></button></span>
                   <span class="sort" data-sort="myorder:desc"><button class="button button-border-caution" id="new">Newest First</button></span>
-                  <span class="sort" data-sort="myorder:asc"><button class="button button-border-caution" id="old">Oldest First</button></span>
+                  <span class="sort" data-sort="myorder:asc"><button class="button button-border-caution disabled" id="old">Oldest First</button></span>
                   <label>Filter:</label>
-                  <span class="filter" data-filter="all"><button class="button button-border-caution" id="all">All</button></span>
+                  <span class="filter" data-filter="all"><button class="button button-border-caution disabled" id="all">All</button></span>
                   <span class="filter" data-filter=".category-1"><button class="button button-border-caution" id="hard">Hardware</button></span>
                   <span class="filter" data-filter=".category-2"><button class="button button-border-caution" id="soft">Software</button></span>
                       <!--<div class="filter" data-filter="all">Show All</div>
@@ -268,7 +268,7 @@
     $( "#soft" ).click(function() {
           $(this).addClass('disabled');
           $( "#all" ).removeClass('disabled');
-          $( "#soft" ).removeClass('disabled');
+          $( "#hard" ).removeClass('disabled');
     });
   </script>
 </body>
