@@ -57,7 +57,6 @@ Here's an example of Liquid using a Jekyll post.
 
 Based on this we'd do:
 
-	            <div id="Container" class="grid cs-style-2">
 	            {% for proj in site.projects %}
 	            	<li class="{{ proj.cat }}" data-myorder="{{ proj.order }}">                    
                     	<figure>
