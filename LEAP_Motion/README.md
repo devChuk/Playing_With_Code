@@ -1,0 +1,1 @@
+I recently won a LEAP Motion kit and I'd like to play around with it. This folder will store any test code I create for the kit.
