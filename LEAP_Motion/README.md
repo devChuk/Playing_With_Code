@@ -10,3 +10,8 @@ These programs are rum from Linux terminal:
 
 
 	LeapControlPanel, Recalibrate, Visualizer, leapd
+
+
+Tutorials for LEAP Motion kit
+
+http://developer.leapmotion.com/getting-started
