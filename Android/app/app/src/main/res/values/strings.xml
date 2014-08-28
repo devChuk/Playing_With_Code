@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ATMFinder</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="Hello_Android_World">Hello Android World</string>
+    <string name="clicke">Click here foo</string>
+    <string name="title_activity_uitest">UITest</string>
+
+</resources>
