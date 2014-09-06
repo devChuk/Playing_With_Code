@@ -16,13 +16,24 @@ public class Lifecycle extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lifecycle);
-    }*/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lifecycle);
         textView = (TextView) findViewById(R.id.textView);
+        textView.append("Create\n");
+    } */
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lifecycle);
+        textView = (TextView) findViewById(R.id.textView);
+        if (savedInstanceState != null)   {
+            textView.setText(savedInstanceState.getCharSequence("myText"));
+        }
         textView.append("Create\n");
     }
 
@@ -60,6 +71,13 @@ public class Lifecycle extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         textView.append("Destroy\n");
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState){
+        savedInstanceState.putCharSequence("myText",textView.getText());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
