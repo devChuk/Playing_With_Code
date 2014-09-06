@@ -4,16 +4,57 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class Lifecycle extends Activity {
+
+    private TextView textView;
+    /*@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lifecycle);
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lifecycle);
+        textView = (TextView) findViewById(R.id.textView);
+        textView.append("Create\n");
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        textView.append("Start\n");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        textView.append("Pause\n");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        textView.append("Resume\n")
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        textView.append("Stop\n");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        textView.append("Restart\n");
+    }
+
+    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
