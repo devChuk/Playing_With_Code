@@ -83,8 +83,7 @@ public class Lifecycle extends Activity {
 
     public void buttonOnClick(View v) {
         Button button=(Button) v;
-        TextView myTextView=(TextView)
-                findViewById(R.id.textView);
-        myTextView.setText("You Clicked Me!");
+        TextView myTextView=(TextView) findViewById(R.id.textView);
+        myTextView.setText("");
     }
 }
