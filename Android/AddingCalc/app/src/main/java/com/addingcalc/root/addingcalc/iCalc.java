@@ -4,9 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 public class iCalc extends Activity {
+
+    private int total = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,5 +38,14 @@ public class iCalc extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onButtonClick(View v) {
+        Button button = (Button) v;
+        String bText = (String) button.getText();
+        int value = Integer.parseInt(bText);
+        total += value;
+        TextView myTextView = (TextView) findViewById(R.id.textView);
+        myTextView.setText(Integer.toString(total));
     }
 }
