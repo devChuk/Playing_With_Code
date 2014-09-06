@@ -39,7 +39,7 @@ public class Lifecycle extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        textView.append("Resume\n")
+        textView.append("Resume\n");
     }
 
     @Override
