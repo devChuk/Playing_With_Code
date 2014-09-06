@@ -54,7 +54,11 @@ public class Lifecycle extends Activity {
         textView.append("Restart\n");
     }
 
-    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        textView.append("Destroy\n");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
