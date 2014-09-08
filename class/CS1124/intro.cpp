@@ -17,22 +17,10 @@ int main() {
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <vector>
 using namespace std;
 
-//pass-by-value
-void addOne(int someInt) {
-	someInt = someInt++;
-}
-//pass by constant reference
-void printVector(const vector<int>& myVector) {
-	for (size_t index = 0; index < myVector.size(); ++index) {
-		cout << myVector[index] << endl;
-	}
-}
-
 int main() {
-	/*cout << "Hello CS1124!!\n";
+	cout << "Hello CS1124!!\n";
 	
 	int x = 17;
 
@@ -66,38 +54,22 @@ int main() {
 
 	ifstream ifs; //input file stream
 	ifs.open("numbers.txt");
-	if (!ifs) {
-		cerr << "Couldn't open numbers.txt\n";
-		exit(1);
-	}
 	while (ifs >> x) { //try to read an int. if you succeed, then run the block below
 		cout << "x: " << x << endl;
 	}
 	ifs.close();
-
-
 
 	ifstream ifs2("numbers.txt");
 	while (ifs2 >> s) {
 		cout << "s: " << s << endl;
 	}
 	ifs2.close();
-*/
-	vector<int> v;
-	cout << v.size() << endl;
-	v.push_back(17);
-	v.push_back(42);
-	v.push_back(28);
+	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
 
-	cout << v[0] << endl;
-	v[0] = 6;
-
-	for (index = 0; index < v.size(); ++index) {
-		cout << v[index] << endl;
+	ifstream ifs3("numbers.txt");
+	while (getline(ifs3, s)) {
+		
 	}
-	v.pop_back;
-	v.clear();
 
-	
 
 }
