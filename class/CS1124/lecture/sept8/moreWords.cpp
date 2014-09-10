@@ -17,4 +17,8 @@ int main() {
 	if (!wordStream) {
 
 	}
+
+	//loop for file filling vector
+
+	//get a token
 }
