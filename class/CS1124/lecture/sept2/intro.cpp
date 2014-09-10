@@ -20,14 +20,33 @@ int main() {
 #include <vector>
 using namespace std;
 
+struct Person {
+	string name;
+	int age;
+};
+
+void addOne(int someInt);
+
 //pass-by-value
 void addOne(int someInt) {
 	someInt = someInt++;
 }
+
+//pass by reference
+void addOneRef(int& someInt) {
+	++someInt;
+}
+
 //pass by constant reference
 void printVector(const vector<int>& myVector) {
 	for (size_t index = 0; index < myVector.size(); ++index) {
 		cout << myVector[index] << endl;
+	}
+}
+
+void printPeople(constant vector<Person> people) {
+	for (Person& x : people) {
+		cout << "Name: " << x.name << " ,age: " << Person.age << endl;
 	}
 }
 
@@ -82,7 +101,7 @@ int main() {
 		cout << "s: " << s << endl;
 	}
 	ifs2.close();
-*/
+
 	vector<int> v;
 	cout << v.size() << endl;
 	v.push_back(17);
@@ -97,7 +116,21 @@ int main() {
 	}
 	v.pop_back;
 	v.clear();
+*/
+	Person somePerson;
+	somePerson.name = "fred";
+	somePerson.age = 42;
 
-	
+	cout << "Name: " << somePerson.name << ", age: " << somePerson.age << endl;
 
+	ifstream peopleStream("person.txt");
+	if (!peopleStream) {
+		cerr << "some message";
+	}
+		string name;
+		int age;
+
+	}
+
+//pass by reference expects modification
 }
