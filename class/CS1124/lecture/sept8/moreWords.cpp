@@ -20,14 +20,19 @@ int main() {
 
 	//loop for file filling vector
 	string token;
-	while (wordStream >> token) {
+	while (wordStream >> token) {	//get a token
+
+		for (Word& w : words) {
+			if (token == w.token) {
+				
+			}
 
 
-	//get a token
 
 	//is it there?
 
 		// if yes, then we have found a word object in the collection and we simply need to update its position
 		// not? Add a new Word object for this token with its position.
+		}
 	}
 }
