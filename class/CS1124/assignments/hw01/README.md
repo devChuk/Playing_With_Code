@@ -113,3 +113,10 @@ Follow the convention that structs begin with an uppercase letter, constants are
 Turn in
 
 Hand in a single cpp file, hw01.cpp, containing your program.
+
+
+##Additional Resources
+
+[warriors.txt]
+
+[output.txt]
