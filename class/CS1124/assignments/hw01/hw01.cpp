@@ -11,7 +11,6 @@ Status lists all warriors, alive or dead, and their strengths.*/
 #include <fstream>
 using namespace std;
 
-int runnable = 0;
 
 struct Warrior {
 	string name;
@@ -19,6 +18,9 @@ struct Warrior {
 };
 
 void warrior(string name, int strength) {
+	Warrior newWarrior;
+	newWarrior.name = name;
+	newWarrior.strength = strength;
 	//creates a new warrior with the specified name and strength
 }
 
