@@ -96,6 +96,7 @@ Warrior: Gates, strength: 0
 
 
 Programming guidelines
+
 For all assignments, please use the aspects of the language that we are focusing on in the assignment. For example, in this assignment, one of the topics is the use of struct. That means we do not want you to define classes or methods, or to use data hiding &emdash; that'll all be in the next assignment. (Obviously, you shouldn't worry if you don't know what I was just talking about there.) Why the restrictions? The purpose of each assignment is to have you excercise specific technical skills. If you want to wow us with the cool stuff you have figured out that goes beyond the current syllabus, great! Come by the office and I will be happy to look at and discuss your work.
 Make good use of functions. In this program, for example, when you determine that you are looking at a Warrior command then you should call a function to handle that command. Similarly with the other commands.
 Begin your file with a comment identifying who you are and what this program is for.
@@ -106,6 +107,9 @@ All structs, functions and variables should have good names.
 Function names should clearly identify what the function does.
 A variable name that is a single letter, such as i, should only be used within the scope of a loop as a loop index. Ok, yes, x and y might make excellent names for referring to the coordinate of a point in 2D space.
 temp is almost never a good name.
+
 Follow the convention that structs begin with an uppercase letter, constants are all uppercase and functions and variables begin with a lowercase letter.
+
 Turn in
+
 Hand in a single cpp file, hw01.cpp, containing your program.
