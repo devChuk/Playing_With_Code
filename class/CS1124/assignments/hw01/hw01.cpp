@@ -34,6 +34,6 @@ void status() {
 int main() {
 	//initialize a ifstream
 	ifstream medievalStream("warriors.txt");
-
+	
 	//The main function that pulls it all together. What didja expect?
 }
