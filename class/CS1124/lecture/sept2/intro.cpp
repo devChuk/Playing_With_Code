@@ -45,7 +45,7 @@ void printVector(const vector<int>& myVector) {
 }
 
 void printPeople(constant vector<Person> people) {
-	for (Person& x : people) {
+	for (constant Person& x : people) {
 		cout << "Name: " << x.name << " ,age: " << Person.age << endl;
 	}
 }
