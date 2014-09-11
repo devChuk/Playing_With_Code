@@ -13,10 +13,12 @@ struct HydroCarbon {
 void searchHydrocarbon(vector<HydroCarbon>& molecules, numC, numH) {
 								//finds a hydrocarbon
 
+
 }
 
 void readAndProcessFile(ifstream ifs, vector<HydroCarbon> molecules) {
 								//the name is rather self-explanatory
+	
 }
 
 void displayHydroCarbons(vector<HydroCarbon>& molecules) {
@@ -27,6 +29,18 @@ int findMax(vector<HydroCarbon>& molecules) {
 								//finds the maximum carbon amount in a single molecule
 }
 
-int main() {					//the main function that pulls it all togethe
+int main() {					//the main function that pulls it all together
+	vector<HydroCarbon> molecules;
+	ifstream ifs("hydrocarbon-set-in-example.txt");
+	readAndProcessFile(ifs, molecules);
+
+
+
+
+
+
+
+
+	ifs.close();
 
 }
