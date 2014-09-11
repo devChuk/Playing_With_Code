@@ -10,7 +10,8 @@ struct HydroCarbon {
 	int position;				//the 
 };
 
-void searchHydrocarbon() {		//finds a hydrocarbon
+void searchHydrocarbon(vector<HydroCarbon>& molecules, numC, numH) {
+								//finds a hydrocarbon
 
 }
 
@@ -26,6 +27,6 @@ int findMax(vector<HydroCarbon>& molecules) {
 								//finds the maximum carbon amount in a single molecule
 }
 
-int main() {
+int main() {					//the main function that pulls it all togethe
 
 }
