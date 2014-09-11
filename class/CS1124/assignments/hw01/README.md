@@ -117,6 +117,6 @@ Hand in a single cpp file, hw01.cpp, containing your program.
 
 ##Additional Resources
 
-[warriors.txt]
+[warriors.txt](https://github.com/devChuk/Playing_With_Code/blob/gh-pages/class/CS1124/assignments/hw01/warriors.txt)
 
-[output.txt]
+[output.txt](https://github.com/devChuk/Playing_With_Code/blob/gh-pages/class/CS1124/assignments/hw01/output.txt)
