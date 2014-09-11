@@ -19,7 +19,11 @@ void readAndProcessFile(ifstream ifs, vector<HydroCarbon> molecules) {
 }
 
 void displayHydroCarbons(vector<HydroCarbon>& molecules) {
+								//prints out the HydroCarbons
+}
 
+int findMax(vector<HydroCarbon>& molecules) {
+								//finds the maximum carbon amount in a single molecule
 }
 
 int main() {
