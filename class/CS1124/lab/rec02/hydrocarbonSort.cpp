@@ -16,9 +16,9 @@ void searchHydrocarbon(vector<HydroCarbon>& molecules, numC, numH) {
 
 }
 
-void readAndProcessFile(ifstream ifs, vector<HydroCarbon> molecules) {
+void readAndProcessFile(ifstream ifs, vector<HydroCarbon>& molecules) {
 								//the name is rather self-explanatory
-	
+
 }
 
 void displayHydroCarbons(vector<HydroCarbon>& molecules) {
