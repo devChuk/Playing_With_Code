@@ -11,20 +11,24 @@ Status lists all warriors, alive or dead, and their strengths.*/
 #include <fstream>
 using namespace std;
 
-
 struct Warrior {
 	string name;
 	int strength;
 };
 
-void warrior(string name, int strength) {
+
+
+void warrior(string name, int strength, vector<Warrior> warriors) {
 	Warrior newWarrior;
 	newWarrior.name = name;
 	newWarrior.strength = strength;
+
+	warriors.push_back(newWarrior);
 	//creates a new warrior with the specified name and strength
 }
 
 void battle(Warrior a, Warrior b) {
+
 	//causes a battle between two warriors
 }
 
@@ -32,10 +36,14 @@ void status() {
 	//lists all warriors, alive or dead, and their strengths
 }
 
+void readandprocessFile(){
+
+}
 
 int main() {
 	//initialize a ifstream
 	ifstream medievalStream("warriors.txt");
-	
+	//initialized a warrior vector
+	vector<Warrior> warriors;	
 	//The main function that pulls it all together. What didja expect?
 }
