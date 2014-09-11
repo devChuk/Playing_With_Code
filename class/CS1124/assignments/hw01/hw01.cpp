@@ -18,7 +18,7 @@ struct Warrior {
 
 
 
-void warrior(string name, int strength, vector<Warrior> warriors) {
+void warrior(vector<Warrior>& warriors, string name, int strength) {
 	Warrior newWarrior;
 	newWarrior.name = name;
 	newWarrior.strength = strength;
@@ -27,23 +27,23 @@ void warrior(string name, int strength, vector<Warrior> warriors) {
 	//creates a new warrior with the specified name and strength
 }
 
-void battle(Warrior a, Warrior b) {
+void battle(vector<Warrior>& warriors, string name1, string name2) {
 
 	//causes a battle between two warriors
 }
 
-void status() {
+void status(vector<Warrior> warriors) {
 	//lists all warriors, alive or dead, and their strengths
 }
 
-void readandprocessFile(){
-
+void readandprocessFile(ifstream ifs, vector<Warrior> warriors){
+	//opens warriors.txt and processes the information
 }
 
 int main() {
-	//initialize a ifstream
-	ifstream medievalStream("warriors.txt");
-	//initialized a warrior vector
-	vector<Warrior> warriors;	
 	//The main function that pulls it all together. What didja expect?
+	ifstream ifs("warriors.txt");
+	vector<Warrior> warriors;
+	readandprocessFile(ifs, warriors);
+	ifs.close();
 }

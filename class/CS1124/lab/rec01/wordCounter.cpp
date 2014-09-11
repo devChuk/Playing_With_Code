@@ -24,7 +24,7 @@ int main() {
 	}
 	ifs.close();              //whatever memory you take, remember to give it back
 
-	
+
 
 
 
