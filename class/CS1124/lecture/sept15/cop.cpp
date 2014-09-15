@@ -6,7 +6,7 @@ using namespace std;
 class Person {
 public:
 	//Constructors
-	Person(const string& theName, int theAge) : name(theName) {
+	Person(const string& theName, int theAge) : name(theName), age(theAge) {
 		//some code
 	}
 
@@ -14,6 +14,16 @@ public:
 	void setName(const string& theName) {
 		name = theName;
 	}
+	//getter / accessor
+	string getName() const {return name;} //you are promising the function won't modify anything
+	int getAge() const{return age;}
+	void walk(int steps) {
+		for (int i = 0; i < steps; ++i) {
+			cout << "step";
+		}
+		cout << endl;
+	}
+
 private:
 	string name;
 	int age;
@@ -25,6 +35,7 @@ void displayPerson(const Person& aPerson) {
 
 int main() {
 	Person john("John", 17);
+	Person mary();
 //	john.setName("John");
 //	john.age = 17;
 	displayPerson(john);
