@@ -24,6 +24,9 @@ public:
 		cout << endl;
 	}
 
+	void display() {
+		cout << "Name: " << name << ", age: " << age << ".\n";
+	}
 private:
 	string name;
 	int age;
@@ -39,4 +42,6 @@ int main() {
 //	john.setName("John");
 //	john.age = 17;
 	displayPerson(john);
+
+	cout << john << endl;
 }

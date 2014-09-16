@@ -9,6 +9,7 @@ prints out the hydrocarbons in order of increasing carbon atom amount.
 #include <vector>
 #include <string>
 #include <fstream>
+
 using namespace std;
 
 struct HydroCarbon {
