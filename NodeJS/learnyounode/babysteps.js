@@ -4,9 +4,7 @@
 function sumAll(args) {
 	var sum = 0;
 	for (i = 2; i < args.length; i++) {
-		if (parseInt(args[i]) != NaN) {
 			sum += parseInt(args[i]);
-		}
 	}
 	return sum;
 }
