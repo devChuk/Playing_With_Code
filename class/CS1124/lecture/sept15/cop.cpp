@@ -41,7 +41,13 @@ int main() {
 	Person mary();
 //	john.setName("John");
 //	john.age = 17;
-	displayPerson(john);
+	john.display()
 
-	cout << john << endl;
+	ifstream ifs("peopleage");
+	if (!ifs) { }
+	vector<Person> vp;
+
+	while(ifs >> ) {
+
+	}
 }
