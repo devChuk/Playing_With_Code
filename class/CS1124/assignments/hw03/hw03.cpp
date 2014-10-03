@@ -10,7 +10,7 @@ class Warrior {
 public:
 	string name;
 	int strength;
-
+	//Warrior constructor
 	Warrior(const string newName, const int newStrength)
 		:name(newName), strength(newStrength) {}
 };
@@ -18,17 +18,75 @@ public:
 class Noble {
 public:
 	string name;
-
+	//Noble constructor
 	Noble(const string& newName)
 		: name(newName) {}
+	//hire a Warrior
+	void hire(Warrior& warrior) {
+		Warrior* p;
+		p = &warrior;
+		warriors.push_back(p);
+	}
+	//fire a Warrior
+	void fire(Warrior& warrior) {
+		for (int i = 0; i < warriors.size(); i++) {
+			if (warriors[i]->name == warrior.name) {
+				cout << warrior.name << ", you're fired! -- " << name << endl;
+				warriors.erase(warriors.begin()+i);
+				break;
+			} 
+		}
+	}
+	//display all warriors and their strengths
+	void display() {
+		cout << name << " has an army of " << warriors.size() << "\n";
+		for (Warrior* warrior : warriors) {
+			cout << "\t" << warrior->name << ": " << warrior->strength << endl;
+		}
+	}
+	//get the total strength of the army
+	int getStrength() {
+		int s = 0;
+		for (int i = 0; i < warriors.size(); i++) {
+			s+= warriors[i]->strength;
+		}
+		return s;
+	}
+	//attack another noble
+	void battle(Noble& target) {
+		cout << name << " battles " << target.name << endl;
+		if (getStrength() == 0 && target.getStrength() == 0) {
+			cout << "Oh, NO! They're both dead! Yuck!" << endl;
+		}
+		else if (getStrength() > target.getStrength()) {
+			double per = 1 - (double)target.getStrength()/getStrength();
+			for (int i = 0; i < warriors.size(); i++) {
+				warriors[i]->strength *= per;
+			}
+			if (name == "Jim") {
+				cout << "He's dead Jim" << endl;
+			}
+			else
+				cout << name << " defeats " << target.name << endl;
+			
+		}
+		else if (getStrength() < target.getStrength()) {
+			double per = 1 - getStrength()/(double)target.getStrength();
+			for (int i = 0; i < target.warriors.size(); i++) {
+				target.warriors[i]->strength *= per;
+			}
+			cout << target.name << " defeats " << name << endl;
 
-	void hire(Warrior& warrior) {}
-
-	void fire(Warrior& warrior) {}
-
-	void display() {}
-
-	void battle(Noble target) {}
+		}
+		else
+			cout << "Mutual Annihalation: " << name << " and " << target.name << " die at each other's hands" << endl;
+			for (int i = 0; i < warriors.size(); i++) {
+				warriors[i]->strength = 0;
+			}
+			for (int i = 0; i < target.warriors.size(); i++) {
+				target.warriors[i]->strength = 0;
+			}
+	}
 
 private:
 
@@ -52,7 +110,7 @@ int main() {
 	Warrior mrGreen("Hulk", 8);
 	Warrior dylan("Hercules", 3);
 
-	/*jim.hire(nimoy);
+	jim.hire(nimoy);
 	lance.hire(theGovernator);
 	art.hire(wizard);
 	lance.hire(dylan);
@@ -73,5 +131,4 @@ int main() {
 	jim.battle(lance);
 	linus.battle(billie);
 	billie.battle(lance);
-	*/
 }
