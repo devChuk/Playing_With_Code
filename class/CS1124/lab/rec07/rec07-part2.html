@@ -1,0 +1,151 @@
+<html><!-- #BeginTemplate "/Templates/Cs1124.dwt" --><!-- DW6 -->
+<head>
+<!-- #BeginEditable "doctitle" -->
+<title>CS 1124 - Recitation 7</title>
+<!-- #EndEditable --> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1 align="center">CS 1124 &#151; Object Oriented Programming</h1>
+<!-- #BeginEditable "Body" -->
+  <META NAME="GENERATOR" CONTENT="Adobe PageMill 3.0 Win">
+  
+
+<CENTER>
+  <h1>Recitation 7 </h1>
+    
+  <h2 align="center">Part Two</h2>
+</CENTER>
+<h2>Topics</h2>
+
+<UL>
+  <LI>Inheritance
+  <LI>Polymorphism
+</UL>
+
+<P><U>PART TWO</U></P>
+
+<P>We are writing code to model a little world that has an orchestra,
+musicians and a Musical Instrument Lending Library.</P>
+
+<P>We've gotten working classes for the MIL<SUP>2</SUP> (Musical
+Instrument Lending Library), the Musican, and the Instrument hierarchy.</P>
+
+<P>Now it's time to use them.</P>
+
+<P>We'll be modeling a little world in which things happen.</P>
+
+<P>The classes are created to allow a programmer to write code
+that models the activities in the world.<BR>
+We'll call this a scenario.</P>
+
+<P>Here's a possible scenario in this (slightly) expanded musical
+world:</P>
+
+<BLOCKQUOTE>
+  <P><FONT FACE="Arial">bob joins the orchestra without an instrument.<BR>
+  the orchestra performs<BR>
+  sue gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT FACE="Arial">
+  and joins the orchestra.<BR>
+  ralph gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial">.<BR>
+  mary gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial"> and joins the orchestra.<BR>
+  ralph returns his instrument to the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial">.<BR>
+  jody gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial"> and joins the orchestra.<BR>
+  morgan gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial"><BR>
+  the orchestra performs.<BR>
+  ralph joins the orchestra.<BR>
+  the orchestra performs.<BR>
+  bob gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT FACE="Arial"><BR>
+  ralph gets an instrument from the </FONT>MIL<SUP>2</SUP><FONT
+   FACE="Arial"><BR>
+  the orchestra performs.<BR>
+  morgan joins the orchestra.<BR>
+  the orchestra performs.</FONT></P>
+</BLOCKQUOTE>
+
+<P>A programmer would use objects to model this world by calling
+methods.</P>
+
+<P>There will most always be an &quot;initialization phase&quot;
+in which the objects that will be used in the scenario will be
+created and things that need to be preset are (like there should
+be a MIL<SUP>2</SUP> and someone needs to put some instruments
+in it before the scenario starts). This is done by the modeling
+programmer before the code for doing the scenario.</P>
+
+<P>There might be some clean up code after the scenario. In this
+recitation there isn't.</P>
+
+<P>What are the additional clases that will need to be created
+for this scenario?<BR>
+Only orchestra. As noted, we already have the others.</P>
+
+<P><FONT FACE="Arial"><strong>Q:</strong></FONT><strong> </strong>What additional 
+  functionality needs to be added to some of our classes?<BR>
+  <FONT FACE="Arial"><strong>A:</strong></FONT><strong> </strong>The way to play 
+  an instrument &quot;normally.&quot; All instruments <I>must</I> have this ability.</P>
+
+<P>There are two ways to play an instrument: the normal playing way that musicians 
+  use when performing in the orchestra and the making sound way that the MIL<SUP>2</SUP> 
+  uses each morning to test the instruments and that musicians used in part one. 
+  (The MIL<SUP>2</SUP> could play its instruments in the normal way but it just 
+  doesn't.)</P>
+
+<UL>
+  <LI><U>For Normal PLAYing</U><B>:</B>
+  <UL>
+    <LI>For trumpets the output should also be:<BR>
+    &quot;<FONT FACE="Arial">Toot</FONT>&quot;
+    <LI>For trombones the output should also be:<BR>
+    &quot;<FONT FACE="Arial">Blat</FONT>&quot;
+    <LI>For violins the output should be:<BR>
+    &quot;<FONT FACE="Arial">Screech&quot;</FONT>
+      <LI>For cellos the output should be:<BR>
+    &quot;<FONT FACE="Arial">Squawk&quot;</FONT>
+    <LI>For drums the output should be:<BR>
+    &quot;<FONT FACE="Arial">Boom</FONT>&quot;
+    <LI>For cymbals the output should be:<BR>
+    &quot;<FONT FACE="Arial">Crash</FONT>&quot;
+  </UL>
+</UL>
+
+<P>How to enforce that every instrument must have a play method?</P>
+
+<P>How would you model &quot;the orchestra?&quot; - an object
+that &quot;contains&quot; all the musicians.<BR>
+The orchestra has a maximum size of 25. Any musician can join
+the orchestra but she joins for life! It also doesn't matter if
+a musician doesn't have an instrument when they are in the orchestra.
+When the orchestra performs, any musician who doesn't have an
+instrument just doesn't play their instruments (or should that
+be stated<B>:</B> they don't play the instruments that they don't
+have?!). A musician can go to the MIL<SUP>2</SUP> and get an instrument
+and then when the orchestra plays, they play. When the orchestra
+performs, it just has each of its musicians one at a time play
+their instrument in the <U>normal</U> way. The order in which
+the musicians perform doesn't matter as long as all musicians
+in the orchestra are told to play. You already have a working
+container for instrument pointers so there shouldn't be too much
+work to modify that code to instead contain <FONT FACE="Courier New">Musician*</FONT>'s.</P>
+
+<P>GO!</P>
+
+<P>Here's <A HREF="cs1124-rec07-PART-TWO.cpp">the sample code for the scenario</A> 
+  given above.<BR>
+  Here's <A HREF="orchOutput.txt">the output from this scenario</A> being run.<BR>
+  Make some of your own scenarios (or add to this one) too.</P>
+<!-- #EndEditable --> 
+<p><a href="http://cis.poly.edu/cs1124">Home</a></p>
+<hr>
+<p><i>Maintained by <a href="http://cis.poly.edu/jsterling">John Sterling</a> 
+  (<a href="mailto:jsterling@poly.edu">jsterling@poly.edu</a>). </i><i>Last updated 
+  <!-- #BeginDate format:Am1 -->January 23, 2011<!-- #EndDate --> </i></p>
+<p>&nbsp; </p>
+</body>
+<!-- #EndTemplate --></html>
