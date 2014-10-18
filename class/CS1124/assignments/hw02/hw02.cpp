@@ -27,7 +27,6 @@ public:
 
 class Warrior {
 public:
-	string name;
 	//Person(const string& fn, const string& ln, const string& birthday)
 	//  : bday(birthday), firstName(fn), lastName(ln), spouse(NULL) {
 	Warrior(const string& nname, const string& weapName, const int strength)
@@ -46,8 +45,13 @@ public:
 		sword.setStrength(i);
 	}
 
+	string getName() {
+		return name;
+	}
+
 private:
 	Weapon sword;
+	string name;
 };
 
 void warrior(vector<Warrior>& warriors, string name, string weapName, int strength) {

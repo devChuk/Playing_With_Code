@@ -8,19 +8,30 @@ using namespace std;
 
 class Warrior {
 public:
-	string name;
-	int strength;
 	//Warrior constructor
 	Warrior(const string newName, const int newStrength)
 		:name(newName), strength(newStrength) {}
+
+	string getName() const {
+		return name;
+	}
+	int getStrength() const {
+		return strength;
+	}
+	void setStrength(int hurr) {
+		strength = hurr;
+	}
+private:
+	string name;
+	int strength;
+
 };
 
 class Noble {
 public:
-	string name;
 	//Noble constructor
 	Noble(const string& newName)
-		: name(newName) {}
+		: name(newName), dead(0) {}
 	//hire a Warrior
 	void hire(Warrior& warrior) {
 		Warrior* p;
@@ -30,66 +41,85 @@ public:
 	//fire a Warrior
 	void fire(Warrior& warrior) {
 		for (int i = 0; i < warriors.size(); i++) {
-			if (warriors[i]->name == warrior.name) {
-				cout << warrior.name << ", you're fired! -- " << name << endl;
+			if (warriors[i]->getName() == warrior.getName()) {
+				cout << warrior.getName() << ", you're fired! -- " << name << endl;
 				warriors.erase(warriors.begin()+i);
 				break;
 			} 
 		}
 	}
+	//returns the name
+	string getName() const {
+		return name;
+	}
+	//checks if alive
+	int uded() {
+		return dead;
+	}
+
+	int die() {
+		dead = 1;
+	}
 	//display all warriors and their strengths
 	void display() {
 		cout << name << " has an army of " << warriors.size() << "\n";
 		for (Warrior* warrior : warriors) {
-			cout << "\t" << warrior->name << ": " << warrior->strength << endl;
+			cout << "\t" << warrior->getName() << ": " << warrior->getStrength() << endl;
 		}
 	}
 	//get the total strength of the army
 	int getStrength() {
 		int s = 0;
 		for (int i = 0; i < warriors.size(); i++) {
-			s+= warriors[i]->strength;
+			s+= warriors[i]->getStrength();
 		}
 		return s;
 	}
 	//attack another noble
 	void battle(Noble& target) {
-		cout << name << " battles " << target.name << endl;
-		if (getStrength() == 0 && target.getStrength() == 0) {
+		cout << name << " battles " << target.getName() << endl;
+		if (uded() && target.uded()) {
 			cout << "Oh, NO! They're both dead! Yuck!" << endl;
+			die();
+			target.die();
 		}
-		else if (getStrength() > target.getStrength()) {
+		else if (getStrength() > target.getStrength() || target.uded()) {
 			double per = 1 - (double)target.getStrength()/getStrength();
 			for (int i = 0; i < warriors.size(); i++) {
-				warriors[i]->strength *= per;
+				warriors[i]->setStrength(warriors[i]->getStrength() * per);
 			}
+			target.die();
 			if (name == "Jim") {
 				cout << "He's dead Jim" << endl;
 			}
 			else
-				cout << name << " defeats " << target.name << endl;
+				cout << name << " defeats " << target.getName() << endl;
 			
 		}
-		else if (getStrength() < target.getStrength()) {
+		else if (getStrength() < target.getStrength() || uded()) {
 			double per = 1 - getStrength()/(double)target.getStrength();
 			for (int i = 0; i < target.warriors.size(); i++) {
-				target.warriors[i]->strength *= per;
+				target.warriors[i]->setStrength(target.warriors[i]->getStrength() * per);
 			}
-			cout << target.name << " defeats " << name << endl;
+			cout << target.getName() << " defeats " << name << endl;
+			die();
 
 		}
 		else
-			cout << "Mutual Annihalation: " << name << " and " << target.name << " die at each other's hands" << endl;
+			cout << "Mutual Annihalation: " << name << " and " << target.getName() << " die at each other's hands" << endl;
 			for (int i = 0; i < warriors.size(); i++) {
-				warriors[i]->strength = 0;
+				warriors[i]->setStrength(0);
 			}
 			for (int i = 0; i < target.warriors.size(); i++) {
-				target.warriors[i]->strength = 0;
+				target.warriors[i]->setStrength(0);
 			}
+			die();
+			target.die();
 	}
 
 private:
-
+	int dead; //1 if dead
+	string name;
 	vector<Warrior*> warriors;
 
 };
