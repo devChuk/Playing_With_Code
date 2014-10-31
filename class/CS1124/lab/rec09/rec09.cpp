@@ -49,6 +49,12 @@ public:
         } // for
     } // Directory()
 
+    ~Directory() {
+        for (int j=0; j < capacity; j++) 
+        delete[] entries[j];
+        delete[] entries;
+    }
+
     void add(const string& name, unsigned room, unsigned ph, Position& pos) {
         if( size == capacity )	{
             // something is missing!!!  Add it!
