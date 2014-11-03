@@ -23,6 +23,14 @@ private:
 
 class Entry {
 public:
+    string name;
+    unsigned phone;
+    string getName() {
+        return name;
+    }
+    unsigned getPhone() {
+        return phone;
+    }
     Entry(const string& aName, unsigned aRoom, unsigned aPhone, Position& aPosition) 
 	: name(aName), room(aRoom), phone(aPhone), pos(&aPosition) {
     }
@@ -31,9 +39,7 @@ public:
         return os;
     } // operato<<
 private:
-    string name;
     unsigned room;
-    unsigned phone;
     Position* pos;
 }; // class Entry
 
@@ -90,9 +96,13 @@ public:
         return os;
     }
 
-    //friend unsigned operator[](const string& name) {
-
-    //}
+    unsigned operator[](const string& name) {
+        for (size_t i = 0; i < size; i++) {
+            if (entries[i]->name == name) {
+                return entries[i]->phone;
+            }
+        }
+    }
 
     void add(const string& name, unsigned room, unsigned ph, Position& pos) {
         if( size == capacity )	{
@@ -141,4 +151,5 @@ int main() {
 
     Directory d3;
     d3 = d2;
+    cout << d2[(string)("Gallagher")];
 } // main
