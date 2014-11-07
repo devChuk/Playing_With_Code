@@ -3,9 +3,42 @@
 #include <string>
 using namespace std;
 
+class Lord {
+public:
+	Lord(const string& newName): name(newName) {}
+private:
+	string name;
+};
+
+class PersonWithStrengthToFight : public Lord {
+
+};
+
+class Protector {
+public:
+	Protector(const string& newName): name(newName) {}
+private:
+	string name;
+};
+
+class Wizard : public Protector {
+
+};
+
+class Warrior: public Protector {
+
+};
+
+class Archer : public Protector {
+
+};
+
+class Swordsman : public Protector {
+
+};
 
 int main() {
-    // Lord sam("Sam");
+    Lord sam("Sam");
     // Archer samantha("Samantha", 200);
     // sam.hires(samantha);
     // Lord joe("Joe");
@@ -28,5 +61,5 @@ int main() {
     // sam.hires(merlin);
     // janet.battle(barclay);	
     // sam.battle(barclay);	
-    // joe.battle(barclay);
+    // joe.battle(barclaylay);
 }       
