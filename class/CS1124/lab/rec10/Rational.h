@@ -9,7 +9,8 @@
 namespace CS1124 {
 
 	class Rational {
-
+	public:
+	private:
 	};
 
 
