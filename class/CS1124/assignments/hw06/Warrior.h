@@ -3,3 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+
+namespace WarriorCraft {
+	
+}
