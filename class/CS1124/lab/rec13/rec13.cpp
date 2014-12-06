@@ -1,5 +1,7 @@
 #include <iostream>
 #include <climits>
+#include <string.h>
+#include <stdio.h>
 using namespace std;
 
 struct Node {
@@ -62,15 +64,29 @@ int max(TNode* root) {
 		return right;
 }
 
-int stringSum(char* cstring) {
-	if (cstring == NULL) {
+int stringSum(char* p) {
+	if (!(*p))
+		return 0;
+	else
+		return int(*p) + stringSum(p + 1);
+}
+
+int binSearch(char* p, char target) {
+	int half = strlen(p) / 2;
+	if (target > p[half]) {
+		return binSearch(p + half, target);
 		return 0;
 	}
-	else
-		// return cstring + stringSum(cstring)
-		cout << cstring << "|" << *cstring << "|" << cstring++ << endl;
-	return 5;
+	else if (target == p[half]) {
+		return half;
+	}
+	else {
+		p[half] = 0;
+		return binSearch(p, target);
+	}
 }
+
+
 
 int main() {
 	cout << "binary of 8" << endl;
@@ -96,6 +112,10 @@ int main() {
 	cout << "================\n" << endl;
 
   	char aa('A');
-  	char cstring[15] = "II love C++"; 
-  	cout << stringSum(cstring) << endl;
+  	char cstring[] = "IloveC++"; 
+  	cout << stringSum(cstring) << endl;	
+	cout << "================\n" << endl;
+
+  	char ccstring[] = "abcdefghijklmnopqrstuv";
+  	cout << binSearch(ccstring, 'c') << endl;	
 }
