@@ -13,9 +13,12 @@ struct Node {
 class Polynomial {
 public:
 	Polynomial(const int newDegree, const std::vector<int> coefficients);
+	Node* getHead() const;
+	int getDeg() const;
 	Polynomial operator+=(const Polynomial& rhs);
 	bool operator==(Polynomial& rhs);
-
+	void evaluate(int& y);
+	std::string display() const;
 
 private:
 	int degree;

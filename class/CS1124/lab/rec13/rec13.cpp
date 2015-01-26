@@ -16,8 +16,8 @@ void binary(int num) {
 		return;
 	}
 
-	binary(num / 2);
-	cout << num % 2;
+	binary(num / 3);
+	cout << num % 3;
 }
 
 Node* sumList(Node* head1, Node* head2) {
@@ -90,7 +90,7 @@ int binSearch(char* p, char target) {
 
 int main() {
 	cout << "binary of 8" << endl;
-	binary(8);
+	binary(9);
 	cout << endl;
 	cout << "binary 10" << endl;
 	binary(10);

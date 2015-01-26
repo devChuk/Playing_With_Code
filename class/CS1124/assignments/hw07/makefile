@@ -1,9 +1,9 @@
 all: hw07.cpp polynomial.h polynomial.cpp
-	g++ hw07.cpp polynomial.h polynomial.cpp -o swag
+	g++ -std=c++11 hw07.cpp polynomial.h polynomial.cpp -o test
 
 run:
-	g++ hw07.cpp polynomial.h polynomial.cpp -o swag    
-	./swag
+	g++ -std=c++11 hw07.cpp polynomial.h polynomial.cpp -o test    
+	./test
 
-clean: swag
-	rm swag
+clean: test
+	rm test
