@@ -1,0 +1,15 @@
+1) man, /, q
+2) Dot files are hidden files. Their names begin with a .
+3) ls -a 
+4) a file that records either the events which happen while a program runs
+5) less, g, G
+6) less or cat
+7) grep -r "word" .
+8) fc >> FILENAME
+9) wget
+10)fc -l
+11) use >>   e.g.: COMMAND >> FILE
+12) ps (use ps -e for everything)
+13) kill SIGNAL PROCESS or killall PROCESS
+14) rm
+15) It'll try to remove THE ROOT FILESYSTEM. There's usually protection in place to report that it's not allowed though.
