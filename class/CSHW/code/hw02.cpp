@@ -26,11 +26,40 @@ int main() {
 	ifstream ifs("MTA_train_stop_data.txt");
 	string s;
 	int count = 1;
-
+	int newL;
 	string stop_id, stop_name;
 	double stop_lat, stop_lon;
+
 	while (getline(ifs,s,',')) {
-			//code needed here
-			data.push_back(trainStopData(stop_id,stop_name,stop_lat,stop_lon));
+		switch(count) {
+			case 1:
+				stop_id = s;
+				count++;
+			break;
+			case 3:
+				stop_name = s;
+				count++;
+			break;
+			case 5:
+				stop_lat = atof(s.c_str());
+				count++;
+			break;
+			case 6:
+				stop_lon = atof(s.c_str());
+				count++;
+			break;
+			case 10:
+				newL = s.find("\n");
+				data.push_back(trainStopData(stop_id,stop_name,stop_lat,stop_lon));
+				stop_id = s.substr(newL+1);
+				count = 2;
+			break;
+			default:
+				count++;
+		}
 	}
+	for (int i = 0; i < data.size(); i++) {
+		cout << " ID: " << data[i].get_id() << " NAME: " << data[i].get_stop_name() << " LAT: " << data[i].get_latitude() << " LON: " << data[i].get_longitude() << endl;
+	}
+
 }
