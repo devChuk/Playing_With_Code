@@ -1,6 +1,7 @@
+#brian chuk
 import string
-import random
-from PIL import Image, ImageColor, ImageDraw
+from PIL import Image, ImageColor, ImageDraw, ImageFont
+from random import randint
 
 
 
@@ -8,19 +9,18 @@ print "please enter a name"
 s = raw_input()
 print "your letter is " + s[:1].upper()
 
+r = randint(0,250)
+g = randint(0,250)
+b = randint(0,250)
 
-im = Image.new("RGB",(800,800),"red")
 
-x, y =  im.size
-eX, eY = 30, 60 #Size of Bounding Box for ellipse
+im = Image.new("RGB",(800,800),(r,g,b))
 
-box =  [0, 0, x, y]
 draw = ImageDraw.Draw(im)
 
-# Image.new("RGB", (600, 600), (250, 250, 400))
+font = ImageFont.truetype("arial.ttf", 700)
 
-# draw.rectangle([0, 0, x, y],fill = 1) # it works, but it needs color
-
+draw.text((150, 35), s[:1].upper(), font=font)
 
 del draw
 
