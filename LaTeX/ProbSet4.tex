@@ -4,67 +4,52 @@
 
 \title{\textbf{Homework}}
 \author{Brian Chuk}
-\date{2/11/2015}
+\date{2/25/2015}
 \begin{document}
 \maketitle
 
-\section{Problem Set 3}
+\section{Problem Set 4}
 \begin{enumerate}
 
-\item
-	a)	$P(1) = 1 * 1! = (1+1)! - 1 = 1$\\
-	b)	$P(5) = 5 * 5! + 4 * 4! + 3 * 3! + 2 * 2! + 1 * 1! = 600 + 96 + 18 + 4 = (5+1)! - 1 = 718$\\
-	c)	$P(k) = k * k! + (k-1)*(k-1)!+...1*1!$\\
-	d)	$P(k+1) = (k+1) * (k+1)! + k * k! + (k-1)*(k-1)!+...1*1!$\\
-	e)	Assuming that for an arbitrary integer $k$, \\$P(k) = k * k! + (k-1)*(k-1)!+...1*1! = (k+1)!-1$ \\
-	Therefore, $P(k+1) = (k+2)!-1$ is true.\\
-	When we add $(k+1) * (k+1)!$ to both sides of the equation $P(k)$, we obtain\\
-	$1 * 1! + ... + (k-1)*(k-1)! + k * k + (k + 1) * (k+1)!$\\
-	$ = (k+1)!-1 + (k + 1) * (k + 1 )! $ \\
-	$ = (k+1)k! + (k + 1)(k + 1)! - 1$ \\
-	$ = (k+1)(k!(1 + (k + 1))) - 1$ \\
-	$ = (k+1)(k!(k + 2)) - 1$ \\
-	$ = k! * (k+1) * (k+2) - 1$ \\
-	$= (k + 2)! - 1$
-\item
-	$P(2)$ is true, because $8 > 7$\\
-	Assume for an integer $k$ greater than or equal to 2, $k^3 > k^2 + 3$\\
-	For $k+1$, $(k+1)^3 > (k+1)^2 + 3$\\
-	$(k + 1)^2 + 3$
-	$= k^2 + 2k + 1 + 3$\\
-	$= (k^2 + 3) + 2k + 1 < k^3 + 2k + 1 \leq k^3 + 3k \leq k^3 + 3k^2 + 3k + 1 = (k + 1)3$
-\item
-	Let $P(n) = 1 + 3 + 9 + ... + 3^n$ for all $n > 0$.\\
-	$P(1)$ is true because $3^1 = (3^{n+1} - 1)/2= 4$\\
-	$1 + 3 + ... + (3^{k-1} - 1)/2 + 3^{k+1} = \dfrac{3^{k+1} - 1 + 2 * 3^{k+1}}{2}$\\
-	$\dfrac{3^{k+2}-1}{2}$
-\item
-	Let $P(k)$ represent the stamps needed to satisfy a postage of k cents.\\
-	$P(18)$ is true because it uses one 4-cent stamp and two 7-cent stamps.\\
-	If $P(k)$ has a 7-cent stamp, replace one 7-cent stamp with two 4-cent stamps. If the pile contains only 4-cent stamps and there are over five 4-cent stamps, replace five 4-cent stamps with three 7-cent stamps.
-\item
-	$\sum\limits_{j=1}^1 (2j+1) = 3 = 3*1^2$, so the base case is true.\\
-	Assume $\sum\limits_{j=k}^{2k-1} (2j+1) = 3k^2$. Therefore,\\
-	$\sum\limits_{j=k+1}^{2(k+1)-1} (2j+1) = \sum\limits_{j=k}^{2k-1} (2j+1) - (2k +1) + (4k + 1) + (4k+3)$\\
-	$= 3k^2+ 6x + 3$\\
-	$=3(k+1^2)$
-\item
-	Since one line in the plane passing through one point divide the plane into $2(1)$ regions, the basis step holds.\\
-	Assume $k$ lines in a plane pass through the same point and divide the plane into 2k regions. Adding another line splits exactly two of these regions into two parts each. Therefore, $k+1$ lines that meet at the same point split the plane into $2k+2 = 2(k+1)$ regions.
-\item
-	$a_1 < 3^1$ is true because $2 < 3$. The base step is true.\\
-	Let $P(n)$ be the proposition $a_n < 3^n$.Assume $P(n)$ is true for all $n$ when $1 \leq k < n$.\\
-	So ,$a_n = 2a_{n - 1} + 3a_{n - 2} \leq 2 * 3^{n − 1} + 3 * 3^{n − 2} $\\
-	$= 2 * 3^{n - 1} + 3^{n - 1} $\\
-	$= 3 ⋅ 3^{n - 1}$\\
-	$= 3n$
-\item
-	There is no basis case.
-\item
-	$f (n) = f (n - 1) + 5$
-\item
-	$a_n = \sqrt{a_{n-1}} $
-\item
-	Assume $p$ is true and $i \leq n$ is true at the end of a rotation of the loop. If the loop is executed again, $i$ would be incremented by 1 and $i \leq n$. Total would become $\dfrac{(i-1)i}{2} + i = \dfrac{(i+1)i}{2}$. Therefore, $p$ is true.
+\item 512
+\item 256
+\item 1792
+\item 495
+\item 126
+\item 4800
+\item 30!
+\item $30!/26!$
+\item $10!/7! * 15!/8!$
+\item $15! * 5! * 10!$
+\item 37!/31!
+\item 17!/14! * 20!/17!
+\item 37!/31! - 17 * 20!/15!
+\item 20!/14! + 17!/11!
+\item 10000
+\item 10!/4! * 6!
+\item 4!/10! * 6!
+\item 62 + 62!/60! + 62!/59! + 62!/58! + 62!/57! + 62!/56!
+\item 9!
+\item $2^8$
+\item $2^5$
+\item 10!/7!
+\item 5!
+\item C(9,4)
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
+\item 
 \end{enumerate}
 \end{document}
