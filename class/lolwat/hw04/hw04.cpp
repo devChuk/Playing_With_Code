@@ -37,20 +37,15 @@ template<class Object>
 Object sumVector( const vector<Object> & a) {// driver program
 	return sumRecurse(a, 0, a.size());
 }
-//6~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-template <class RandItr>
-void mergeSort(RandItr start, RandItr end) {
-	int sz = end-start; // or use auto sz = end-start;
-	typedef typename iterator_traits<RandItr>::value_type Object; //Xcode
-	// typedef iterator_traits<RandItr>::value_type Object; //Other compilers
-	// Don’t worry about this line of code
-	vector<Object> tmp(sz);
-	mergeSort(tmp.begin(), start, end);
+
+//Written Questions 2-7, & 15
+
+void myRecFunc(int n)
+{
+cout << n << ": ";
+if (n < 1) return;
+myRecFunc(n/2);
 }
-//7~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-//TODO 6, 7. Written Questions 2-7, & 15
 
 int main() {
 	//Test for #3
@@ -66,6 +61,8 @@ int main() {
 	durr.push_back(14);
 	durr.push_back(1);
 	durr.push_back(-20);
-	cout << sumVector(durr) << endl;
+	// cout << sumVector(durr) << endl;
+
+	myRecFunc(4);
 
 }
