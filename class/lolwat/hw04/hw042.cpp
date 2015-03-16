@@ -17,6 +17,7 @@ void mergeSort(RandItr beg, RandItr start, RandItr end) {
     mergeSort(beg, start, start + middle);
     mergeSort(beg, start + middle, end);
     std::merge(start, start + middle, start + middle, end, beg);
+    std::copy(beg, beg + sz, start);
  
 }
 
@@ -35,11 +36,7 @@ void mergeSort(RandItr start, RandItr end) {
 }
 
 int main() {
-
-
-
-	int myints[] = {10, 9, 8, 7};
+	int myints[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 	std::vector<int> pls (myints, myints + sizeof(myints) / sizeof(int) );
 	mergeSort(pls.begin(), pls.end());
-
 }
