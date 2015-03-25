@@ -17,8 +17,31 @@ void reversi(int input) {
 	else {cout << input % 10; reversi(input / 10);}
 }
 
+template <class Object>
+Object summation(Object x, int n) {
+	if (n <= 1) return x;
+	else return x + summation(x, n - 1); 
+}
+
+void recPattern (int n) {
+    if (n >= 1) {
+        recPattern(n-1);
+        cout << " " << n;
+        recPattern(n-1);
+    }
+}
+
+template<class Object>
+Object sumVector( const vector<Object> & a) {
+	
+}
 
 int main() {
 	reversi(1234);
 	reversi("1234");
+
+
+	cout << summation(4, 4) << endl;
+
+	recPattern(3);
 }
