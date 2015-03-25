@@ -32,8 +32,13 @@ void recPattern (int n) {
 }
 
 template<class Object>
-Object sumVector( const vector<Object> & a) {
+Object sumVector(const vector<Object> & a, int left, int right) {
 	
+}
+
+template<class Object>
+Object sumVector( const vector<Object> & a) {
+	return sumVector(a, 0, a.size());
 }
 
 int main() {
