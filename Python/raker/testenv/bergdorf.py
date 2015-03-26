@@ -19,15 +19,25 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
+
 from time import sleep
 import pymongo
 from pymongo import MongoClient
+
+# SETUP
+
 ##########ASK ABOUT MONGODB CREDENTIALS
 #client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
 #db = client['frockhub2']
 #collection = db['burberry']
-# chromedriver = "./chromedriver"
-# browser = webdriver.Chrome(executable_path = chromedriver)
+
+##########SELENIUM CHROME DRIVER MAGIC (this stuff is actually pretty cool)
+driver = webdriver.Firefox() # Create a new instance of the Firefox driver
+
+
+
 
 def grabCategories(pageUrl):
 	categories = {}
@@ -35,16 +45,7 @@ def grabCategories(pageUrl):
 
 def startUrl(url, gender):
 	result = []
-	categories = grabCategories(url)
-	print categories
-	for page in categories:
-		item_sets = grabItemSets(categories[page])
-		for track in item_sets:
-			for item in item_sets[track]:
-				try:
-					result.append(scrapeProductUrl(item, gender, page, track))
-				except:
-					result.append(scrapeProductUrl(item, gender, page, track))
+	print url + " " + gender
 	return result
 
 def scrape(): #love how there's a single tab for mens and the rest are all for women
@@ -52,7 +53,10 @@ def scrape(): #love how there's a single tab for mens and the rest are all for w
 	#browser.find_element_by_xpath()
 	urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]]
 	for url in urls:
-		print ', '.join(urls)
+		gender = url.pop()
+		link = url.pop()
+		startUrl(link, gender)
 
-
+# RUN
 scrape()
+driver.quit()

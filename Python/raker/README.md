@@ -43,4 +43,4 @@ the main function that kicks it off
 
 **Process:**
 
->just get clothes, bags, scarves, shoes for now
+>Needs specialization for men & 5F pages. High amt of repeats on bags, will need to check for repeats

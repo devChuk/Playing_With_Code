@@ -16,14 +16,14 @@ print driver.title
 inputElement = driver.find_element_by_name("q")
 
 # type in the search
-inputElement.send_keys("cheese!")
+inputElement.send_keys("cheese")
 
 # submit the form (although google automatically searches now without submitting)
 inputElement.submit()
 
 try:
     # we have to wait for the page to refresh, the last thing that seems to be updated is the title
-    WebDriverWait(driver, 10).until(EC.title_contains("cheese!"))
+    WebDriverWait(driver, 10).until(EC.title_contains("cheese"))
 
     # You should see "cheese! - Google Search"
     print driver.title
