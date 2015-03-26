@@ -26,8 +26,8 @@ from pymongo import MongoClient
 #client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
 #db = client['frockhub2']
 #collection = db['burberry']
-chromedriver = "./chromedriver"
-browser = webdriver.Chrome(executable_path = chromedriver)
+# chromedriver = "./chromedriver"
+# browser = webdriver.Chrome(executable_path = chromedriver)
 
 def grabCategories(pageUrl):
 	categories = {}
@@ -35,7 +35,16 @@ def grabCategories(pageUrl):
 
 def startUrl(url, gender):
 	result = []
-	
+	categories = grabCategories(url)
+	print categories
+	for page in categories:
+		item_sets = grabItemSets(categories[page])
+		for track in item_sets:
+			for item in item_sets[track]:
+				try:
+					result.append(scrapeProductUrl(item, gender, page, track))
+				except:
+					result.append(scrapeProductUrl(item, gender, page, track))
 	return result
 
 def scrape(): #love how there's a single tab for mens and the rest are all for women
@@ -43,4 +52,7 @@ def scrape(): #love how there's a single tab for mens and the rest are all for w
 	#browser.find_element_by_xpath()
 	urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]]
 	for url in urls:
-		startUrl(*url)
+		print ', '.join(urls)
+
+
+scrape()

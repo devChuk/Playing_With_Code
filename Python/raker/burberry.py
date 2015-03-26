@@ -23,11 +23,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 import pymongo
 from pymongo import MongoClient
-client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
-db = client['frockhub2']
-collection = db['burberry']
-chromedriver = "./chromedriver"
-browser = webdriver.Chrome(executable_path = chromedriver)
+# client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
+# db = client['frockhub2']
+# collection = db['burberry']
+# chromedriver = "./chromedriver"
+# browser = webdriver.Chrome(executable_path = chromedriver)
 materials = ['silk', 'cotton', 'chiffon', 'satin', 'silt', 'wool', 'linen', 'cashmere', 'taffita', 'leather', 'mink', 'fur', 'suade', 'tweed', 'fleece', 'velvet', 'grogaine', 'corduroy', 'denim']
 
 def scrapeProductUrl(productUrl, gender, category, track):
@@ -150,4 +150,6 @@ def scrape():
 	## Women
 	urls = [["http://us.burberry.com/womens-clothing/", "women"], ["http://us.burberry.com/womens-trench-coats/", "women"], ["http://us.burberry.com/womens-bags/", "women"], ["http://us.burberry.com/womens-scarves/", "women"], ["http://us.burberry.com/womens-shoes/", "women"]]
 	for url in urls:
-		startUrl(*url)
+		print startUrl(*url)
+
+scrape()
