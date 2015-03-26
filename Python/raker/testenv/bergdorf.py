@@ -39,13 +39,34 @@ driver = webdriver.Firefox() # Create a new instance of the Firefox driver
 
 
 
-def grabCategories(pageUrl):
+"""
+	browser.get(pageUrl)
+	possible = browser.find_elements_by_tag_name("li")
+	possible = [item for item in possible if 'l-2' in item.get_attribute("class")]
+	possible = [item.find_element_by_tag_name("ul") for item in possible if 'active' in item.find_element_by_tag_name("a").get_attribute("class")][0].find_elements_by_tag_name("li")
 	categories = {}
+	for category in possible:
+		category = category.find_element_by_tag_name("a")
+		categories.update({category.text.lower():category.get_attribute("href")})
+	return categories
+"""
+
+
+def grabCategories(pageUrl):
+	driver.get(pageUrl)
+	categories = {}
+	possible = driver.find_elements_by_tag_name("li").toString()
+	print possible
 	return categories
 
 def startUrl(url, gender):
 	result = []
-	print url + " " + gender
+	print "\n"
+	print "scraping from:"
+	print url + " for " + gender
+	categories = grabCategories(url)
+
+
 	return result
 
 def scrape(): #love how there's a single tab for mens and the rest are all for women
