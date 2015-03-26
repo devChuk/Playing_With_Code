@@ -34,10 +34,10 @@ the main function that kicks it off
 #Execution
 **Links:**
 
-[Mens](http://www.bergdorfgoodman.com/Mens-Store/cat202802/c.cat?siloId=cat202802&navid=topNavMens)
-[Women's scarves](http://www.bergdorfgoodman.com/Categories/Scarves/cat408112_cat408110_cat408107/c.cat)
-[Women's shoes](http://www.bergdorfgoodman.com/Shoe-Salon/cat200648/c.cat?siloId=cat200648&navid=topNavShoeSalon)
-[Women's bags](http://www.bergdorfgoodman.com/Handbags/cat257221/c.cat?siloId=cat257221&navid=topNavHandbags)
+[Mens](http://www.bergdorfgoodman.com/Mens-Store/cat202802/c.cat?siloId=cat202802&navid=topNavMens) | 
+[Women's scarves](http://www.bergdorfgoodman.com/Categories/Scarves/cat408112_cat408110_cat408107/c.cat) | 
+[Women's shoes](http://www.bergdorfgoodman.com/Shoe-Salon/cat200648/c.cat?siloId=cat200648&navid=topNavShoeSalon) | 
+[Women's bags](http://www.bergdorfgoodman.com/Handbags/cat257221/c.cat?siloId=cat257221&navid=topNavHandbags) | 
 [Women's clothes](http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat)
 
 

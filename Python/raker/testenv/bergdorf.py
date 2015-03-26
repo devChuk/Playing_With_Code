@@ -26,10 +26,21 @@ from pymongo import MongoClient
 #client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
 #db = client['frockhub2']
 #collection = db['burberry']
+chromedriver = "./chromedriver"
+browser = webdriver.Chrome(executable_path = chromedriver)
+
+def grabCategories(pageUrl):
+	categories = {}
+	return categories
+
+def startUrl(url, gender):
+	result = []
+	
+	return result
 
 def scrape(): #love how there's a single tab for mens and the rest are all for women
 	products = []
 	#browser.find_element_by_xpath()
-	urls = []
+	urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]]
 	for url in urls:
-		#startUrl(*url)
+		startUrl(*url)
