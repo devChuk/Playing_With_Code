@@ -37,8 +37,22 @@ from pymongo import MongoClient
 driver = webdriver.Firefox() # Create a new instance of the Firefox driver
 
 
+def scrapeProduct():
+	scraped_item = {"available": False, "unavailable": {}, "url": productUrl, "gender":gender, "category":category, "currency":"USD", "price":0, "brand":"burberry", "name":"", "description":"", "color_families":[], "materials":[], "colors":[], "sizes":[], "events":[], "attributes":[track]}
+	return scraped_item
 
-
+def grabCategoryProducts(pageUrl):
+	product_urls = []
+	driver.get(pageUrl)
+	all_products = driver.find_elements_by_class_name("qv-tip")
+	for product in all_products:
+		product.click()
+		try:
+			prod = scrapeProduct()
+		# 	collection.insert(scrapeProduct())
+		except:
+			print "SKIPPED ITEM"
+	return product_urls
 
 def maleCategoriesfilter(text):
 	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and text != "ACCESSORIES"
@@ -52,7 +66,7 @@ def grabCategories(pageUrl):
 		print possible.get_attribute("href")
 		print possible.text
 		categories.update({possible.text.lower():possible.get_attribute("href")})
-	print "categories grabbed~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	print "Categories grabbed. Now scraping from each category~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	return categories
 
 """
@@ -75,7 +89,12 @@ def startUrl(url, gender):
 	print "scraping from:"
 	print url + " for " + gender + "\n"
 	categories = grabCategories(url)
-	# for page in categories:
+	categoryProducts = {}
+	for page in categories:
+		print gender + ": " + page + ":  " + categories[page]
+		categoryProducts.update({page:grabCategoryProducts(categories[page])})
+	# for categoryProduct in categoryProducts
+	# 	superfunc()
 	return result
 
 def scrape(): #love how there's a single tab for men and the rest are all for women
