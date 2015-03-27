@@ -28,34 +28,76 @@ from pymongo import MongoClient
 
 # SETUP
 
-##########ASK ABOUT MONGODB CREDENTIALS
-#client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
-#db = client['frockhub2']
-#collection = db['burberry']
+client = MongoClient("mongodb://cris:cris1@c18.candidate.43.mongolayer.com:10018,c333.candidate.40.mongolayer.com:10333/frockhub2")
+db = client['frockhub2']
+bergdorf = db['bergdorf']
+
 
 ##########SELENIUM CHROME DRIVER MAGIC (this stuff is actually pretty cool)
 driver = webdriver.Firefox() # Create a new instance of the Firefox driver
+c_colors = ['brown', 'orange', 'yellow', 'red', 'purple', 'blue', 'green', 'gray', 'white', 'black', 'pink', 'gold', 'silver', 'beige']
+materialz = ['silk', 'cotton', 'chiffon', 'satin', 'silt', 'wool', 'linen', 'cashmere', 'taffita', 'leather', 'mink', 'fur', 'suade', 'tweed', 'fleece', 'velvet', 'grogaine', 'corduroy', 'denim']
 
+def getColors():
+	ans = []
+	text = driver.find_element_by_class_name("oneColor").text.lower()
+	images = driver.find_elements_by_class_name('alt-shot')
+	sources = []
+	for image in images:
+		sources.append(image.get_attribute("src"))
+	for color in c_colors:
+		if color in text:
+			ans.append({'name':color, 'color_family': color, 'images': sources})
+	return ans
 
-def scrapeProduct():
-	scraped_item = {"available": False, "unavailable": {}, "url": productUrl, "gender":gender, "category":category, "currency":"USD", "price":0, "brand":"burberry", "name":"", "description":"", "color_families":[], "materials":[], "colors":[], "sizes":[], "events":[], "attributes":[track]}
+def getc_fam():
+	ans = []
+	text = driver.find_element_by_class_name("oneColor").text.lower()
+	for color in c_colors:
+		if color in text:
+			ans.append(color)
+	return ans
+
+def getMaterials():
+	ans = []
+	text = driver.find_element_by_class_name("qvTopBorder").text
+	for mat in materialz:
+		if mat in text:
+			ans.append(mat)
+	return ans
+
+def getSizes():
+	ans = []
+	all_sizes = driver.find_elements_by_xpath("//option")
+	for size in all_sizes:
+		size = size.get_attribute("value")
+		ans.append(size)
+	return ans
+
+def scrapeProduct(productUrl, gender, category):
+	scraped_item = {"available": True, "unavailable": {}, "url": productUrl, "gender":gender, "category":category, "currency":"USD", "price":int(driver.find_element_by_class_name("price").text[1:(driver.find_element_by_class_name("price").text.index("."))]), "brand":driver.find_element_by_id("productDesignerName").text, "name":driver.find_element_by_class_name("displayName").text, "description":driver.find_element_by_class_name("qvTopBorder").text, "color_families":getc_fam(), "materials":getMaterials(), "colors":getColors(), "sizes":getSizes(), "events":[], "attributes":[]}	
+	print scraped_item["price"]
 	return scraped_item
 
-def grabCategoryProducts(pageUrl):
-	product_urls = []
+def grabCategoryProducts(pageUrl, gender, page):
+	products = []
 	driver.get(pageUrl)
+	WebDriverWait(driver, 10)
+	driver.find_element_by_id("HundredTwentyPerPage").click()
+	# while driver.find_element_by_class_name("pagingNav").text == "NEXT":
 	all_products = driver.find_elements_by_class_name("qv-tip")
 	for product in all_products:
+		# try:
 		product.click()
-		try:
-			prod = scrapeProduct()
-		# 	collection.insert(scrapeProduct())
-		except:
-			print "SKIPPED ITEM"
-	return product_urls
+		WebDriverWait(driver, 20)
+		prod = scrapeProduct(driver.find_element_by_class_name("prodPageLink").get_attribute("href"), gender, page)
+			# bergdorf.insert(prod)##############################################################################################
+		# except:	
+		# 	print "SKIPPED ITEM"
+	return products
 
 def maleCategoriesfilter(text):
-	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and text != "ACCESSORIES"
+	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and text != "ACCESSORIES" #and "DRESS" not in text
 
 def grabCategories(pageUrl):
 	driver.get(pageUrl)
@@ -65,23 +107,9 @@ def grabCategories(pageUrl):
 		possible = possible.find_element_by_tag_name("a")
 		print possible.get_attribute("href")
 		print possible.text
-		categories.update({possible.text.lower():possible.get_attribute("href")})
+		categories.update({possible.text.lower():(possible.get_attribute("href"))})
 	print "Categories grabbed. Now scraping from each category~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	return categories
-
-"""
-print categories
-	for page in categories:
-		item_sets = grabItemSets(categories[page])
-		for track in item_sets:
-			for item in item_sets[track]:
-				try:
-					result.append(scrapeProductUrl(item, gender, page, track))
-				except:
-					result.append(scrapeProductUrl(item, gender, page, track))
-	return result
-"""
-
 
 def startUrl(url, gender):
 	result = []
@@ -92,7 +120,8 @@ def startUrl(url, gender):
 	categoryProducts = {}
 	for page in categories:
 		print gender + ": " + page + ":  " + categories[page]
-		categoryProducts.update({page:grabCategoryProducts(categories[page])})
+		categoryProducts.update({page:grabCategoryProducts(categories[page], gender, page)})
+
 	# for categoryProduct in categoryProducts
 	# 	superfunc()
 	return result
