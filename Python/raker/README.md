@@ -43,4 +43,4 @@ the main function that kicks it off
 
 **Process:**
 
->Needs specialization for men & 5F pages. High amt of repeats on bags, will need to check for repeats
+>Needs specialization for men & 5F pages. High amt of repeats on bags, will need to check for repeats text
