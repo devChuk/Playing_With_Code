@@ -116,17 +116,17 @@ def grabCategoryProducts(pageUrl, gender, page):
 	# while driver.find_element_by_class_name("pagingNav").text == "NEXT":
 	all_products = driver.find_elements_by_class_name("qv-tip")
 	for product in all_products:
-		# try:
-		product.click()
-		WebDriverWait(driver, 25).until(EC.element_to_be_clickable((By.ID,'qvViewProductDetails')))
-		prod = scrapeProduct(driver.find_element_by_class_name("prodPageLink").get_attribute("href"), gender, page)
-			# bergdorf.insert(prod)##############################################################################################
-		# except:	
-		# 	print "SKIPPED ITEM " + page
+		try:
+			product.click()
+			WebDriverWait(driver, 25).until(EC.element_to_be_clickable((By.ID,'qvViewProductDetails')))
+			prod = scrapeProduct(driver.find_element_by_class_name("prodPageLink").get_attribute("href"), gender, page)
+			bergdorf.insert(prod)##############################################################################################
+		except:	
+			print "SKIPPED ITEM " + page
 	return products
 
 def maleCategoriesfilter(text):
-	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and "ACCESSORIES" not in text and "ALL" not in text and "MAGAZINE" not in text and "LOOKS" not in text and "STORIES" not in text and "SUN" not in text and "OPTICAL" not in text and "WATCH" not in text and "SWIM" not in text
+	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and "ACCESSORIES" not in text and "ALL" not in text and "MAGAZINE" not in text and "LOOKS" not in text and "STORIES" not in text and "SUN" not in text and "OPTICAL" not in text and "WATCH" not in text and "SWIM" not in text and "COATS" not in text and "LINGE" not in text and "DRESS" not in text and "JUMP" not in text and "JACKET" not in text and "DENIM" not in text
 
 def grabCategories(pageUrl):
 	driver.get(pageUrl)
