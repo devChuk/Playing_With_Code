@@ -1,0 +1,48 @@
+
+<html>
+<head>
+</head>
+<body >
+
+	<center><a style="color:#de3230"><div id="age"></div></a>
+
+
+	<form name="inputform" action="somewhere" method="post">
+	    <input value="message" id="text" name="message" />
+		<button type="button" id="clickMe">Click Me!</button>
+	</form>
+
+
+	</center>
+	<script language="javascript">
+
+
+	function onClick() {
+		//create new object
+		//set pointer to new object	
+			var newmessage = new XMLHttpRequest();
+			var url = "http://www.reddit.com/r/worldnews/comments/28srj5/microsoft_nsa_security_fallout_getting_worse_not.json";
+			var params = ("");
+			newmessage.open("GET", url, true);
+
+			newmessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+			newmessage.onreadystatechange = function() {//Call a function when the state changes.
+			    if(newmessage.readyState == 4 && newmessage.status == 200) {
+			        PPid = newmessage.responseText;
+			      
+			    }
+			}
+			newmessage.send(params);
+	}
+
+	document.getElementById("clickMe").onclick = onClick;
+
+
+
+	
+
+</script>
+
+</body>
+</html>
