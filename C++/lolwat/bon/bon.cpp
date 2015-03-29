@@ -5,6 +5,7 @@
 #include <string>
 #include <set>
 #include <algorithm>
+#include <stack>
 #include <math.h>
 using namespace std;
 
@@ -17,18 +18,22 @@ void mazeRecurse(vector<vector<char>>& maze, int i, int j) { //The recursive fun
 		if (j < maze[i].size() && maze[i][j+1] != 'x') {
 			maze[i][j] = 'x';
 			mazeRecurse(maze, i, j + 1);
+			cout << i << " " << j;
 		}
 		if (j > 0 && maze[i][j-1] != 'x') {
 			maze[i][j] = 'x';
 			mazeRecurse(maze, i, j - 1);
+			cout << i << " " << j;
 		}
 		if (i > 0 && maze[i-1][j] != 'x') {
 			maze[i][j] = 'x';
 			mazeRecurse(maze, i-1, j);
+			cout << i << " " << j;
 		}
 		if (i < maze.size() && maze[i+1][j] != 'x') {
 			maze[i][j] = 'x';
 			mazeRecurse(maze, i+1, j);
+			cout << "|" << i << " " << j;
 		}
 	}
 }
@@ -45,24 +50,33 @@ void mazeRecurse(vector<vector<char>>& maze) { //The driver func: searches for t
 	}
 }
 
+struct coords {
+	coords(int a, int b) {i = a; b = j;}
+	int i, j;
+};
 
 void mazeStack(vector<vector<char>>& maze, int i, int j) { //loc_finder with a stack
 
 }
 
 void mazeStack(vector<vector<char>>& maze) { //The driver func: searches for the 's' via brute force and starts stack finder
-	for (int i = 0; i < maze.size(); i++) {
-		for (int j = 0; j < maze[i].size(); j++) {
-			if (maze[i][j] == 's') {
-				cout << "s: "<< i << " " << j << endl;
-				mazeStack(maze, i, j);
-				return;
+	int i;
+	int j;
+	for (int a = 0; a < maze.size(); a++) {
+		for (int b = 0; b < maze[a].size(); b++) {
+			if (maze[a][b] == 's') {
+				i = a; j = b;
 			}
 		}
 	}
+	cout << "s: "<< i << " " << j << endl;
+	stack<coords> stack;
+	// coords yo(4,3);
+	// cout << yo.i << endl;
 }
 
 /*
+This is an example maze
 xxxxxxxxxxxxxxxxxx
 s.x...x....x...exx
 x.x.x.x.xx.x..xxxx
@@ -101,20 +115,19 @@ int main() {
 	cout << "\n" << endl;
 
 	for (int i = 0; i < maze.size(); i++) {			//prints out the maze
-		for (int j = 0; j < maze[i].size(); j++) {
+		for (int j = 0; j < maze[i].size(); j++)
 			cout << maze[i][j];
-		}
 		cout << endl;
 	}
 
 
-	mazeRecurse(maze);								//testFunc for recursive loc_Finder
-
+	// mazeRecurse(maze);							//testFunc for recursive loc_Finder
+	mazeStack(maze);								//testFunc for stack loc_Finder
+	// mazeQueue(maze);								//testFunc for queue loc_Finder
 
 	for (int i = 0; i < maze.size(); i++) {			//prints out the maze
-		for (int j = 0; j < maze[i].size(); j++) {
+		for (int j = 0; j < maze[i].size(); j++)
 			cout << maze[i][j];
-		}
 		cout << endl;
 	}
 
