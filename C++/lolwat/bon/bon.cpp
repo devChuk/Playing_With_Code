@@ -8,7 +8,7 @@
 #include <math.h>
 using namespace std;
 
-void mazeRecurse(vector<vector<char>>& maze, int i, int j) {
+string mazeRecurse(vector<vector<char>>& maze, int i, int j) {
 	if (maze[i][j] == 'e') {
 		return true;
 		cout << "e: " << i << " " << j << endl;
@@ -47,8 +47,11 @@ void mazeRecurse(vector<vector<char>>& maze) {
 	}
 }
 
-void mazeStack(vector<vector<char>>& maze) {
-	std::stack<int> mystack;	
+void mazeStack(vector<vector<char>>& maze, int i, int j) {
+	std::stack<vector<int>> stack;
+
+	stack.push()
+
 }
 
 /*
