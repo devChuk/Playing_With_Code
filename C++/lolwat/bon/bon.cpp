@@ -55,22 +55,36 @@ struct coords {
 	int i, j;
 };
 
-void mazeStack(vector<vector<char>>& maze, int i, int j) { //loc_finder with a stack
+bool fork(vector<vector<char>>& maze, int i, int j) { //determines whether the path is a fork in the road
 
 }
 
-void mazeStack(vector<vector<char>>& maze) { //The driver func: searches for the 's' via brute force and starts stack finder
+void mazeStack(vector<vector<char>>& maze) { //loc_finder with a stack
 	int i;
 	int j;
-	for (int a = 0; a < maze.size(); a++) {
-		for (int b = 0; b < maze[a].size(); b++) {
-			if (maze[a][b] == 's') {
+	for (int a = 0; a < maze.size(); a++)
+		for (int b = 0; b < maze[a].size(); b++)
+			if (maze[a][b] == 's')
 				i = a; j = b;
-			}
-		}
-	}
 	cout << "s: "<< i << " " << j << endl;
 	stack<coords> stack;
+	while (maze[i][j] != 'e') {
+		if (j < maze[i].size() && maze[i][j+1] != 'x')
+			stack.push_back(coords a(i,j++));
+		else if (j > 0 && maze[i][j-1] != 'x')
+			stack.push_back(coords a(i,j--));
+		else if (i > 0 && maze[i-1][j] != 'x')
+			stack.push_back(coords a(i--,j));
+		else if (i < maze.size() && maze[i+1][j] != 'x')
+			stack.push_back(coords a(i++,j));
+//meditations:
+		//set a markpoint on where the last fork is
+		//stack pop() til I hit that markpoint
+		//one-ways will have to be dealt with too. Not only forks.
+
+
+
+	}
 	// coords yo(4,3);
 	// cout << yo.i << endl;
 }
