@@ -54,3 +54,13 @@ the main function that kicks it off
 * boys and girls are the genders for kid items
 * make sure sizes are right, they're formatted a little strangely
 * ^do this by "Shop All Kids" >> then filtering by Gender & category
+
+Here's the links to scrape:
+
+**Boys:**
+
+[jackets](http://www.bergdorfgoodman.com/Kids/Boys/cat413109_cat000006_cat000000/c.cat?fromDrawer=true#endecaDrivenSiloRefinements=fromDrawer%3Dtrue&userConstrainedResults=true&refinements=4294924778,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=) | [tops](http://www.bergdorfgoodman.com/Kids/Boys/cat413109_cat000006_cat000000/c.cat?fromDrawer=true#endecaDrivenSiloRefinements=fromDrawer%3Dtrue&userConstrainedResults=true&refinements=4294924777,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=)
+
+**Girls:**
+
+[dresses](http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924774,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=) | [jackets](http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924778,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=) | [shorts](http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924780,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=) | [tops](http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924777,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=)
