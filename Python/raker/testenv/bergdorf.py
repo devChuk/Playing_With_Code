@@ -33,7 +33,7 @@ db = client['frockhub2']
 bergdorf = db['bergdorf']
 
 
-##########SELENIUM CHROME DRIVER MAGIC (this stuff is actually pretty cool)
+##########SELENIUM DRIVER MAGIC (this stuff is actually pretty cool)
 driver = webdriver.Firefox() # Create a new instance of the Firefox driver
 c_colors = ['brown', 'orange', 'yellow', 'red', 'purple', 'blue', 'green', 'gray', 'white', 'black', 'pink', 'gold', 'silver', 'beige']
 materialz = ['silk', 'cotton', 'chiffon', 'satin', 'silt', 'wool', 'linen', 'cashmere', 'taffita', 'leather', 'mink', 'fur', 'suade', 'tweed', 'fleece', 'velvet', 'grogaine', 'corduroy', 'denim']
@@ -165,7 +165,8 @@ def scrape(): #love how there's a single tab for men and the rest are all for wo
 	#browser.find_element_by_xpath()
 	#["http://www.bergdorfgoodman.com/Shoe-Salon/cat200648/c.cat?siloId=cat200648&navid=topNavShoeSalon","women"], ["http://www.bergdorfgoodman.com/Handbags/cat257221/c.cat?siloId=cat257221&navid=topNavHandbags","women"]]
 	#urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"], ["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"], ["http://www.bergdorfgoodman.com/Categories/Scarves/cat408112_cat408110_cat408107/c.cat","women"]]
-	urls = [["http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat","men"]]
+	# urls = [["http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat","men"]]
+	urls = [["http://www.bergdorfgoodman.com/Kids/Boys/cat413109_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924778,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=", "boy"]]
 	#[["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"]]
 	#DONE: [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]], 
 	for url in urls:
