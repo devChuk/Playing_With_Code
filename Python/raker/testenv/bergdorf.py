@@ -120,13 +120,14 @@ def grabCategoryProducts(pageUrl, gender, page):
 			product.click()
 			WebDriverWait(driver, 25).until(EC.element_to_be_clickable((By.ID,'qvViewProductDetails')))
 			prod = scrapeProduct(driver.find_element_by_class_name("prodPageLink").get_attribute("href"), gender, page)
-			bergdorf.insert(prod)##############################################################################################
+			# bergdorf.insert(prod)#######THIS IS WHERE STUFF IS SENT INTO THE DATABASE. MAKE SURE IT'S COMMENTED DURING TESTING
 		except:	
 			print "SKIPPED ITEM " + page
 	return products
 
 def maleCategoriesfilter(text):
-	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and "ACCESSORIES" not in text and "ALL" not in text and "MAGAZINE" not in text and "LOOKS" not in text and "STORIES" not in text and "SUN" not in text and "OPTICAL" not in text and "WATCH" not in text and "SWIM" not in text and "COATS" not in text and "LINGE" not in text and "DRESS" not in text and "JUMP" not in text and "JACKET" not in text and "DENIM" not in text
+	# return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SHOES" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and "ACCESSORIES" not in text and "ALL" not in text and "MAGAZINE" not in text and "LOOKS" not in text and "STORIES" not in text and "SUN" not in text and "OPTICAL" not in text and "WATCH" not in text and "SWIM" not in text and "COATS" not in text and "LINGE" not in text and "DRESS" not in text and "JUMP" not in text and "JACKET" not in text and "DENIM" not in text
+	return text and "\n" not in text and "DESIGNERS" not in text and "MEN" not in text and text != "SANDALS" and text != "BELTS" and "BG" not in text and "NEW" not in text and "BEST" not in text and "MARCUS" not in text and "ACCESSORIES" not in text and "ALL" not in text and "MAGAZINE" not in text and "LOOKS" not in text and "STORIES" not in text and "SUN" not in text and "OPTICAL" not in text and "WATCH" not in text and "SWIM" not in text and "COATS" not in text and "LINGE" not in text and "JUMP" not in text and "JACKET" not in text and "DENIM" not in text and text != "CLOTHING"
 
 def grabCategories(pageUrl):
 	driver.get(pageUrl)
@@ -137,6 +138,10 @@ def grabCategories(pageUrl):
 		print possible.get_attribute("href")
 		print possible.text
 		categories.update({possible.text.lower():(possible.get_attribute("href"))})
+	#DELETE THESE AND UNCOMMENT ABOVE FOR MuLTISCRAPING
+	## categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat"})
+	## categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Metals/cat436703_cat216801_cat413612/c.cat"})
+	# categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Plastics/cat436704_cat216801_cat413612/c.cat"})
 	print "Categories grabbed. Now scraping from each category~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	return categories
 
@@ -160,7 +165,8 @@ def scrape(): #love how there's a single tab for men and the rest are all for wo
 	#browser.find_element_by_xpath()
 	#["http://www.bergdorfgoodman.com/Shoe-Salon/cat200648/c.cat?siloId=cat200648&navid=topNavShoeSalon","women"], ["http://www.bergdorfgoodman.com/Handbags/cat257221/c.cat?siloId=cat257221&navid=topNavHandbags","women"]]
 	#urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"], ["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"], ["http://www.bergdorfgoodman.com/Categories/Scarves/cat408112_cat408110_cat408107/c.cat","women"]]
-	urls = [["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"]]
+	urls = [["http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat","men"]]
+	#[["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"]]
 	#DONE: [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]], 
 	for url in urls:
 		gender = url.pop()
