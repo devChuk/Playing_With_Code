@@ -3,6 +3,11 @@ Notes on raker project
 
 (this is a freelance project)
 
+#TODO
+
+Get kids' clothes
+
+Fix image issue
 
 #Setup
 **Links:**
@@ -49,7 +54,17 @@ the main function that kicks it off
 
 Client needs sandals in a beach event
 
-'There's men's in there too.
+'List those under men.
+
+Add a check to your database pusher.
+
+So if the URL is in the DB it just ignores it.
+
+You'll need to do that for this situation.
+
+Then push these as women:
+
+lThere's men's in there too.
 
 But with that check it'll just ignore the men's items.
 
