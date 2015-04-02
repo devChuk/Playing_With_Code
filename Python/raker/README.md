@@ -49,3 +49,8 @@ the main function that kicks it off
 **Process:**
 
 >Needs specialization for men & 5F pages. High amt of repeats on bags, will need to check for repeats text
+
+#Misc Notes
+* boys and girls are the genders for kid items
+* make sure sizes are right, they're formatted a little strangely
+* ^do this by "Shop All Kids" >> then filtering by Gender & category
