@@ -53,7 +53,7 @@ the main function that kicks it off
 #Misc Notes
 * boys and girls are the genders for kid items
 * make sure sizes are right, they're formatted a little strangely
-* ^do this by "Shop All Kids" >> then filtering by Gender & category
+* ^do this by filtering with gender & category in the website itself
 
 Here's the links to scrape:
 
