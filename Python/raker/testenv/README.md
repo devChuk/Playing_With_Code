@@ -1,0 +1,1 @@
+This is the repository of code that's meant to scrape product data off of Bergdorf Goodman and send it to a mongoDB database.

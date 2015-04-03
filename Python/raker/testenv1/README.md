@@ -1,0 +1,1 @@
+This is the repository of the code that touches up/fixes anything in the Bergdorf Goodman database.
