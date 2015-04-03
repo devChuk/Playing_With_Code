@@ -112,13 +112,16 @@ def grabCategoryProducts(pageUrl, gender, page):
 	products = []
 	driver.get(pageUrl)
 	WebDriverWait(driver, 10)
-	driver.find_element_by_id("HundredTwentyPerPage").click() #try
+	try:
+		driver.find_element_by_id("HundredTwentyPerPage").click() #try
+	except:
+		print "all products are shown."
 	# while driver.find_element_by_class_name("pagingNav").text == "NEXT":
 	all_products = driver.find_elements_by_class_name("qv-tip")
 	for product in all_products:
 		try:
 			product.click()
-			WebDriverWait(driver, 25).until(EC.element_to_be_clickable((By.ID,'qvViewProductDetails')))
+			WebDriverWait(driver, 35).until(EC.element_to_be_clickable((By.ID,'qvViewProductDetails')))
 			prod = scrapeProduct(driver.find_element_by_class_name("prodPageLink").get_attribute("href"), gender, page)
 			# bergdorf.insert(prod)#######THIS IS WHERE STUFF IS SENT INTO THE DATABASE. MAKE SURE IT'S COMMENTED DURING TESTING
 		except:	
@@ -137,11 +140,12 @@ def grabCategories(pageUrl):
 		possible = possible.find_element_by_tag_name("a")
 		print possible.get_attribute("href")
 		print possible.text
-		categories.update({possible.text.lower():(possible.get_attribute("href"))})
-	#DELETE THESE AND UNCOMMENT ABOVE FOR MuLTISCRAPING
-	## categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat"})
-	## categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Metals/cat436703_cat216801_cat413612/c.cat"})
-	# categories.update({"sunglasses":"http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Plastics/cat436704_cat216801_cat413612/c.cat"})
+		# categories.update({possible.text.lower():(possible.get_attribute("href"))})
+	#DELETE BELOW AND UNCOMMENT ABOVE FOR MuLTISCRAPING
+	# categories.update({"dresses":"http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924774,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly="})
+	# categories.update({"jackets":"http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924778,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly="})
+	# categories.update({"shorts":"http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924780,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly="})
+	categories.update({"tops":"http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924777,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly="})
 	print "Categories grabbed. Now scraping from each category~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 	return categories
 
@@ -166,7 +170,7 @@ def scrape(): #love how there's a single tab for men and the rest are all for wo
 	#["http://www.bergdorfgoodman.com/Shoe-Salon/cat200648/c.cat?siloId=cat200648&navid=topNavShoeSalon","women"], ["http://www.bergdorfgoodman.com/Handbags/cat257221/c.cat?siloId=cat257221&navid=topNavHandbags","women"]]
 	#urls = [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"], ["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"], ["http://www.bergdorfgoodman.com/Categories/Scarves/cat408112_cat408110_cat408107/c.cat","women"]]
 	# urls = [["http://www.bergdorfgoodman.com/Mens-Store/Accessories/Sunglasses-Optical/Aviators/cat436702_cat216801_cat413612/c.cat","men"]]
-	urls = [["http://www.bergdorfgoodman.com/Kids/Boys/cat413109_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924778,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=", "boy"]]
+	urls = [["http://www.bergdorfgoodman.com/Kids/Girls/cat356400_cat000006_cat000000/c.cat#userConstrainedResults=true&refinements=4294924777,&page=1&pageSize=120&sort=PCS_SORT&definitionPath=/nm/commerce/pagedef/template/EndecaDriven&allStoresInput=false&onlineOnly=", "girl"]]
 	#[["http://www.bergdorfgoodman.com/5F-Contemporary/5F-Apparel/Shop-All-5F/cat441205_cat232503_cat230300/c.cat", "women"]]
 	#DONE: [["http://www.bergdorfgoodman.com/Mens-Store/Clothing/cat000024_cat202802_cat000000/c.cat", "men"]], 
 	for url in urls:

@@ -5,11 +5,10 @@ Notes on raker project
 
 #TODO
 
-Get kids' clothes
-
 Fix image issue
 
-#Setup
+#Misc Notes
+
 **Links:**
 
 [Format](https://docs.google.com/document/d/10cGMGMSijke0lIZUNIiIQu6_MwH8ktVJNlx6h_p-1wU/edit?usp=sharing)
@@ -35,7 +34,7 @@ called for every URL, figures out the categories, and returns an array of item s
 	scrape()
 
 the main function that kicks it off
-
+cd 
 #Execution
 **Links:**
 
@@ -50,7 +49,6 @@ the main function that kicks it off
 
 >Needs specialization for men & 5F pages. High amt of repeats on bags, will need to check for repeats text
 
-#Misc Notes
 * boys and girls are the genders for kid items
 * make sure sizes are right, they're formatted a little strangely
 * ^do this by filtering with gender & category in the website itself
