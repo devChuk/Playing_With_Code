@@ -3,6 +3,8 @@ Notes on raker project
 
 (this is a freelance project)
 
+Funfact: There's a couple thousand products scraped with this program
+
 #TODO
 
 Fix image issue
