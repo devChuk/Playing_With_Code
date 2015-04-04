@@ -1,13 +1,3 @@
-//Brian Chuk
-#include <iostream>
-#include <functional>
-#include <vector>
-#include <string>
-#include <set>
-#include <algorithm>
-#include <math.h>
-using namespace std;
-
 
 template<class Object>
 class LList;
@@ -98,8 +88,4 @@ void LList<Object>::remove_if( Predicate pred)
 {
 
 
-}
-
-int main() {
-	
 }
