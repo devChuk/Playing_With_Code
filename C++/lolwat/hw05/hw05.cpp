@@ -104,7 +104,7 @@ public:
     void remove_if(Predicate pred) {
     	LListItr<Object> p = before_begin();
     	while (p != end()) {
-    		if (p.current->next != nullptr && pred(*p))
+    		if (p.current->next != nullptr && pred(p.current->next->element))
     			erase_after(p);
     		p++;
     	}
@@ -114,10 +114,11 @@ public:
     	LListItr<Object> target;
     	LListItr<Object> p = before_begin();
     	while (p != end()) {
-    		if (p.current->next != nullptr && pred(*p))
-    			erase_after(p);
+    		if (p.current->next != nullptr && p.current->next->element == x)
+    			target = p;
     		p++;
     	}
+    	erase_after(target);
     }
 
     LListItr<Object> erase_after(LListItr<Object> itr) {
@@ -157,17 +158,19 @@ public:
 int main() {
 	LList<int> list = LList<int>();
 	list.push_front(5);
+	list.push_front(2);
 	list.push_front(4);
+	list.push_front(5);
 	list.push_front(3);
 	list.push_front(2);
-	list.push_front(1);						// {1, 2, 3, 4, 5}
+	list.push_front(1);						// {1, 2, 3, 5, 4, 2, 5}
 	list.print();
-	list.pop_front();						// {2, 3, 4, 5}
+	list.pop_front();						// {2, 3, 5, 4, 2, 5}
 	list.print();
-	list.erase_after(list.begin());			// {2, 4, 5}
+	list.erase_after(list.begin());			// {2, 5, 4, 2, 5}
 	list.print();
-	list.remove_if(LessThanThree());		// {4, 5}
+	list.remove_if(LessThanThree());		// {5, 4, 5}
 	list.print();
-
-
+	list.remove_last(5);					// {5, 4}
+	list.print();
 }
