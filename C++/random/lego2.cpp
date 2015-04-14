@@ -7,12 +7,12 @@
 
 Make sure you know about:
 ✓	writing a method for the LList Class, or LListItr class
-	writing a functor, or generic function
-	using the map class
-	determining the running times
-	knowing how to binary search trees work (similar to the homework)
-	showing you understand the topics we covered in class on the LList class
-	knowing how to go from an infix expression to a postfix expression, and how to evaluate a postfix expression
+✓	writing a functor, or generic function
+✓	using the map class
+✓	determining the running times
+✓	knowing how to binary search trees work (similar to the homework)
+✓	showing you understand the topics we covered in class on the LList class
+✓	knowing how to go from an infix expression to a postfix expression, and how to evaluate a postfix expression
 */
 #include <iostream>
 #include <functional>
