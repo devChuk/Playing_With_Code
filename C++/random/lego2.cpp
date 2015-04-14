@@ -1,7 +1,7 @@
 //This is an attempt to study for the upcoming Data Structures test on 4/14
 
 /*STUFF TO STUDY
-- lecture materials
+- lecture slides 13 - 1 (17?) CHECK ;__;
 - redo HW 5 & 6
 
 
@@ -24,3 +24,6 @@ Make sure you know about:
 #include <list>
 using namespace std;
 
+int main() {
+	
+}
