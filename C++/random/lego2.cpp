@@ -6,7 +6,7 @@
 
 
 Make sure you know about:
-	writing a method for the LList Class, or LListItr class
+✓	writing a method for the LList Class, or LListItr class
 	writing a functor, or generic function
 	using the map class
 	determining the running times
@@ -25,5 +25,5 @@ Make sure you know about:
 using namespace std;
 
 int main() {
-	
+
 }
