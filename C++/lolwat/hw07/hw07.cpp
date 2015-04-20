@@ -63,6 +63,7 @@ int main() {
 	//     cout << ' ' << *it;
 }
 */
+
 //PROBLEM 2///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template< class Comparable>
@@ -138,14 +139,12 @@ void BinarySearchTree<Comparable>::insert( const Comparable & x, Node * & t ) {
 
 template <class Comparable>
 void BinarySearchTree<Comparable>::makeEmpty( Node * & t ) const {
-    if( t != NULL )
-    {
+    if( t != NULL ) {
         makeEmpty( t->left );
         makeEmpty( t->right );
         delete t;
         t = NULL;
     }
-    
 }
 
 int main() {
