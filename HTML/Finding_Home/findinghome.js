@@ -5626,7 +5626,8 @@ Class(function GATracker() {
         }
     }
 }, "Static");
-window.ASSETS = ["assets/images/common/end.png", "assets/images/common/noise.jpg", "assets/images/common/particle.png", "assets/images/favicon.png", "assets/images/landing/loader/bg.png", "assets/images/landing/loader/ring.png", "assets/images/landing/loader/solid.png", "assets/images/landing/loader/top.png", "assets/images/landing/logo.png", "assets/images/orb/flare.png", "assets/images/orb/particle.png", "assets/images/share.jpg", "assets/images/space/palette.jpg", "assets/images/space/star.png", "assets/js/lib/three.min.69.js", "assets/shaders/Meteor.fs", "assets/shaders/Meteor.vs", "assets/shaders/OrbBulb.fs", "assets/shaders/OrbBulb.vs", "assets/shaders/OrbCenter.fs", "assets/shaders/OrbCenter.vs", "assets/shaders/OrbFlare.fs", "assets/shaders/OrbFlare.vs", "assets/shaders/SpaceDistance.fs", "assets/shaders/SpaceDistance.vs", "assets/shaders/SpacePainter.fs", "assets/shaders/SpacePainter.vs", "assets/shaders/Terrain.fs", "assets/shaders/Terrain.vs", "assets/shaders/TerrainSky.fs", "assets/shaders/TerrainSky.vs", "assets/shaders/Trail.fs", "assets/shaders/Trail.vs", "assets/shaders/Water.fs", "assets/shaders/Water.vs", "assets/geometry/t0.json", "assets/geometry/t1.json", "assets/geometry/t10.json", "assets/geometry/t11.json", "assets/geometry/t2.json", "assets/geometry/t3.json", "assets/geometry/t4.json", "assets/geometry/t5.json", "assets/geometry/t6.json", "assets/geometry/t7.json", "assets/geometry/t8.json", "assets/geometry/t9.json"];
+// document.domain = 'christmasexperiments.com';
+window.ASSETS = ["http://christmasexperiments.com/experiments/xps/7/assets/images/common/end.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/common/noise.jpg", "http://christmasexperiments.com/experiments/xps/7/assets/images/common/particle.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/favicon.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/bg.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/ring.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/solid.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/top.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/logo.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/orb/flare.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/orb/particle.png", "http://christmasexperiments.com/experiments/xps/7/assets/images/share.jpg", "http://christmasexperiments.com/experiments/xps/7/assets/images/space/palette.jpg", "http://christmasexperiments.com/experiments/xps/7/assets/images/space/star.png", "http://christmasexperiments.com/experiments/xps/7/assets/js/lib/three.min.69.js", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Meteor.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Meteor.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbBulb.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbBulb.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbCenter.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbCenter.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbFlare.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/OrbFlare.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/SpaceDistance.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/SpaceDistance.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/SpacePainter.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/SpacePainter.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Terrain.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Terrain.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/TerrainSky.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/TerrainSky.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Trail.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Trail.vs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Water.fs", "http://christmasexperiments.com/experiments/xps/7/assets/shaders/Water.vs", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t0.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t1.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t10.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t11.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t2.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t3.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t4.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t5.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t6.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t7.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t8.json", "http://christmasexperiments.com/experiments/xps/7/assets/geometry/t9.json"];
 Class(function Config() {
     var a = this;
     this.PROXY = "";
@@ -6312,7 +6313,7 @@ Data.Class(function Sound() {
 
     function c() {
         d = new Howl({
-            urls: [Config.CDN + "assets/audio/awake.mp3", Config.CDN + "assets/audio/awake.ogg"]
+            urls: [Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/audio/awake.mp3", Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/audio/awake.ogg"]
         })
     }
 
@@ -7909,7 +7910,7 @@ Class(function TerrestrialMeteor() {
         var k = {
             map: {
                 type: "t",
-                value: Data.Textures.getTexture("assets/images/common/particle.png")
+                value: Data.Textures.getTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/common/particle.png")
             },
             size: {
                 type: "f",
@@ -8216,11 +8217,11 @@ Class(function SpacePainter(x) {
         var z = {
             palette: {
                 type: "t",
-                value: THREE.ImageUtils.loadTexture("assets/images/space/palette.jpg")
+                value: THREE.ImageUtils.loadTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/space/palette.jpg")
             },
             map: {
                 type: "t",
-                value: THREE.ImageUtils.loadTexture("assets/images/space/star.png")
+                value: THREE.ImageUtils.loadTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/space/star.png")
             },
             size: {
                 type: "f",
@@ -8375,7 +8376,7 @@ Class(function SpaceDistance() {
             },
             map: {
                 type: "t",
-                value: Data.Textures.getTexture("assets/images/space/star.png")
+                value: Data.Textures.getTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/space/star.png")
             },
             opacity: {
                 type: "f",
@@ -8504,7 +8505,7 @@ Class(function FXComposer() {
             aperture: 0,
         });
         p.uniforms.fogColor.value = Data.Color.getColor("fog", "color0");
-        p.uniforms.tNoise.value = Data.Textures.getTexture("assets/images/common/noise.jpg");
+        p.uniforms.tNoise.value = Data.Textures.getTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/common/noise.jpg");
         p.renderToScreen = true;
         d.addPass(p)
     }
@@ -8599,7 +8600,7 @@ Class(function OrbTrail(j) {
         var r = {
             map: {
                 type: "t",
-                value: Data.Textures.getTexture("assets/images/orb/particle.png")
+                value: Data.Textures.getTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/orb/particle.png")
             },
             size: {
                 type: "f",
@@ -8761,7 +8762,7 @@ Class(function OrbPulser(j) {
         var p = {
             map: {
                 type: "t",
-                value: Data.Textures.getTexture("assets/images/orb/flare.png")
+                value: Data.Textures.getTexture("http://christmasexperiments.com/experiments/xps/7/assets/images/orb/flare.png")
             },
             color: {
                 type: "c",
@@ -8845,7 +8846,7 @@ Class(function LandingView() {
     function j() {
         b = n.create(".logo");
         var o = 0.37;
-        b.size(1226 * o, 328 * o).center().bg(Config.CDN + "assets/images/landing/logo.png").css({
+        b.size(1226 * o, 328 * o).center().bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/logo.png").css({
             marginTop: -170,
             opacity: 0.85
         })
@@ -8933,22 +8934,22 @@ Class(function LandingSpinner() {
 
     function g() {
         d = n.create(".bg");
-        d.size(o, o).center().bg(Config.CDN + "assets/images/landing/loader/bg.png").css({
+        d.size(o, o).center().bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/bg.png").css({
             opacity: 0.1
         });
         c = n.create(".bg");
-        c.size(o, o).center().bg(Config.CDN + "assets/images/landing/loader/ring.png").css({
+        c.size(o, o).center().bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/ring.png").css({
             opacity: 0
         });
         l = n.create(".bg");
-        l.size(o, o).center().bg(Config.CDN + "assets/images/landing/loader/solid.png").css({
+        l.size(o, o).center().bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/solid.png").css({
             opacity: 0
         })
     }
 
     function f() {
         q = n.create(".spin");
-        q.size(o, o).center().bg(Config.CDN + "assets/images/landing/loader/top.png");
+        q.size(o, o).center().bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/landing/loader/top.png");
         a = k.initClass(CSSAnimation);
         a.loop = true;
         a.ease = "linear";
@@ -9075,7 +9076,7 @@ Class(function EndView() {
         }).hide();
         Stage.add(e);
         b = e.create("img");
-        b.size(512, 180).bg(Config.CDN + "assets/images/common/end.png").center().css({
+        b.size(512, 180).bg(Config.CDN + "http://christmasexperiments.com/experiments/xps/7/assets/images/common/end.png").center().css({
             opacity: 0
         })
     }
