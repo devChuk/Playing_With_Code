@@ -17,8 +17,7 @@ hurr = Login.new(@browser)
 
 
 @browser.find_element(:name => 'email').text
-hurr.wait_until do
-    @browser.find_element(:name => 'email').text == 'Forgot password?'
-end
 
-# @browser.save_screenshot("./blah.png")
+@browser.save_screenshot("./blah.png")
+
+@browser.quit
