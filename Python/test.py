@@ -14,9 +14,8 @@ def findWords( str ):
 	finhash = str.replace(" ", "")
 	finhash = geniusHash(finhash)
 	print finhash
-	for word in dic:
-		print word
+	# for word in dic:
+
 
 findWords( "llo worldhe" )
 findWords( "hello world" )
-
