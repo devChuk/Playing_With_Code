@@ -1,5 +1,6 @@
 # https://developer.venmo.com/docs/quickstart
-import requests
+import requests, syncano, json
+from syncano.models.base import Object
 
 # extract phone, note, and amount from the ARGS
 # if none are passed, it will raise an error
@@ -8,7 +9,8 @@ import requests
 # or in a direct CodeBox call:
 # CodeBox.please.run(instance_name='YOUR_INSTANCE_NAME', id=the_CodeBox_id, payload={'phone': '1234', 'note': 'helloworld', 'amount': '0.01'})
 
-accesstoken = 'INSERT_ACCESS_TOKEN_HERE'
+accesstoken = 'INSERT_VENMO_ACCESS_TOKEN_HERE'
+connection = syncano.connect(api_key='SYNCANO_API_KEY')
 
 # a valid US 'phone', 'email' or Venmo 'user_id' is required
 phone = ARGS.get("phone", None)
@@ -38,4 +40,14 @@ base_url = "https://api.venmo.com/v1/payments"
 r = requests.post(base_url, data=data)
 
 print(r.status_code, r.reason)
-print(r.text)
+# print(r.text)
+
+balance = r.json()
+print(balance['data']['balance'])
+
+Object.please.create(balance=float(balance['data']['balance']),
+                     amount=float(amount),
+                     note=note,
+                     phone=phone,
+                     instance_name="INSTANCE_NAME",
+                     class_name="venmo_payment")
