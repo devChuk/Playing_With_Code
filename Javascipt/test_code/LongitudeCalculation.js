@@ -18,9 +18,7 @@ function rad2deg(rad) {
 	return(rad * conv_factor);
 }
 
-function log10(val) { // calculate the log base 10 of val
-  return(Math.LOG10E * Math.log(val));
-}
+
 
 function compute(obj) {// Compute lengths of degrees
 	// Convert latitude to radians
