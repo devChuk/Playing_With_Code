@@ -137,12 +137,70 @@ long sqrt(int n) {
 	return low;
 }
 
+template<class Comparable>
+void printVec(vector<Comparable>& a) {
+	for (int i = 0; i < a.size(); i++)
+		cout << a[i] << " ";
+	cout << endl;
+}
+
+void quickSort( vector<int> & a, int low, int high )
+{
+	if (low < high) {
+		int mid = ( low + high )/2; // select pivot to be element in middle position
+		int pivot = a[mid];
+		swap( a[high], a[mid] ); // put pivot in a[high]
+		// Begin partitioning
+		int i, j;
+		for(i = low, j = high - 1; ; )
+		{
+			while (a[i] < pivot)
+				++i;
+			while(j > i && pivot < a[j])
+				--j;
+			if( i < j )
+				swap(a[ i++ ], a[ j--]);
+			else
+				break;
+		}
+		swap(a[i], a[high]); // Restore pivot
+		// printVec(a); // prints the contents of the vector in order
+		quickSort(a, low, i - 1); // Sort small elements
+		quickSort(a, i + 1, high); // Sort large elements
+	}
+}
+
+template <class RandItr>
+void mergeSort(RandItr beg, RandItr start, RandItr end) {
+    if (end-start < 2)
+            return;
+    int sz = end-start;
+    int middle = sz / 2;
+    mergeSort(beg, start, start + middle);
+    mergeSort(beg, start + middle, end);
+    std::merge(start, start + middle, start + middle, end, beg);
+    std::copy(beg, beg + sz, start);
+}
+
+////////////////////////
+for(int x=0; x<n; x++) {
+		for(int y=0; y<n-1; y++) {
+			if(array[y]>array[y+1]) {
+				int temp = array[y+1];
+				array[y+1] = array[y];
+				array[y] = temp;
+			}
+		}
+	}
+///////////////////
+//Notice that this will always loop n times 
+//from 0 to n, so the order of this algorithm is O(n^2)
+
+
 int main () {
 	// vector<vector<int>> matrix;
 	// FourNMatrix(matrix);
 	// printMatrix(matrix);
 	// cout << "\n" << endl;
 	// sumP(matrix);
-
-	
 }
