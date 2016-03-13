@@ -48,16 +48,6 @@ public class CS3913Spring2016Window1 {
         jp.add(secondButton,BorderLayout.SOUTH);
         jp.add(middle,BorderLayout.CENTER);
         jf.setVisible(true);
-        /*SomeClass sc = new SomeClass();
-        System.out.println(sc.SomeFunc());
-        
-        System.out.println(new SomeClass().SomeFunc());
-        
-        System.out.println(new SomeClass(){
-            String SomeFunc(){
-                return "Some other Func's string!!!!";
-            }
-        }.SomeFunc());*/
     }
     
 

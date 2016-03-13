@@ -12,10 +12,6 @@ import javax.swing.*;
  * @author dkatz
  */
 public class CS3913Spring2016Window2 {
-
-    /**
-     * @param args the command line arguments
-     */
     static int i;
     static int upPresses;
     static int downPresses;
@@ -72,10 +68,8 @@ public class CS3913Spring2016Window2 {
         top.add(totalLabel);
         upButton.addActionListener(new ButtonPress());
         downButton.addActionListener(new ButtonPress());
-        jf.setVisible(true);
-        
+        jf.setVisible(true);   
     }
-    
     static class ButtonPress implements ActionListener{
         public void actionPerformed(ActionEvent ae){
             if (ae.getSource()==upButton){
