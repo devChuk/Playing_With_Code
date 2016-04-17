@@ -17,11 +17,13 @@ typedef struct _bucket_entry {
 } bucket_entry;
 
 bucket_entry *table[NUM_BUCKETS];
+pthread_mutex_t locks[NUM_BUCKETS];
 
-pthread_mutex_t lock;               // declare a lock
-pthread_mutex_init(&lock, NULL);    // initialize the lock
-pthread_mutex_lock(&lock);          // acquire lock
-pthread_mutex_unlock(&lock);        // release lock
+// pthread_mutex_t lock;               // declare a lock
+// pthread_mutex_init(&lock, NULL);    // initialize the lock
+// pthread_mutex_lock(&lock);          // acquire lock
+// pthread_mutex_unlock(&lock);        // release lock
+
 
 void panic(char *msg) {
     printf("%s\n", msg);
@@ -38,11 +40,26 @@ double now() {
 void insert(int key, int val) {
     int i = key % NUM_BUCKETS;
     bucket_entry *e = (bucket_entry *) malloc(sizeof(bucket_entry));
-    if (!e) panic("No memory to allocate bucket!");
-    e->next = table[i];
-    e->key = key;
-    e->val = val;
-    table[i] = e;
+     if (!e) panic("No memory to allocate bucket!");
+  
+    pthread_mutex_lock(locks+i);
+    /*
+    bucket_entry *n;
+    for(n = table[i]; n!=0;n=n->next){
+      if(n->key != key){
+        e->next = n;
+        e->key = key;
+        e->val = val;
+        table[i] = e;
+      }
+    }
+    */
+        e->next = table[i];
+        e->key = key;
+        e->val = val;
+        table[i] = e;
+    
+  pthread_mutex_unlock(locks+i);
 }
 
 // Retrieves an entry from the hash table by key
@@ -62,9 +79,12 @@ void * put_phase(void *arg) {
     // If there are k threads, thread i inserts
     //      (i, i), (i+k, i), (i+k*2)
     for (key = tid ; key < NUM_KEYS; key += num_threads) {
+        //pthread_mutex_lock();
         insert(keys[key], tid);
+        
+        //pthread_mutex_unlock();
     }
-
+    
     pthread_exit(NULL);
 }
 
@@ -92,7 +112,12 @@ int main(int argc, char **argv) {
     if ((num_threads = atoi(argv[1])) <= 0) {
         panic("must enter a valid number of threads to run");
     }
-
+  
+    int k;
+    for (k = 0; k < NUM_BUCKETS; ++k) {
+        pthread_mutex_init(locks + k, NULL);
+    }
+  
     srandom(time(NULL));
     for (i = 0; i < NUM_KEYS; i++)
         keys[i] = random();
