@@ -20,37 +20,6 @@ document.body.appendChild( renderer.domElement );
 // var cube = new THREE.Mesh( geometry, material );
 // scene.add( cube );
 
-// create the particle variables
-var particleCount = 1800,
-    particles = new THREE.Geometry(),
-    pMaterial = new THREE.ParticleBasicMaterial({
-      color: 0xFFFFFF,
-      size: 20
-    });
-
-// now create the individual particles
-for (var p = 0; p < particleCount; p++) {
-
-  // create a particle with random
-  // position values, -250 -> 250
-  var pX = Math.random() * 500 - 250,
-      pY = Math.random() * 500 - 250,
-      pZ = Math.random() * 500 - 250,
-      particle = new THREE.Vertex(
-        new THREE.Vector3(pX, pY, pZ)
-      );
-
-  // add it to the geometry
-  particles.vertices.push(particle);
-}
-
-// create the particle system
-var particleSystem = new THREE.ParticleSystem(
-    particles,
-    pMaterial);
-
-// add it to the scene
-scene.addChild(particleSystem);
 
 
 camera.position.z = 5;
@@ -66,3 +35,18 @@ var render = function () {
 };
 
 render();
+
+/*
+http://stackoverflow.com/questions/31289577/three-js-position-particles-evenly-on-objects-faces-rather-than-verticies
+http://stackoverflow.com/questions/28285573/making-a-3d-earth-made-up-of-particles-with-three-js
+https://github.com/mrdoob/three.js/issues/1591
+*/
+
+
+// TODO
+// Make a particle cloud
+// ANIMATE PARTICLES IN OPENING MOTION
+// SEE IF I CAN MOVE THEM INTO A 3D MODELLED cube
+// Consider somehow animating this cube for science.
+// If so, let's make a dank deer
+// ???
