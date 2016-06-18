@@ -1,12 +1,9 @@
 /*
-Title:			BrianCh.uk Home Screen Javascript ThreeJS Animation v1
-Author:			Brian Chuk (brianch.uk)
-Copyright: 		2015, Brian Chuk - All rights reserved (you have permission to use it, just tell me :D)
-
-I would use some of my other animations for the background, but I've found that it was too distracting haha.
-Test users would just stare at the animation & not realize that they could scroll down haha
-
+Brian Chuk (brianch.uk)
+Props for checking out this code
 */
+
+////////////////////////////////////////SETUP////////////////////////////////////////
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -15,10 +12,24 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// var cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
+window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize(){
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+////////////////////////////////////////CREATING OBJECTS////////////////////////////////////////
+
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
 
 
 
