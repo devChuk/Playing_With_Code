@@ -60,9 +60,9 @@ var render = function () {
 
 	geometry.vertices.forEach(function(point, index, array) {
 		var dX, dY, dZ;
-	    dX = Math.random() * 2 - 1;
-	    dY = Math.random() * 2 - 1;
-	    dZ = Math.random() * 2 - 1;
+	    dX = 4;//Math.random() * 2 - 1;
+	    // dY = Math.random() * 2 - 1;
+	    // dZ = Math.random() * 2 - 1;
 
 	    geometry.colors[index] = new THREE.Color(Math.random(), Math.random(), Math.random());
 	    point.add(new THREE.Vector3(dX, dY, dZ));
@@ -83,19 +83,13 @@ render();
 http://stackoverflow.com/questions/31289577/three-js-position-particles-evenly-on-objects-faces-rather-than-verticies
 http://stackoverflow.com/questions/28285573/making-a-3d-earth-made-up-of-particles-with-three-js
 https://github.com/mrdoob/three.js/issues/1591
+http://stemkoski.blogspot.com/2013/06/creating-particle-effects-engine-in.html
 */
 
 
 // TODO
-// Make a particle cloud
-/*
-So they're called point clouds
-
-
-
-
-*/
-// ANIMATE PARTICLES IN OPENING MOTION
+// Make a particle cloud 												CHECK AY
+// ANIMATE PARTICLES IN OPENING MOTION									
 // SEE IF I CAN MOVE THEM INTO A 3D MODELLED cube
 // Consider somehow animating this cube for science.
 // If so, let's make a dank deer
