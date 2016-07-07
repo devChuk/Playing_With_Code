@@ -42,9 +42,9 @@ var material = new THREE.PointsMaterial({
 var geometry = new THREE.Geometry();
 var x, y, z;
 for (var i = 0; i < 1000; i++) {
-	x = (Math.random() * 800) - 400;
-	y = (Math.random() * 800) - 400;
-  	z = (Math.random() * 800) - 400;
+	x = 40;//(Math.random() * 800) - 400;
+	y = 40;//(Math.random() * 800) - 400;
+  	z = (Math.random() * 800) - 400; //-400
   	geometry.vertices.push(new THREE.Vector3(x, y, z));
 	geometry.colors.push(new THREE.Color(Math.random(), Math.random(), Math.random()));
 }
@@ -120,3 +120,25 @@ http://blog.stevensanderson.com/2014/06/11/write-massively-parallel-gpu-code-for
 
 //need to consider performance issues and look into animations that change depending on networks & screen size.
 //also do animations stop running when the tab is off?
+
+/*   INSPIRATIONS
+
+http://19-79.com/inspiration/qvalis-visual-identity/
+http://www.semplicelabs.com/showcase
+http://aaronporter.co/
+http://dacdavynguyen.com/
+http://evankosowski.com/
+http://lahacks.com/2015/
+https://vimeo.com/129551643
+http://vincentgarreau.com/particles.js/
+http://vincentgarreau.com/
+https://github.com/VincentGarreau/particles.js/blob/master/particles.js
+
+
+
+
+
+
+
+
+*/
