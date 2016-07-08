@@ -61,7 +61,6 @@ var setup = function () {
 		movement.push({	dX: Math.random() * 2 - 1,
 						dY: Math.random() * 2 - 1,
 						dZ: Math.random() * 2 - 1});
-
 	}
 
 	var points = new THREE.Points(geometry, material);

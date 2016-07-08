@@ -26,7 +26,7 @@ http://blog.stevensanderson.com/2014/06/11/write-massively-parallel-gpu-code-for
 
 // TODO
 // Make a particle cloud                                                CHECK AY
-// ANIMATE PARTICLES IN OPENING MOTION                                  
+// ANIMATE PARTICLES IN OPENING MOTION                                  CHECK AY
 // SEE IF I CAN MOVE THEM INTO A 3D MODELLED cube
 // Consider somehow animating this cube for science.
 // If so, let's make a dank deer
