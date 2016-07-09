@@ -17,6 +17,7 @@ renderer.setSize( vw, vh );
 document.body.appendChild( renderer.domElement );
 
 camera.position.z = 655;
+
 ////////////////////////////////////////HELPER FUNCTIONS////////////////////////////////////////
 
 function empty(elem) {
@@ -37,7 +38,6 @@ function onWindowResize(){
     reset();
 }
 
-
 ////////////////////////////////////////CREATING OBJECTS////////////////////////////////////////
 
 var setup = function () {
@@ -54,7 +54,7 @@ var setup = function () {
 	for (var i = 0; i < 1000; i++) {
 		x = (Math.random() * vw) - vw/2;
 		y = (Math.random() * vh) - vh/2;
-	  	z = 0;//(Math.random() * 800) - 400; //-400
+	  	z = 0;
 	  	geometry.vertices.push(new THREE.Vector3(x, y, z));
 		geometry.colors.push(new THREE.Color(250,250,250));
 
@@ -77,8 +77,17 @@ var render = function () {
 
 	geometry.vertices.forEach(function(point, index, array) {
 			    // geometry.colors[index] = new THREE.Color(Math.random(), Math.random(), Math.random());
+	    if (Math.abs(point.x) >= vw/2) {
+	    	movement[index].dX *= -1;
+	    } else if (Math.abs(point.y) >= vh/2) {
+	    	movement[index].dY *= -1;
+	    } else if (Math.abs(point.z) >= 600) {
+	    	movement[index].dZ *= -1;
+	    } else {
+	    	
+	    }
 	    point.add(new THREE.Vector3(movement[index].dX, movement[index].dY, movement[index].dZ));
-	    
+	    	
 	    // console.log(index);
 	});
 
@@ -88,7 +97,6 @@ var render = function () {
 
 	renderer.render(scene, camera);
 };
-
 
 ////////////////////////////////////////RENDERING&&ANIMATING////////////////////////////////////////
 setup();
