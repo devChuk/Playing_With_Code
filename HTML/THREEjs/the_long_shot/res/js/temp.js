@@ -68,6 +68,20 @@ var setup = function () {
 
 
 
+	var lineMaterial = new THREE.LineBasicMaterial({
+		color: 0xffffff,
+		linewidth: 1
+    });
+
+    var lineGeometry = new THREE.Geometry();
+    lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 0));
+    lineGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
+    lineGeometry.vertices.push(new THREE.Vector3(100, 0, 0));
+    var line = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(line);
+
+
+
 }
 
 ////////////////////////////////////////RENDERING&&ANIMATING////////////////////////////////////////
