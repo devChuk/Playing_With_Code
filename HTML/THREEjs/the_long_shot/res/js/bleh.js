@@ -18,7 +18,7 @@ document.body.appendChild( renderer.domElement );
 
 camera.position.z = 655;
 
-////////////////////////////////////////HELPER FUNCTIONS////////////////////////////////////////
+////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
 
 function p(num) {return Math.pow(num, 2);}
 function sqrt(num) {return Math.sqrt(num);}
@@ -40,11 +40,13 @@ function onWindowResize(){
     reset();
 }
 
-////////////////////////////////////////CREATING OBJECTS////////////////////////////////////////
+////////////////////////////////////////CREATING OBJECTS/////////////////////////////
 
 var setup = function () {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
+
+    //Generate FPS counter.
     stats = new Stats();
     container.appendChild( stats.dom );
 
@@ -57,7 +59,7 @@ var setup = function () {
 	pointGeometry = new THREE.Geometry();
 	movement = [];
 	var x, y, z;
-	for (var i = 0; i < 200; i++) {
+	for (var i = 0; i < 100; i++) {
 		x = (Math.random() * vw) - vw/2;
 		y = (Math.random() * vh) - vh/2;
 	  	z = 0;
@@ -67,62 +69,34 @@ var setup = function () {
 		movement.push({	dX: Math.random() * 1 - 0.5,
 						dY: Math.random() * 1 - 0.5,
 						dZ: Math.random() * 1 - 0.5});
-
-
 	}
 
 	var points = new THREE.Points(pointGeometry, pointMaterial);
 	scene.add(points);
 
-
-
 	lineMaterial = new THREE.LineBasicMaterial({
-		color: 0x303030,
-		linewidth: 2
+		color: 0xE5E5E5,
+		linewidth: 2,
+        transparent: true,
+        opacity: 0.1
     });
-
-    // lineGeometry = new THREE.Geometry();
-
-    pointGeometry.vertices.forEach(function(point, index, array) {
-        for (var i = index + 1; i < array.length; i++) {
-            
-            if (sqrt(p(point.x - array[i].x) + p(point.y - array[i].y) + p(point.z - array[i].z)) <= 150) {
-                var lineGeometry = new THREE.Geometry();
-                lineGeometry.vertices.push(point);
-                lineGeometry.vertices.push(array[i]);
-                scene.add(new THREE.Line(lineGeometry, lineMaterial));
-            }
-
-
-        }
-    });
-    // lineGeometry.vertices.push(new THREE.Vector3(-100, 0, 0));
-    // lineGeometry.vertices.push(new THREE.Vector3(0, 100, 0));
-    // lineGeometry.vertices.push(new THREE.Vector3(100, 0, 0));
-    // var line = new THREE.Line(lineGeometry, lineMaterial);
-    // scene.add(line);
-
-
 }
 
-////////////////////////////////////////RENDERING&&ANIMATING////////////////////////////////////////
+////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
 var storage = {};
-
 
 var render = function () {
 	window.requestAnimationFrame( render );
+    //Update FPS counter.
     stats.update();
 
-    //remove everything
-    for(var i = scene.children.length - 1; i > 0; i--) {
-        // scene.children[i].deallocate();
-        
+    //remove all lines
+    for(var i = scene.children.length - 1; i > 0; i--) {        
         scene.children[i].geometry.dispose();
         scene.children[i].material.dispose();
         scene.remove(scene.children[i]);
     }
     for (var member in storage) {
-        // storage[member].deallocate();
         delete storage[member];
     }
     var indexx = 0;
@@ -137,28 +111,27 @@ var render = function () {
 	    }
 	    point.add(new THREE.Vector3(movement[index].dX, movement[index].dY, movement[index].dZ));
 
+        var closeEnough = 200;
 
         for (var i = index + 1; i < array.length; i++) {
             var dist = sqrt(p(point.x - array[i].x) + p(point.y - array[i].y) + p(point.z - array[i].z));
-            if (dist <= 130 &&
+            if (dist <= closeEnough &&
                 scene.children.length <= 600) {
-                // lineGeometry.vertices.push(newTHREE)   (point.x - array[i].x)
                 var lineGeometry = new THREE.Geometry();
                 lineGeometry.vertices.push(point);
                 lineGeometry.vertices.push(array[i]);
                 storage[indexx] = new THREE.Line(lineGeometry, new THREE.LineBasicMaterial(lineMaterial));
-                var hsl_string = "hsl(0, 0%, " + map_range(dist, 0, 130, 100, 0) + "%)";
-                storage[indexx].material.color = new THREE.Color(hsl_string);
+                var opacity_input = map_range(dist, 0, closeEnough, 70, 0)/100;
+                storage[indexx].material.opacity = opacity_input;
                 scene.add(storage[indexx]);
                 indexx++;
             }
-
         }
 	});
     pointGeometry.verticesNeedUpdate = true;
 	renderer.render(scene, camera);
 };
 
-////////////////////////////////////////RENDERING&&ANIMATING////////////////////////////////////////
+////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
 setup();
 render();
