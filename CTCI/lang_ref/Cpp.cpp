@@ -40,6 +40,24 @@ int main() {
 	std::vector<int> third (second.begin(),second.end());  // iterating through second
 	std::vector<int> fourth (third);                       // a copy of third
 
+	first.push_back(5);
+	std::cout << first.size() << std::endl;
+	std::cout << first[0] << std::endl;
+	std::cout << first.front() << std::endl;
+	std::cout << first.back() << std::endl;
+
+	first.pop_back();
+
+	it = first.begin();
+	first.insert(it,300);
+	first.insert(it,2,300);
+
+	first.erase(first.begin() + 5);
+	first.swap(second);
+
+	first.clear();
+
+
 
 	/*
 	char grade = 'D';
