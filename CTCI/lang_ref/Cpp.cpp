@@ -82,6 +82,7 @@ int main() {
 	}
 	*/
 
+	std::string s(5, 'a');
 	string str1 = "Hello";
 	string str2 = "World";
 	string str3;
