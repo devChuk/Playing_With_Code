@@ -102,6 +102,25 @@ void replaceTwenty(std::string& str, int length) {
 	}
 }
 
+std::string compress(std::string input) {
+	std::string compressed = "";
+	int count = 1;
+	char character = input[0];
+	for (int i = 1; i < input.length(); i++) {
+		if (character == input[i] && i != input.length()-1)
+			count++;
+		else {
+			compressed += character;
+			compressed += std::to_string(count);
+			character = input[i];
+			count = 1;
+		}
+	}
+	return compressed;
+}
+
+
+
 int main() {
 	// std::cout << uniqueChars("abcda") << std::endl;
 	// std::cout << uniqueChars("abcd") << std::endl;
@@ -116,16 +135,11 @@ int main() {
 	// std::cout << permuCheck("abcd","dcbacc") << std::endl;
 	// std::cout << permuCheck("abcd","aacd") << std::endl;
 	
-	std::string charlie = "Mr John Smith    ";
-	replaceTwenty(charlie, 13);
-	std::cout << charlie << std::endl;
+	// std::string charlie = "Mr John Smith    ";
+	// replaceTwenty(charlie, 13);
+	// std::cout << charlie << std::endl;
 
-
-
-
-
-
-
+	std::cout << compress("aabcccccaaa") << std::endl;
 
 	return 0;
 }
