@@ -119,6 +119,52 @@ std::string compress(std::string input) {
 	return compressed;
 }
 
+void stringCompress(std::string& input) {
+	if (input.length() > 1) {
+		char character = input[0];
+		std::string ans = "";
+		int count = 1;
+
+		for (int i = 1; i < input.length(); i++) {
+			if (input[i] == character)
+				count++;
+			else {
+				ans += character;
+				ans += std::to_string(count);
+				character = input[i];
+				count = 1;
+			}
+
+			if (i == input.length() - 1) {
+				ans += character;
+				ans += std::to_string(count);
+			}
+		}
+
+		if (ans.length() < input.length())
+			input = ans;
+	}
+}
+
+// void rotateNinety(int matrix[][], int n) {
+// 	for (int layers = 0; layers < n/2; layers++) {
+// 		for (int i = 0; i < n - layers * 2; i++) {
+// 			int temp = matrix[layer+i][layer];
+// 			matrix[layer+i][layer] = matrix[layer][n - (layer+i)];
+// 			matrix[layer][n - (layer+i)] = matrix[n - (layer+i)][n-layer];
+// 			matrix[n - (layer+i)][n-layer] = matrix[n-layer][layer+i];
+// 			matrix[n-layer][layer+i] = temp;
+// 		}
+// 	}
+// }
+
+bool isRotation(std::string s1, std::string s2) {
+	if (s1.length() == s2.length()) {
+		s2 += s2;
+		return s2.find(s1) != std::string::npos;
+	}
+	return false;
+}
 
 
 int main() {
@@ -139,7 +185,11 @@ int main() {
 	// replaceTwenty(charlie, 13);
 	// std::cout << charlie << std::endl;
 
-	std::cout << compress("aabcccccaaa") << std::endl;
+	// std::string hurrdurr = "aabcccccaaa";
+	// stringCompress(hurrdurr);
+	// std::cout << hurrdurr << std::endl;
+
+	// std::cout << isRotation("waterbottle","terbotllewa") << std::endl;
 
 	return 0;
 }
