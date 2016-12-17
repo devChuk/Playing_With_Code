@@ -27,12 +27,12 @@ class Stack {
 	LLNode* top;
 
 	int pop() {
-		if (top != null) {
+		if (top != NULL) {
 			int item = top->data;
 			top = top->next;
 			return item;
 		}
-		return null;
+		return -666;
 	}
 
 	void push(int item) {
@@ -41,21 +41,22 @@ class Stack {
 		top = t;
 	}
 
-	Object peekQ {
+	int peek() {
 		return top->data;
 	}
 };
 
 
 class Queue {
-	LLNode* first, last;
+	LLNode* first;
+	LLNode* last;
 
 	void enqueue(int item) {
 		if (first == NULL) {
-			last = new Node(item);
+			last = new LLNode(item);
 			first = last;
 		} else {
-			last->next = new Node(item);
+			last->next = new LLNode(item);
 			last = last->next;
 		}
 	}
@@ -66,6 +67,10 @@ class Queue {
 			first = first->next;
 			return item;
 		}
-		return NULL;
+		return -666;
 	}
 };
+
+int main() {
+	
+}
