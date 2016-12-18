@@ -25,11 +25,13 @@ struct LLNode {
 
 class Stack {
 	LLNode* top;
+	int size = 0;
 
 	int pop() {
 		if (top != NULL) {
 			int item = top->data;
 			top = top->next;
+			size--;
 			return item;
 		}
 		return -666;
@@ -39,10 +41,19 @@ class Stack {
 		LLNode* t = new LLNode(item);
 		t->next = top;
 		top = t;
+		size++;
 	}
 
 	int peek() {
 		return top->data;
+	}
+
+	bool isEmpty() {
+		return size == 0;
+	}
+
+	int size() {
+		return size;
 	}
 };
 
@@ -99,6 +110,11 @@ class TripleArray {
 	int topOfStack(int stackNum) {
 		return stackNum * capacity + stackPointer[stackNum];
 	}
+};
+
+class SetofStacks {
+	std::vector<Stack> set;
+
 };
 
 int main() {
