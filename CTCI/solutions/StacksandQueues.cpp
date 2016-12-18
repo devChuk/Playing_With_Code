@@ -71,6 +71,37 @@ class Queue {
 	}
 };
 
+class TripleArray {
+	public:
+	int* head;
+	int capacity;
+	int stackPointer[3] = {0, 0, 0};
+
+	TripleArray(int size) {
+		int arr[size * 3];
+		capacity = size;
+		head = arr;
+	}
+
+	void push(int item, int stackNum) {
+		int index = topOfStack(stackNum);
+		*(head + index) = item;
+		stackPointer[stackNum]++;
+	}
+
+	int pop(int stackNum) {
+		int item = *(head + topOfStack(stackNum));
+		*(head + topOfStack(stackNum)) = 0;
+		stackPointer[stackNum]--;
+		return item;
+	}
+
+	int topOfStack(int stackNum) {
+		return stackNum * capacity + stackPointer[stackNum];
+	}
+};
+
 int main() {
 	
+
 }
