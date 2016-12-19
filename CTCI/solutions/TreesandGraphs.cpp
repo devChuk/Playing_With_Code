@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <math.h>
 
+#include <queue>
+
 struct TNode {
 	TNode* left;
 	TNode* right;
@@ -17,6 +19,7 @@ struct TNode {
 
 struct GNode {
 	int data;
+	bool visited = false;
 	std::vector<GNode*> nodes;
 };
 
@@ -47,8 +50,52 @@ bool isBalanced(TNode* head) {
 	}
 }
 
-int main() {
-	if (-1) {
-		std::cout << "test" << std::endl;
+void DFsearch(TNode* root) {
+	if (root) {
+		DFsearch(root->left);
+		DFsearch(root->right);
 	}
+}
+
+void BFsearch(GNode* root) {
+	std::queue<GNode*> queue;
+	root->visited = true;
+	queue.push(root);
+
+	while (!queue.empty()) {
+		GNode* r = queue.front();
+		queue.pop();
+		for (int i = 0; i > r->nodes.size(); i++) {
+			if (!r->nodes[i]->visited) {
+				r->nodes[i]->visited = true;
+				queue.push(r->nodes[i]);
+			}
+		}
+	}
+}
+
+bool checkForRoute(GNode* start, GNode* end) {
+	std::queue<GNode*> queue;
+	start->visited = true;
+	queue.push(start);
+
+	while (!queue.empty()) {
+		GNode* r = queue.front();
+		if (r == end)
+			return true;
+		for (int i = 0; i < r->nodes.size(); i++) {
+			GNode* current = r->nodes[i];
+			if (!current->visited) {
+				current->visited = true;
+				queue.push(current);
+			}
+		}
+	}
+	return false;
+}
+
+void hurrdurr(int swag[]) {}
+
+int main() {
+	
 }
