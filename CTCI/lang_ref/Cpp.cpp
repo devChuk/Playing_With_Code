@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <math.h>
 
+#include <fstream>
+
 template <class Object>
 Object sumVector(const std::vector<Object> & a, int left, int right) {
         
@@ -224,7 +226,64 @@ int main() {
         cin >> a >> b;
         cout << a+b << "\n";
     }
-    */   
+    */
+
+
+    /*
+   char data[100];
+
+   // open a file in write mode.
+   ofstream outfile;
+   outfile.open("afile.dat");
+
+   cout << "Writing to the file" << endl;
+   cout << "Enter your name: "; 
+   cin.getline(data, 100);
+
+   // write inputted data into the file.
+   outfile << data << endl;
+
+   cout << "Enter your age: "; 
+   cin >> data;
+   cin.ignore();
+   
+   // again write inputted data into the file.
+   outfile << data << endl;
+
+   // close the opened file.
+   outfile.close();
+
+   // open a file in read mode.
+   ifstream infile; 
+   infile.open("afile.dat"); 
+ 
+   cout << "Reading from the file" << endl; 
+   infile >> data; 
+
+   // write the data at the screen.
+   cout << data << endl;
+   
+   // again read the data from the file and display it.
+   infile >> data; 
+   cout << data << endl; 
+
+   // close the opened file.
+   infile.close();
+
+	*/
+
+   /*
+	std::string line;
+	while (std::getline(infile, line))
+	{
+		std::istringstream iss(line);
+		int a, b;
+		if (!(iss >> a >> b)) { break; } // error
+
+	// process pair (a,b)
+	}
+
+	*/
 
     return 0;
 }
