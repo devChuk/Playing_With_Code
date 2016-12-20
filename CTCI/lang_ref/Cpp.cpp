@@ -229,7 +229,7 @@ int main() {
     */
 
 
-    /*
+    
    char data[100];
 
    // open a file in write mode.
@@ -270,9 +270,9 @@ int main() {
    // close the opened file.
    infile.close();
 
-	*/
+	
 
-   /*
+   
 	std::string line;
 	while (std::getline(infile, line))
 	{
@@ -283,7 +283,7 @@ int main() {
 	// process pair (a,b)
 	}
 
-	*/
+	
 
     return 0;
 }
