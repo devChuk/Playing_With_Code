@@ -190,19 +190,40 @@ bool testTwo() {
 	return true;
 }
 
-TNode* findInOrderSuccessor(TNode* root) {
-	if (root->right) {
-		TNode* runner = root->right;
-		while (runner->left)
-			runner = runner->left;
-		return runner;
-	} else if (root->parent) {
-		TNode* runner = root;
-		while (runner->parent && runner->parent->left != runner) {
-			runner = runner->parent
-		}
-		return runner->parent;
+// TNode* findInOrderSuccessor(TNode* root) {
+// 	if (root->right) {
+// 		TNode* runner = root->right;
+// 		while (runner->left)
+// 			runner = runner->left;
+// 		return runner;
+// 	} else if (root->parent) {
+// 		TNode* runner = root;
+// 		while (runner->parent && runner->parent->left != runner) {
+// 			runner = runner->parent
+// 		}
+// 		return runner->parent;
+// 	}
+// }
+
+bool TreeContainsR(TNode* root, int item) {
+	if (root) {
+		if (root->data == item)
+			return true;
+		else
+			return TreeContainsR(root->left, item) || TreeContainsR(root->right, item);
 	}
+	return false;
+}
+
+TNode* firstCommonAncestor(TNode* root, TNode* a, TNode* b) {
+	if (!root)
+		return NULL;
+	if (root == a && root == b)
+		return root;
+	TNode* left = firstCommonAncestor(TNode* root->left, TNode* a, TNode* b);
+	TNode* right = firstCommonAncestor(TNode* root->right, TNode* a, TNode* b);
+
+	
 }
 
 int main() {
@@ -220,8 +241,9 @@ int main() {
 	// root->right->left->data = 2;
 
 	printBFSTree(root);
-
-	std::cout << checkIfBST(root) << std::endl;
+	
+	std::cout << TreeContainsR(root, 7) << std::endl;
+	//std::cout << checkIfBST(root) << std::endl;
 
 	// if (testOne() && testTwo()) {
 	// 	std::cout << "gg" << std::endl;
