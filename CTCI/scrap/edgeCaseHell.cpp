@@ -101,6 +101,5 @@ int solution(vector<int> &A) {
 
 int main() {
 
-
 	return 0;
 }
