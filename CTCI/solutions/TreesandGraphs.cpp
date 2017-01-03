@@ -250,6 +250,46 @@ TNode* firstCommonAncestor(TNode* root, TNode* a, TNode* b) {
 		return (left == NULL) ? right : left;
 }
 
+bool checkIfIdentical(TNode* a, TNode* b) {
+	if (!a && !b)
+		return true;
+	else if (!a || !b)
+		return false;
+
+	if (a->data != b->data)
+		return false;
+	else
+		return checkIfIdentical(a->left, b->left) && checkIfIdentical(a->right, b->right);
+}
+
+bool containsTree(TNode* t1, TNode* t2) {
+	if (!t2)
+		return true;
+	else if (!t1)
+		return false;
+
+	std::queue<TNode*> queue;
+	queue.push(t1);
+
+	while (!queue.empty()) {
+		TNode* r = queue.front();
+		queue.pop();
+
+		if (r) {
+
+			if (r->data == t2->data) {
+				if (checkIfIdentical(r, t2))
+					return true;
+			}
+ 
+			queue.push(r->left);
+			queue.push(r->right);
+		}
+	}
+
+	return false;
+}
+
 int main() {
 	std::vector<int> v;
 	v.push_back(1);
@@ -261,12 +301,14 @@ int main() {
 	v.push_back(7);
 
 	TNode* root = genMinialHeightBST(v);
+	TNode* root2 = genMinialHeightBST(v);
+	root2->right->right->data = 100;
 	
 	// root->right->left->data = 2;
 
 	printBFSTree(root);
 	
-	std::cout << firstCommonAncestor(root, root->right->right, new TNode(30))->data << std::endl;
+	std::cout << containsTree(root, root2->right) << std::endl;
 	//std::cout << checkIfBST(root) << std::endl;
 
 	// if (testOne() && testTwo()) {
