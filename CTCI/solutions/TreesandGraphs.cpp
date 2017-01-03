@@ -223,7 +223,7 @@ TNode* firstCommonAncestor(TNode* root, TNode* a, TNode* b) {
 	TNode* left = firstCommonAncestor(TNode* root->left, TNode* a, TNode* b);
 	TNode* right = firstCommonAncestor(TNode* root->right, TNode* a, TNode* b);
 
-	
+	if (left != NULL && left )
 }
 
 int main() {
