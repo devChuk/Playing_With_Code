@@ -215,15 +215,39 @@ bool TreeContainsR(TNode* root, int item) {
 	return false;
 }
 
+bool TreeContainsP(TNode* root, TNode* item) {
+	if (root) {
+		if (root == item)
+			return true;
+		else
+			return TreeContainsP(root->left, item) || TreeContainsP(root->right, item);
+	}
+	return false;	
+}
+
 TNode* firstCommonAncestor(TNode* root, TNode* a, TNode* b) {
+	if (!TreeContainsP(root, a) || !TreeContainsP(root, b))
+		return NULL;
+
 	if (!root)
 		return NULL;
 	if (root == a && root == b)
 		return root;
-	TNode* left = firstCommonAncestor(TNode* root->left, TNode* a, TNode* b);
-	TNode* right = firstCommonAncestor(TNode* root->right, TNode* a, TNode* b);
+	TNode* left = firstCommonAncestor(root->left, a, b);
+	TNode* right = firstCommonAncestor(root->right, a, b);
 
-	if (left != NULL && left )
+	if (left != NULL && left != a && left != b)
+		return left;
+
+	if (right != NULL && right != a && right != b)
+		return right;
+
+	if (left != NULL && right != NULL)
+		return root;
+	else if (root == a || root == b)
+		return root;
+	else
+		return (left == NULL) ? right : left;
 }
 
 int main() {
@@ -242,7 +266,7 @@ int main() {
 
 	printBFSTree(root);
 	
-	std::cout << TreeContainsR(root, 7) << std::endl;
+	std::cout << firstCommonAncestor(root, root->right->right, new TNode(30))->data << std::endl;
 	//std::cout << checkIfBST(root) << std::endl;
 
 	// if (testOne() && testTwo()) {
