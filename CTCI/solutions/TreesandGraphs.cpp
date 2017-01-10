@@ -290,6 +290,48 @@ bool containsTree(TNode* t1, TNode* t2) {
 	return false;
 }
 
+///
+int findDepth(TNode* root) {
+	if (!root)
+		return 0;
+	else
+		return 1 + std::max(findDepth(root->left), findDepth(root->right));
+}
+
+void findSum(TNode* root, int sum, std::vector<int> path, int level) {
+	if (!root)
+		return;
+
+	path[level] = root->data;
+
+	int n = 0;
+	for (int i = level; i >= 0; i--) {
+		n += path[i];
+		if (n == sum) {
+			for (int j = i; j <= level; j++) {
+				std::cout << path[j] << " ";
+			}
+			std::cout << std::endl;
+		}
+	}
+
+	findSum(root->left, sum, path, level + 1);
+	findSum(root->right, sum, path, level + 1);
+
+	path[level] = 0;
+
+}
+
+void findSum(TNode* root, int sum) {
+	if (root) {
+		int depth = findDepth(root);
+		std::vector<int> path (depth, 0);
+		findSum(root, sum, path, 0);
+	}
+}
+
+
+
 int main() {
 	std::vector<int> v;
 	v.push_back(1);
@@ -308,7 +350,8 @@ int main() {
 
 	printBFSTree(root);
 	
-	std::cout << containsTree(root, root2->right) << std::endl;
+	findSum(root, 7);
+	//std::cout << containsTree(root, root2->right) << std::endl;
 	//std::cout << checkIfBST(root) << std::endl;
 
 	// if (testOne() && testTwo()) {
