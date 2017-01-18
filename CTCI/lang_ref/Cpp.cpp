@@ -116,6 +116,23 @@ void replaceTwenty(std::string& str, int length) {
 	}
 }
 
+void removeDupes(LLNode* head) {
+	std::unordered_map<int, bool> record;
+	record.insert({head->data, true});
+	LLNode* current = head->next;
+	LLNode* prev = head;
+
+	while (current)
+		if (record.count(current->data) > 0) {
+			current = current->next;
+			prev->next = current;
+		} else {
+			record.insert({current->data, true});
+			current = current->next;
+			prev = prev->next;
+		}
+}
+
 int main() {
 	
 	while(false) {
@@ -287,3 +304,12 @@ int main() {
 
     return 0;
 }
+
+// std::sort O(nlogn)
+
+
+std::sort(mMyClassVector.begin(), mMyClassVector.end(), 
+    [](const MyClass & a, const MyClass & b) -> bool
+{ 
+    return a.mProperty > b.mProperty; 
+});
