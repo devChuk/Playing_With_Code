@@ -15,11 +15,13 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, vw/vh, 0.1, 1000 );
 
 var renderer = new THREE.WebGLRenderer({antialias: true});
-
 renderer.setSize( vw, vh );
 document.body.appendChild( renderer.domElement );
 
 camera.position.z = 655;
+
+closeEnough = 100;
+farEnough = 200;
 
 ////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
 
@@ -30,13 +32,13 @@ function map_range(value, low1, high1, low2, high2) {
 }
 
 function reset() {
-	this.scene = new THREE.Scene();
-	setup();
+    this.scene = new THREE.Scene();
+    setup();
 }
 
 window.addEventListener( 'resize', onWindowResize, false );
 function onWindowResize(){
-	vw = window.innerWidth; vh = window.innerHeight;
+    vw = window.innerWidth; vh = window.innerHeight;
     camera.aspect = vw / vh;
     camera.updateProjectionMatrix();
     renderer.setSize( vw, vh );
@@ -53,33 +55,33 @@ var setup = function () {
     stats = new Stats();
     container.appendChild( stats.dom );
 
-	var pointMaterial = new THREE.PointsMaterial({
-		color: 0xffffcc,
-		size: 0,
-		vertexColors: THREE.VertexColors
-	});
+    var pointMaterial = new THREE.PointsMaterial({
+        color: 0xffffcc,
+        size: 0,
+        vertexColors: THREE.VertexColors
+    });
 
-	pointGeometry = new THREE.Geometry();
-	movement = [];
-	var x, y, z;
-	for (var i = 0; i < 100; i++) {
-		x = (Math.random() * vw) - vw/2;
-		y = (Math.random() * vh) - vh/2;
-	  	z = 0;
-	  	pointGeometry.vertices.push(new THREE.Vector3(x, y, z));
-		pointGeometry.colors.push(new THREE.Color(1,1,1));
+    pointGeometry = new THREE.Geometry();
+    movement = [];
+    var x, y, z;
+    for (var i = 0; i < 100; i++) {
+        x = (Math.random() * vw) - vw/2;
+        y = (Math.random() * vh) - vh/2;
+        z = 0;
+        pointGeometry.vertices.push(new THREE.Vector3(x, y, z));
+        pointGeometry.colors.push(new THREE.Color(1,1,1));
 
-		movement.push({	dX: Math.random() * 1 - 0.5,
-						dY: Math.random() * 1 - 0.5,
-						dZ: 0/*Math.random() * 1 - 0.5*/});
-	}
+        movement.push({ dX: Math.random() * 1 - 0.5,
+                        dY: Math.random() * 1 - 0.5,
+                        dZ: 0/*Math.random() * 1 - 0.5*/});
+    }
 
-	var points = new THREE.Points(pointGeometry, pointMaterial);
-	scene.add(points);
+    var points = new THREE.Points(pointGeometry, pointMaterial);
+    scene.add(points);
 
-	lineMaterial = new THREE.LineBasicMaterial({
-		color: 0xE5E5E5,
-		linewidth: 2,
+    lineMaterial = new THREE.LineBasicMaterial({
+        color: 0xE5E5E5,
+        linewidth: 2,
         transparent: true,
         opacity: 0.1
     });
@@ -89,7 +91,7 @@ var setup = function () {
 var storage = {};
 
 var render = function () {
-	window.requestAnimationFrame( render );
+    window.requestAnimationFrame( render );
     //Update FPS counter.
     stats.update();
 
@@ -104,33 +106,38 @@ var render = function () {
     }
     var indexx = 0;
 
-	pointGeometry.vertices.forEach(function(point, index, array) {
-	    if (Math.abs(point.x) >= vw/2) {
-			movement[index].dX *= -1;
-	    } else if (Math.abs(point.y) >= vh/2) {
-	    	movement[index].dY *= -1;
-	    }
-	    point.add(new THREE.Vector3(movement[index].dX, movement[index].dY, movement[index].dZ));
+    pointGeometry.vertices.forEach(function(point, index, array) {
+        if (Math.abs(point.x) >= vw/2) {
+            movement[index].dX *= -1;
+        } else if (Math.abs(point.y) >= vh/2) {
+            movement[index].dY *= -1;
+        }
+        point.add(new THREE.Vector3(movement[index].dX, movement[index].dY, movement[index].dZ));
 
-        var closeEnough = 200;
+        
 
         for (var i = index + 1; i < array.length; i++) {
             var dist = sqrt(p(point.x - array[i].x) + p(point.y - array[i].y) + p(point.z - array[i].z));
-            if (dist <= closeEnough && dist != 0 &&
+            if (dist >= closeEnough && dist != 0 && dist <= farEnough &&
                 scene.children.length <= 400) {
                 var lineGeometry = new THREE.Geometry();
                 lineGeometry.vertices.push(point);
                 lineGeometry.vertices.push(array[i]);
                 storage[indexx] = new THREE.Line(lineGeometry, new THREE.LineBasicMaterial(lineMaterial));
-                var opacity_input = map_range(dist, 0, closeEnough, 70, 0)/100;
+                var opacity_input;
+                if (dist < (farEnough + closeEnough) / 2)
+                    opacity_input = map_range(dist, farEnough, closeEnough, 70, 0)/100;
+                else
+                    opacity_input = map_range(dist, closeEnough, farEnough, 70, 0)/100;
+                //var opacity_input = map_range(dist, closeEnough, farEnough, 70, 0)/100;
                 storage[indexx].material.opacity = opacity_input;
                 scene.add(storage[indexx]);
                 indexx++;
             }
         }
-	});
+    });
     pointGeometry.verticesNeedUpdate = true;
-	renderer.render(scene, camera);
+    renderer.render(scene, camera);
 };
 
 ////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
