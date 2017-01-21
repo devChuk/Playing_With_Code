@@ -62,7 +62,7 @@ function initMesh() {
 function screenXY(obj){
 
     var vector = obj.clone();
-    var windowWidth = window.innerWidth;
+    var windowWidth = document.documentElement.clientWidth;
     // var minWidth = 1280; // may need to edit this lol
 
     // if(windowWidth < minWidth) {
@@ -70,7 +70,7 @@ function screenXY(obj){
     // }
 
     var widthHalf = (windowWidth/2);
-    var heightHalf = (window.innerHeight/2);
+    var heightHalf = (document.documentElement.clientHeight/2);
 
     vector.project(camera);
 
@@ -110,6 +110,7 @@ var render = function () {
     var canvas = document.getElementById("2d");
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "green";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (model) {
         model.updateMatrixWorld();
@@ -123,17 +124,11 @@ var render = function () {
             vertices.push(model.geometry.vertices[i].clone());
             vertices[i].applyMatrix4(model.matrixWorld);
             vertices[i] = screenXY(vertices[i]);
-            ctx.fillRect(vertices[i].x, vertices[i].y, 4, 4);
+            ctx.fillRect(vertices[i].x, vertices[i].y, 10, 10);
         }
 
 
     }
-
-    
-    ctx.fillRect(200, 200, 4, 4);
-    ctx.fillRect(200, 200, 4, 4);
-
-
 
     renderer.render(scene, camera);
 };
