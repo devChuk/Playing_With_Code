@@ -14,16 +14,19 @@ var vh = window.innerHeight;
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, vw/vh, 0.1, 1000 );
 
-var renderer = new THREE.WebGLRenderer({antialias: true});
+var threedcanvas = document.getElementById("3d");
+var renderer = new THREE.WebGLRenderer({antialias: true,
+                                        canvas: threedcanvas});
 renderer.setSize( vw, vh );
-document.body.appendChild( renderer.domElement );
+scene.background = new THREE.Color( 0xffe0f4 );
+//document.body.appendChild( renderer.domElement );
 
 camera.position.z = 655;
 
 closeEnough = 100;
 farEnough = 200;
 
-var mesh;
+var model;
 
 ////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
 
@@ -48,23 +51,46 @@ function onWindowResize(){
 }
 
 function initMesh() {
-    console.log("initMesh start");
-
     var loader = new THREE.JSONLoader();
     loader.load('./res/js/model.json', function(geometry) {
-        mesh = new THREE.Mesh(geometry);
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = 100;
-        scene.add(mesh);
+        model = new THREE.Mesh(geometry);
+        model.scale.x = model.scale.y = model.scale.z = 100;
+        scene.add(model);
     });
-
-    console.log("initMesh end");
 }
+
+function screenXY(obj){
+
+    var vector = obj.clone();
+    var windowWidth = window.innerWidth;
+    // var minWidth = 1280; // may need to edit this lol
+
+    // if(windowWidth < minWidth) {
+    // windowWidth = minWidth;
+    // }
+
+    var widthHalf = (windowWidth/2);
+    var heightHalf = (window.innerHeight/2);
+
+    vector.project(camera);
+
+    vector.x = ( vector.x * widthHalf ) + widthHalf;
+    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+    vector.z = 0;
+
+    return vector;
+};
 
 ////////////////////////////////////////CREATING OBJECTS/////////////////////////////
 
 var setup = function () {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
+    scene.background = new THREE.Color( 0xffe0f4 );
+
+    var canvas = document.getElementById("2d");
+    canvas.width = vw;
+    canvas.height = vh;
 
     //Generate FPS counter.
     stats = new Stats();
@@ -81,13 +107,31 @@ var render = function () {
     //Update FPS counter.
     stats.update();
 
+    var canvas = document.getElementById("2d");
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "green";
+
+    if (model) {
+        model.updateMatrixWorld();
+
+        model.rotation.x += 0.02;
+        model.rotation.y += 0.02;
+        // model.rotation.z += 0.02;
+
+        vertices = [];
+        for (var i = 0; i < model.geometry.vertices.length; i++) {
+            vertices.push(model.geometry.vertices[i].clone());
+            vertices[i].applyMatrix4(model.matrixWorld);
+            vertices[i] = screenXY(vertices[i]);
+            ctx.fillRect(vertices[i].x, vertices[i].y, 4, 4);
+        }
+
+
+    }
 
     
-    if (mesh) {
-        mesh.rotation.x += 0.02;
-        mesh.rotation.y += 0.02;
-        // mesh.rotation.z += 0.02;
-    }
+    ctx.fillRect(200, 200, 4, 4);
+    ctx.fillRect(200, 200, 4, 4);
 
 
 

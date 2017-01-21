@@ -1,20 +1,36 @@
 {
-    "uvs":[],
-    "normals":[-1,0,0,-0,0,-1,1,0,0,0,0,1,0,-1,0,0,1,-0],
-    "materials":[],
-    "skinWeights":[],
+    "influencesPerVertex":2,
     "metadata":{
         "normals":6,
-        "version":3,
-        "type":"Geometry",
-        "generator":"io_three",
         "uvs":0,
-        "faces":6,
+        "type":"Geometry",
         "vertices":8,
-        "materials":0
+        "materials":1,
+        "generator":"io_three",
+        "faces":6,
+        "version":3
     },
-    "faces":[35,0,1,3,2,0,0,0,0,0,35,2,3,7,6,0,1,1,1,1,35,6,7,5,4,0,2,2,2,2,35,1,0,4,5,0,3,3,3,3,35,4,0,2,6,0,4,4,4,4,35,7,3,1,5,0,5,5,5,5],
-    "influencesPerVertex":2,
-    "vertices":[-0.309613,-0.757411,0.401052,-0.309613,1.24259,0.401051,-0.309613,-0.757411,-1.59895,-0.309613,1.24259,-1.59895,1.69039,-0.757411,0.401052,1.69039,1.24259,0.401051,1.69039,-0.757411,-1.59895,1.69039,1.24259,-1.59895],
-    "skinIndices":[]
+    "materials":[{
+        "shading":"phong",
+        "wireframe":false,
+        "blending":"NormalBlending",
+        "colorEmissive":[0,0,0],
+        "DbgIndex":0,
+        "visible":true,
+        "colorSpecular":[0.5,0.5,0.5],
+        "DbgColor":15658734,
+        "depthWrite":true,
+        "depthTest":true,
+        "opacity":1,
+        "transparent":false,
+        "DbgName":"Material",
+        "colorDiffuse":[0.64,0.64,0.64],
+        "specularCoef":50
+    }],
+    "normals":[-0,-1,0,0,1,-0,1,0,0,-0,-0,1,-1,-0,-0,0,0,-1],
+    "skinWeights":[],
+    "uvs":[],
+    "vertices":[1,-1,-1,1,-1,1,-1,-1,1,-1,-1,-1,1,1,-1,0.999999,1,1,-1,1,1,-1,1,-1],
+    "skinIndices":[],
+    "faces":[35,0,1,2,3,0,0,0,0,0,35,4,7,6,5,0,1,1,1,1,35,0,4,5,1,0,2,2,2,2,35,1,5,6,2,0,3,3,3,3,35,2,6,7,3,0,4,4,4,4,35,4,0,3,7,0,5,5,5,5]
 }
