@@ -51,7 +51,7 @@ function initMesh() {
     console.log("initMesh start");
 
     var loader = new THREE.JSONLoader();
-    loader.load('./res/js/untitled.json', function(geometry) {
+    loader.load('./res/js/model.json', function(geometry) {
         mesh = new THREE.Mesh(geometry);
         mesh.scale.x = mesh.scale.y = mesh.scale.z = 100;
         scene.add(mesh);
@@ -83,9 +83,11 @@ var render = function () {
 
 
     
-    mesh.rotation.x += 0.02;
-    mesh.rotation.y += 0.02;
-    mesh.rotation.z += 0.02;
+    if (mesh) {
+        mesh.rotation.x += 0.02;
+        mesh.rotation.y += 0.02;
+        // mesh.rotation.z += 0.02;
+    }
 
 
 
