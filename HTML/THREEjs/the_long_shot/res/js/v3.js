@@ -2,7 +2,10 @@
 Brian Chuk (brianch.uk)
 
 
-file:///home/brian_chuk/Desktop/Playing_With_Code/HTML/THREEjs/the_long_shot/index.html
+Last resort:
+http://www.blendswap.com/blends/view/21278
+https://www.turbosquid.com/3d-models/deer-blender-3d-model/822899
+
 */
 
 ////////////////////////////////////////SETUP////////////////////////////////////////
@@ -14,17 +17,13 @@ var vh = window.innerHeight;
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, vw/vh, 0.1, 1000 );
 
-var threedcanvas = document.getElementById("3d");
+var modelCanvas = document.getElementById("3d");
 var renderer = new THREE.WebGLRenderer({antialias: true,
-                                        canvas: threedcanvas});
-renderer.setSize( vw, vh );
-scene.background = new THREE.Color( 0xffe0f4 );
-//document.body.appendChild( renderer.domElement );
+                                        canvas: modelCanvas});
 
 camera.position.z = 655;
-
-closeEnough = 100;
-farEnough = 200;
+var closeEnough = 240;
+/* 130 240 */
 
 var model;
 
@@ -52,41 +51,32 @@ function onWindowResize(){
 
 function initMesh() {
     var loader = new THREE.JSONLoader();
-    loader.load('./res/js/model.json', function(geometry) {
+    loader.load('./res/js/model2.json', function(geometry) {
         model = new THREE.Mesh(geometry);
         model.scale.x = model.scale.y = model.scale.z = 100;
-        scene.add(model);
+        //scene.add(model);
     });
 }
 
-function screenXY(obj){
-
+function projectToScreen(obj){
     var vector = obj.clone();
     var windowWidth = document.documentElement.clientWidth;
-    // var minWidth = 1280; // may need to edit this lol
-
-    // if(windowWidth < minWidth) {
-    // windowWidth = minWidth;
-    // }
-
     var widthHalf = (windowWidth/2);
     var heightHalf = (document.documentElement.clientHeight/2);
-
     vector.project(camera);
-
     vector.x = ( vector.x * widthHalf ) + widthHalf;
     vector.y = - ( vector.y * heightHalf ) + heightHalf;
     vector.z = 0;
-
     return vector;
 };
 
 ////////////////////////////////////////CREATING OBJECTS/////////////////////////////
 
 var setup = function () {
+    renderer.setSize( vw, vh );
     container = document.createElement( 'div' );
     document.body.appendChild( container );
-    scene.background = new THREE.Color( 0xffe0f4 );
+    scene.background = new THREE.Color( 0x1b1b19 );
 
     var canvas = document.getElementById("2d");
     canvas.width = vw;
@@ -100,7 +90,6 @@ var setup = function () {
 }
 
 ////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
-var storage = {};
 
 var render = function () {
     window.requestAnimationFrame( render );
@@ -117,14 +106,27 @@ var render = function () {
 
         model.rotation.x += 0.02;
         model.rotation.y += 0.02;
-        // model.rotation.z += 0.02;
 
         vertices = [];
         for (var i = 0; i < model.geometry.vertices.length; i++) {
             vertices.push(model.geometry.vertices[i].clone());
             vertices[i].applyMatrix4(model.matrixWorld);
-            vertices[i] = screenXY(vertices[i]);
-            ctx.fillRect(vertices[i].x, vertices[i].y, 10, 10);
+            vertices[i] = projectToScreen(vertices[i]);
+            //ctx.fillRect(vertices[i].x, vertices[i].y, 10, 10);
+        }
+
+        for (var i = 0; i < vertices.length; i++) {
+            for (var j = i + 1; j < vertices.length; j++) {
+                    var dist = vertices[i].distanceTo(vertices[j]);
+                    if (dist < closeEnough) {
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(vertices[i].x, vertices[i].y);
+                        ctx.lineTo(vertices[j].x, vertices[j].y);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.stroke();
+                    }
+            }
         }
 
 
