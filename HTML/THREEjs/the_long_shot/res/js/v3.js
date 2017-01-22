@@ -22,7 +22,9 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
                                         canvas: modelCanvas});
 
 camera.position.z = 655;
-var closeEnough = 240;
+var closeEnough = 130;
+// var farEnough = 130;
+opacityLvl = 0.05;
 /* 130 240 */
 
 var model;
@@ -32,7 +34,7 @@ var model;
 function p(num) {return Math.pow(num, 2);}
 function sqrt(num) {return Math.sqrt(num);}
 function map_range(value, low1, high1, low2, high2) {
-    return Math.round(low2 + (high2 - low2) * (value - low1) / (high1 - low1));
+    return (low2 + (high2 - low2) * (value - low1) / (high1 - low1));
 }
 
 function reset() {
@@ -51,7 +53,7 @@ function onWindowResize(){
 
 function initMesh() {
     var loader = new THREE.JSONLoader();
-    loader.load('./res/js/model2.json', function(geometry) {
+    loader.load('./res/models/model2.json', function(geometry) {
         model = new THREE.Mesh(geometry);
         model.scale.x = model.scale.y = model.scale.z = 100;
         //scene.add(model);
@@ -119,7 +121,13 @@ var render = function () {
             for (var j = i + 1; j < vertices.length; j++) {
                     var dist = vertices[i].distanceTo(vertices[j]);
                     if (dist < closeEnough) {
-                        
+                        // if (dist < (farEnough + closeEnough) / 2)
+                        //     ctx.globalAlpha = map_range(dist, farEnough, closeEnough, 0.3, 0.05)/100;
+                        // else
+                        //     ctx.globalAlpha = map_range(dist, closeEnough, farEnough, 0.3, 0.05)/100;
+
+                        ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
+                        // ctx.globalAlpha=opacityLvl;
                         ctx.beginPath();
                         ctx.moveTo(vertices[i].x, vertices[i].y);
                         ctx.lineTo(vertices[j].x, vertices[j].y);
