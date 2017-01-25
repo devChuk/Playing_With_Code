@@ -40,6 +40,10 @@ var _goalPoints;
 // sphere model
 var sphereM;
 
+// starfield model
+var starFieldM = [];
+var starVelocities = [];
+
 // stag model
 var stagBorderM;
 var stagEarM;
@@ -75,7 +79,18 @@ function initMeshes() {
 
     var sphereG = new THREE.SphereGeometry(300, 15, 15);
     sphereM = new THREE.Mesh(sphereG);
-    //scene.add(sphereM);
+
+    for (var i = 0; i < 500; i++) {
+        starFieldM.push({
+            x: (Math.random() * canvas.width) - canvas.width/2,
+            y: (Math.random() * canvas.width) - canvas.width/2
+        });
+
+        starVelocities.push({
+            dx: Math.random() * 1 - 0.5,
+            dy: Math.random() * 1 - 0.5
+        });
+    }
 
     loader.load('./res/models/model2.json', function(geometry) {
     //loader.load('./res/models/stagFiles/ears.json', function(geometry) {
@@ -168,6 +183,11 @@ var render = function () {
             }
             break;
         case STAGE.STARFIELD:
+            //for (var i = 0; i < starFieldM.length; )
+
+            // loop through all starField vertices
+                // move each vertice based on movement[]
+            // double for loop them and create lines
 
             break;
         case STAGE.STAG:
