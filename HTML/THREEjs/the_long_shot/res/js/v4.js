@@ -129,7 +129,7 @@ var setup = function () {
     document.body.appendChild( container );
     scene.background = new THREE.Color( 0x1b1b19 );
 
-    var canvas = document.getElementById("2d");
+    canvas = document.getElementById("2d");
     canvas.width = vw;
     canvas.height = vh;
 
