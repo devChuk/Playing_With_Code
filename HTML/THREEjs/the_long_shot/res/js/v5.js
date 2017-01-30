@@ -43,7 +43,7 @@ var _goalMovements;
 var _goalPoints;
 var _goalPointsSatisfied;
 var _newStage;
-var transitionSpeed = 10;
+var transitionSpeed = 0.5;
 
 // sphere model
 var sphereM;
@@ -134,9 +134,33 @@ function startTransition(newStage) {
     _goalPointsSatisfied = [];
     switch(newStage) {
         case STAGE.STARFIELD:
-            _goalPoints = starFieldM;
+            transitionSpeed = 0.5;
+            _goalPoints = [];
+            for (var i = 0; i < 256; i++) {
+                _goalPoints.push({
+                    x: starFieldM[i].x,
+                    y: starFieldM[i].y
+                });
+            }
+
+            if (vertices.length < starFieldM.length) {
+                vertices.length = 250;
+                _goalPoints.length = 250;
+
+                //TODO -- generate 250 nodes from outside the screen, move them quickly in
+                
+
+                for (var i = 250; i < 500; i++) {
+                    vertices.push(vertices[i - 250].clone());
+                    _goalPoints.push({
+                        x: starFieldM[i].x,
+                        y: starFieldM[i].y
+                    });
+                }
+            }
             break;
         case STAGE.STAG:
+            transitionSpeed = 0.5;
             stagBorderM.updateMatrixWorld();
             _goalPoints = [];
 
@@ -172,12 +196,10 @@ function transitionTo(newStage) {
         _goalMovements.push({dx: diffX/magnitude * transitionSpeed,
                              dy: diffY/magnitude * transitionSpeed});
     }
-    var count = 0;
+
     for (var i = 0; i < vertices.length; i++) {
         if (_goalPointsSatisfied[i] == false && (vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y)) {
-        //if ((vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y)) {
             transitionComplete = false;
-            count++;
 
             if (sqrt(p(_goalPoints[i].x - vertices[i].x) + p(_goalPoints[i].y - vertices[i].y)) > transitionSpeed) {
                 vertices[i].x += _goalMovements[i].dx;
@@ -192,8 +214,6 @@ function transitionTo(newStage) {
             vertices[i].y = _goalPoints[i].y;
         }
     }
-    console.log(count);
-
 
     if (transitionComplete)
         _stage = newStage;
@@ -204,7 +224,7 @@ function genEdges(distanceThreshold, ctx) {
         for (var j = i + 1; j < vertices.length; j++) {
                 var dist = distanceBetween(vertices[i], vertices[j]);
                 if (dist < distanceThreshold) {
-                    ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
+                    ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.25, 0);
                     ctx.beginPath();
                     ctx.moveTo(vertices[i].x, vertices[i].y);
                     ctx.lineTo(vertices[j].x, vertices[j].y);
@@ -255,7 +275,7 @@ var render = function () {
         case STAGE.TRANSITION:
             switch(_newStage) {
                 case STAGE.STARFIELD:
-                    
+                    transitionSpeed += 0.1;
                     for (var i = 0; i < starFieldM.length; i++) {
                         starFieldM[i].x += starVelocities[i].dx;
                         starFieldM[i].y += starVelocities[i].dy;
@@ -271,6 +291,8 @@ var render = function () {
 
                     break;
                 case STAGE.STAG:
+
+                    transitionSpeed += 0.1;
                     stagBorderM.updateMatrixWorld();
                     stagBorderM.rotation.x += 0.01;
                     stagBorderM.rotation.y += 0.01;
@@ -290,9 +312,9 @@ var render = function () {
             break;
         case STAGE.SPHERE:
             sphereM.updateMatrixWorld();
-            sphereM.rotation.x += 0.004;
-            sphereM.rotation.y += 0.005;
-            sphereM.rotation.z += 0.008;
+            // sphereM.rotation.x += 0.001;
+            sphereM.rotation.y += 0.001;
+            // sphereM.rotation.z += 0.001;
 
             vertices = [];
             for (var i = 0; i < sphereM.geometry.vertices.length; i++) {
