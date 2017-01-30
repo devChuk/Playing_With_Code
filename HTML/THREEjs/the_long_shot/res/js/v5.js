@@ -40,9 +40,10 @@ var STAGE = {
 var _stage = STAGE.SPHERE;
 var vertices;
 var _goalMovements;
-var _newStage;
 var _goalPoints;
-var transitionSpeed = 40;
+var _goalPointsSatisfied;
+var _newStage;
+var transitionSpeed = 10;
 
 // sphere model
 var sphereM;
@@ -91,7 +92,7 @@ function initMeshes() {
     if (canvas.width * canvas.height > 550000)
         numStars = 500;
     else
-        numStars = 250;
+        numStars = 256;
 
     for (var i = 0; i < numStars; i++) {
         starFieldM.push({
@@ -130,6 +131,7 @@ function distanceBetween(p1, p2) {
 }
 
 function startTransition(newStage) {
+    _goalPointsSatisfied = [];
     switch(newStage) {
         case STAGE.STARFIELD:
             _goalPoints = starFieldM;
@@ -144,31 +146,13 @@ function startTransition(newStage) {
                 _goalPoints[i] = projectToScreen(_goalPoints[i]);
             }
             break;
-        }
-
-    // while (_goalPoints.length > vertices.length) {
-    //     vertices.push({
-    //         x: (canvas.width/2),
-    //         y: (canvas.height/2)
-    //     });
-    // }
+    }
+    for (var i = 0; i < _goalPoints.length; i++) {
+        _goalPointsSatisfied.push(false);
+    }
 
     if (_goalPoints.length < vertices.length) {
         vertices.length = _goalPoints.length;
-    }
-
-    //generate goalMovements
-    _goalMovements = [];
-    for (var i = 0; i < vertices.length; i++) {
-        var diffX = _goalPoints[i].x - vertices[i].x;
-        var diffY = _goalPoints[i].y - vertices[i].y;
-        var magnitude = sqrt(p(diffX) + p(diffY));
-
-        //figure out direction
-        //* by speed
-        //set to goalMovement.
-        _goalMovements.push({dx: diffX/magnitude * transitionSpeed,
-                             dy: diffY/magnitude * transitionSpeed});
     }
 
     _stage = STAGE.TRANSITION;
@@ -178,25 +162,37 @@ function startTransition(newStage) {
 
 function transitionTo(newStage) {
     var transitionComplete = true;
-    
-    for (var i = 0; i < vertices.length; i++) {
-        
-        if (vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y) {
-            transitionComplete = false;
 
-            //if far
+    _goalMovements = [];
+    for (var i = 0; i < vertices.length; i++) {
+        var diffX = _goalPoints[i].x - vertices[i].x;
+        var diffY = _goalPoints[i].y - vertices[i].y;
+        var magnitude = sqrt(p(diffX) + p(diffY));
+
+        _goalMovements.push({dx: diffX/magnitude * transitionSpeed,
+                             dy: diffY/magnitude * transitionSpeed});
+    }
+    var count = 0;
+    for (var i = 0; i < vertices.length; i++) {
+        if (_goalPointsSatisfied[i] == false && (vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y)) {
+        //if ((vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y)) {
+            transitionComplete = false;
+            count++;
+
             if (sqrt(p(_goalPoints[i].x - vertices[i].x) + p(_goalPoints[i].y - vertices[i].y)) > transitionSpeed) {
                 vertices[i].x += _goalMovements[i].dx;
                 vertices[i].y += _goalMovements[i].dy;
             } else {
-                //if close
+                _goalPointsSatisfied[i] = true;
                 vertices[i].x = _goalPoints[i].x;
                 vertices[i].y = _goalPoints[i].y;
             }
-
+        } else if (_goalPointsSatisfied[i] == true) {
+            vertices[i].x = _goalPoints[i].x;
+            vertices[i].y = _goalPoints[i].y;
         }
-
     }
+    console.log(count);
 
 
     if (transitionComplete)
@@ -257,21 +253,39 @@ var render = function () {
 
     switch(_stage) {
         case STAGE.TRANSITION:
+            switch(_newStage) {
+                case STAGE.STARFIELD:
+                    
+                    for (var i = 0; i < starFieldM.length; i++) {
+                        starFieldM[i].x += starVelocities[i].dx;
+                        starFieldM[i].y += starVelocities[i].dy;
+
+                        if (starFieldM[i].x < 0 || starFieldM[i].x > canvas.width)
+                            starVelocities[i].dx *= -1;
+
+                        if (starFieldM[i].y < 0 || starFieldM[i].y > canvas.height)
+                            starVelocities[i].dy *= -1;
+
+                        _goalPoints[i] = starFieldM[i];
+                    }
+
+                    break;
+                case STAGE.STAG:
+                    stagBorderM.updateMatrixWorld();
+                    stagBorderM.rotation.x += 0.01;
+                    stagBorderM.rotation.y += 0.01;
+
+                    for (var i = 0; i < _goalPoints.length; i++) {
+                        _goalPoints[i] = stagBorderM.geometry.vertices[i].clone();
+                        _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
+                        _goalPoints[i] = projectToScreen(_goalPoints[i]);
+                    }
+                    break;
+            }
+
             transitionTo(_newStage);
 
-            for (var i = 0; i < vertices.length; i++) {
-                for (var j = i + 1; j < vertices.length; j++) {
-                        var dist = distanceBetween(vertices[i], vertices[j]);
-                        if (dist < closeEnough) {
-                            ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
-                            ctx.beginPath();
-                            ctx.moveTo(vertices[i].x, vertices[i].y);
-                            ctx.lineTo(vertices[j].x, vertices[j].y);
-                            ctx.strokeStyle = '#ffffff';
-                            ctx.stroke();
-                        }
-                }
-            }
+            genEdges(closeEnough, ctx);
 
             break;
         case STAGE.SPHERE:
@@ -305,7 +319,7 @@ var render = function () {
                 vertices.push(starFieldM[i]);
             }
 
-            genEdges(100, ctx);
+            genEdges(closeEnough, ctx);
 
             break;
         case STAGE.STAG:
