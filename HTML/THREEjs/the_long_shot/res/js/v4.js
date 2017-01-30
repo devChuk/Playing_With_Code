@@ -25,6 +25,10 @@ var closeEnough = 130;
 opacityLvl = 0.05;
 /* 130 240 */
 
+// HTML Canvas variables
+var canvas;
+var starCloseEnough;
+
 // runtime values
 var STAGE = {
     TRANSITION: 0,
@@ -33,7 +37,7 @@ var STAGE = {
     STAG: 3,
 };
 
-var _stage = STAGE.SPHERE;
+var _stage = STAGE.STARFIELD;
 var _newStage;
 var _goalPoints;
 
@@ -80,15 +84,21 @@ function initMeshes() {
     var sphereG = new THREE.SphereGeometry(300, 15, 15);
     sphereM = new THREE.Mesh(sphereG);
 
-    for (var i = 0; i < 500; i++) {
+    var numStars;
+    if (canvas.width * canvas.height > 550000)
+        numStars = 500;
+    else
+        numStars = 250;
+
+    for (var i = 0; i < numStars; i++) {
         starFieldM.push({
-            x: (Math.random() * canvas.width) - canvas.width/2,
-            y: (Math.random() * canvas.width) - canvas.width/2
+            x: (Math.random() * canvas.width),
+            y: (Math.random() * canvas.height)
         });
 
         starVelocities.push({
-            dx: Math.random() * 1 - 0.5,
-            dy: Math.random() * 1 - 0.5
+            dx: Math.random() * 0.4 - 0.2,
+            dy: Math.random() * 0.4 - 0.2
         });
     }
 
@@ -114,8 +124,20 @@ function projectToScreen(obj){
     return vector;
 };
 
-function transitionTo(newStage, goalPoints) {
+function distanceBetween(p1, p2) {
+    return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));
+}
+
+function startTransition(newStage) {
+    
+
+
+
+
     _stage = STAGE.TRANSITION;
+}
+
+function transitionTo(newStage, goalPoints) {
     // if goalPoints not satisfied, then move points
 
     // if goalPoints are, then update _stage
@@ -137,6 +159,8 @@ var setup = function () {
     stats = new Stats();
     container.appendChild( stats.dom );
 
+    starFieldM = [];
+    starVelocities = [];
     initMeshes();
 }
 
@@ -161,7 +185,7 @@ var render = function () {
             sphereM.rotation.y += 0.005;
             sphereM.rotation.z += 0.008;
 
-            vertices = [];
+            var vertices = [];
             for (var i = 0; i < sphereM.geometry.vertices.length; i++) {
                 vertices.push(sphereM.geometry.vertices[i].clone());
                 vertices[i].applyMatrix4(sphereM.matrixWorld);
@@ -174,8 +198,8 @@ var render = function () {
                         if (dist < closeEnough) {
                             ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
                             ctx.beginPath();
-                            ctx.moveTo(vertices[i].x, vertices[i].y);
-                            ctx.lineTo(vertices[j].x, vertices[j].y);
+                            ctx.moveTo(vertices[i].x/2, vertices[i].y/2);
+                            ctx.lineTo(vertices[j].x/2, vertices[j].y/2);
                             ctx.strokeStyle = '#ffffff';
                             ctx.stroke();
                         }
@@ -183,7 +207,34 @@ var render = function () {
             }
             break;
         case STAGE.STARFIELD:
-            //for (var i = 0; i < starFieldM.length; )
+            var vertices = [];
+
+            for (var i = 0; i < starFieldM.length; i++) {
+                starFieldM[i].x += starVelocities[i].dx;
+                starFieldM[i].y += starVelocities[i].dy;
+
+                if (starFieldM[i].x < 0 || starFieldM[i].x > canvas.width)
+                    starVelocities[i].dx *= -1;
+
+                if (starFieldM[i].y < 0 || starFieldM[i].y > canvas.height)
+                    starVelocities[i].dy *= -1;
+
+                vertices.push(starFieldM[i]);
+            }
+
+            for (var i = 0; i < vertices.length; i++) {
+                for (var j = i + 1; j < vertices.length; j++) {
+                        var dist = distanceBetween(vertices[i], vertices[j]);
+                        if (dist < 100) {
+                            ctx.globalAlpha = map_range(dist, 0, 100, 0.5, 0);
+                            ctx.beginPath();
+                            ctx.moveTo(vertices[i].x, vertices[i].y);
+                            ctx.lineTo(vertices[j].x, vertices[j].y);
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.stroke();
+                        }
+                }
+            }
 
             // loop through all starField vertices
                 // move each vertice based on movement[]
@@ -197,7 +248,7 @@ var render = function () {
                 stagBorderM.rotation.x += 0.01;
                 stagBorderM.rotation.y += 0.01;
 
-                vertices = [];
+                var vertices = [];
                 for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
                     vertices.push(stagBorderM.geometry.vertices[i].clone());
                     vertices[i].applyMatrix4(stagBorderM.matrixWorld);
