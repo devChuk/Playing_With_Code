@@ -81,6 +81,64 @@ function onWindowResize(){
     reset();
 }
 
+function projectToScreen(obj){
+    var vector = obj.clone();
+    var windowWidth = document.documentElement.clientWidth;
+    var widthHalf = (windowWidth/2);
+    var heightHalf = (document.documentElement.clientHeight/2);
+    vector.project(camera);
+    vector.x = ( vector.x * widthHalf ) + widthHalf;
+    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+    vector.z = 0;
+    return vector;
+};
+
+function distanceBetween(p1, p2) {
+    return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));
+}
+
+function genEdges(distanceThreshold, ctx) {
+    for (var i = 0; i < vertices.length; i++) {
+        for (var j = i + 1; j < vertices.length; j++) {
+            var dist = distanceBetween(vertices[i], vertices[j]);
+            if (dist < distanceThreshold) {
+                ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(vertices[i].x, vertices[i].y);
+                ctx.lineTo(vertices[j].x, vertices[j].y);
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function genRanPtOutsideScreen(array) {
+    var perimeter = (canvas.width+ canvas.height) * 2;
+    var ptLoc = Math.random() * perimeter;
+    if (ptLoc < canvas.height && ptLoc > 0) {
+        array.push({
+            x: Math.random() * -500,
+            y: ptLoc
+        });
+    } else if (ptLoc < canvas.height + canvas.width && ptLoc > canvas.height) {
+        array.push({
+            x: ptLoc - canvas.height,
+            y: canvas.height + Math.random() * 500
+        });
+    } else if (ptLoc < canvas.height * 2 + canvas.width && ptLoc > canvas.height + canvas.width) {
+        array.push({
+            x: canvas.width + Math.random() * 500,
+            y: ptLoc - canvas.height - canvas.width
+        });
+    } else {
+        array.push({
+            x: ptLoc - canvas.height * 2 - canvas.width,
+            y: Math.random() * -500
+        });
+    }
+}
+
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
 function initMeshes() {
     var loader = new THREE.JSONLoader();
@@ -114,29 +172,13 @@ function initMeshes() {
     
 }
 
-function projectToScreen(obj){
-    var vector = obj.clone();
-    var windowWidth = document.documentElement.clientWidth;
-    var widthHalf = (windowWidth/2);
-    var heightHalf = (document.documentElement.clientHeight/2);
-    vector.project(camera);
-    vector.x = ( vector.x * widthHalf ) + widthHalf;
-    vector.y = - ( vector.y * heightHalf ) + heightHalf;
-    vector.z = 0;
-    return vector;
-};
-
-function distanceBetween(p1, p2) {
-    return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));
-}
-
 function startTransition(newStage) {
     _goalPointsSatisfied = [];
     switch(newStage) {
         case STAGE.STARFIELD:
             transitionSpeed = 1;
             _goalPoints = [];
-            for (var i = 0; i < 256; i++) {
+            for (var i = 0; i < 250; i++) {
                 _goalPoints.push({
                     x: starFieldM[i].x,
                     y: starFieldM[i].y
@@ -147,31 +189,8 @@ function startTransition(newStage) {
                 vertices.length = 250;
                 _goalPoints.length = 250;
 
-                //TODO -- generate 250 nodes from outside the screen, move them quickly in
-                var perimeter = (canvas.width+ canvas.height) * 2;
                 for (var i = 250; i < 500; i++) {
-                    var ptLoc = Math.random() * perimeter;
-                    if (ptLoc < canvas.height && ptLoc > 0) {
-                        vertices.push({
-                            x: Math.random() * -500,
-                            y: ptLoc
-                        });
-                    } else if (ptLoc < canvas.height + canvas.width && ptLoc > canvas.height) {
-                        vertices.push({
-                            x: ptLoc - canvas.height,
-                            y: canvas.height + Math.random() * 500
-                        });
-                    } else if (ptLoc < canvas.height * 2 + canvas.width && ptLoc > canvas.height + canvas.width) {
-                        vertices.push({
-                            x: canvas.width + Math.random() * 500,
-                            y: ptLoc - canvas.height - canvas.width
-                        });
-                    } else {
-                        vertices.push({
-                            x: ptLoc - canvas.height * 2 - canvas.width,
-                            y: Math.random() * -500
-                        });
-                    }                    
+                    genRanPtOutsideScreen(vertices);
 
                     _goalPoints.push({
                         x: starFieldM[i].x,
@@ -185,10 +204,14 @@ function startTransition(newStage) {
             stagBorderM.updateMatrixWorld();
             _goalPoints = [];
 
-            for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
-                _goalPoints.push(stagBorderM.geometry.vertices[i].clone());
-                _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
-                _goalPoints[i] = projectToScreen(_goalPoints[i]);
+            for (var i = 0; i < starFieldM.length; i++) {
+                if (i < stagBorderM.geometry.vertices.length) {
+                    _goalPoints.push(stagBorderM.geometry.vertices[i].clone());
+                    _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
+                    _goalPoints[i] = projectToScreen(_goalPoints[i]);
+                } else {
+                    genRanPtOutsideScreen(_goalPoints);
+                }
             }
             break;
     }
@@ -240,22 +263,6 @@ function transitionTo(newStage) {
         _stage = newStage;
 }
 
-function genEdges(distanceThreshold, ctx) {
-    for (var i = 0; i < vertices.length; i++) {
-        for (var j = i + 1; j < vertices.length; j++) {
-            var dist = distanceBetween(vertices[i], vertices[j]);
-            if (dist < distanceThreshold) {
-                ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.25, 0);
-                ctx.beginPath();
-                ctx.moveTo(vertices[i].x, vertices[i].y);
-                ctx.lineTo(vertices[j].x, vertices[j].y);
-                ctx.strokeStyle = '#ffffff';
-                ctx.stroke();
-            }
-        }
-    }
-}
-
 ////////////////////////////////////////CREATING OBJECTS/////////////////////////////
 
 var setup = function () {
@@ -288,6 +295,12 @@ var render = function () {
 
     var timeElapsed = Date.now() - startTime;
 
+    if (timeElapsed > 6000 && _stage == STAGE.SPHERE) {
+        startTransition(STAGE.STARFIELD);
+    } else if (timeElapsed > 12000 && _stage == STAGE.STARFIELD) {
+        startTransition(STAGE.STAG);
+    }
+
     var canvas = document.getElementById("2d");
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -318,7 +331,7 @@ var render = function () {
                     stagBorderM.rotation.x += 0.01;
                     stagBorderM.rotation.y += 0.01;
 
-                    for (var i = 0; i < _goalPoints.length; i++) {
+                    for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
                         _goalPoints[i] = stagBorderM.geometry.vertices[i].clone();
                         _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
                         _goalPoints[i] = projectToScreen(_goalPoints[i]);
@@ -333,9 +346,9 @@ var render = function () {
             break;
         case STAGE.SPHERE:
             sphereM.updateMatrixWorld();
-            // sphereM.rotation.x += 0.001;
+            sphereM.rotation.x += 0.001;
             sphereM.rotation.y += 0.001;
-            // sphereM.rotation.z += 0.001;
+            sphereM.rotation.z += 0.001;
 
             vertices = [];
             for (var i = 0; i < sphereM.geometry.vertices.length; i++) {
