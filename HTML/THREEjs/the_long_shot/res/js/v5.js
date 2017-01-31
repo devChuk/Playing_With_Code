@@ -134,7 +134,7 @@ function startTransition(newStage) {
     _goalPointsSatisfied = [];
     switch(newStage) {
         case STAGE.STARFIELD:
-            transitionSpeed = 0.5;
+            transitionSpeed = 1;
             _goalPoints = [];
             for (var i = 0; i < 256; i++) {
                 _goalPoints.push({
@@ -148,10 +148,31 @@ function startTransition(newStage) {
                 _goalPoints.length = 250;
 
                 //TODO -- generate 250 nodes from outside the screen, move them quickly in
-                
-
+                var perimeter = (canvas.width+ canvas.height) * 2;
                 for (var i = 250; i < 500; i++) {
-                    vertices.push(vertices[i - 250].clone());
+                    var ptLoc = Math.random() * perimeter;
+                    if (ptLoc < canvas.height && ptLoc > 0) {
+                        vertices.push({
+                            x: Math.random() * -500,
+                            y: ptLoc
+                        });
+                    } else if (ptLoc < canvas.height + canvas.width && ptLoc > canvas.height) {
+                        vertices.push({
+                            x: ptLoc - canvas.height,
+                            y: canvas.height + Math.random() * 500
+                        });
+                    } else if (ptLoc < canvas.height * 2 + canvas.width && ptLoc > canvas.height + canvas.width) {
+                        vertices.push({
+                            x: canvas.width + Math.random() * 500,
+                            y: ptLoc - canvas.height - canvas.width
+                        });
+                    } else {
+                        vertices.push({
+                            x: ptLoc - canvas.height * 2 - canvas.width,
+                            y: Math.random() * -500
+                        });
+                    }                    
+
                     _goalPoints.push({
                         x: starFieldM[i].x,
                         y: starFieldM[i].y
@@ -222,15 +243,15 @@ function transitionTo(newStage) {
 function genEdges(distanceThreshold, ctx) {
     for (var i = 0; i < vertices.length; i++) {
         for (var j = i + 1; j < vertices.length; j++) {
-                var dist = distanceBetween(vertices[i], vertices[j]);
-                if (dist < distanceThreshold) {
-                    ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.25, 0);
-                    ctx.beginPath();
-                    ctx.moveTo(vertices[i].x, vertices[i].y);
-                    ctx.lineTo(vertices[j].x, vertices[j].y);
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.stroke();
-                }
+            var dist = distanceBetween(vertices[i], vertices[j]);
+            if (dist < distanceThreshold) {
+                ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.25, 0);
+                ctx.beginPath();
+                ctx.moveTo(vertices[i].x, vertices[i].y);
+                ctx.lineTo(vertices[j].x, vertices[j].y);
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+            }
         }
     }
 }
