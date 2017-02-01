@@ -39,9 +39,11 @@ var STAGE = {
 
 var _stage = STAGE.SPHERE;
 var vertices;
-var _goalMovements;
+var _distanceTravelled;
 var _goalPoints;
+var _goalMovements;
 var _goalPointsSatisfied;
+var _speeds;
 var _newStage;
 var transitionSpeed = 0.5;
 
@@ -174,15 +176,18 @@ function initMeshes() {
 
 function startTransition(newStage) {
     _goalPointsSatisfied = [];
+    _distanceTravelled = [];
     switch(newStage) {
         case STAGE.STARFIELD:
             transitionSpeed = 1;
             _goalPoints = [];
+            _distanceTravelled = [];
             for (var i = 0; i < 250; i++) {
                 _goalPoints.push({
                     x: starFieldM[i].x,
                     y: starFieldM[i].y
                 });
+                _distanceTravelled.push(0);
             }
 
             if (vertices.length < starFieldM.length) {
@@ -196,6 +201,7 @@ function startTransition(newStage) {
                         x: starFieldM[i].x,
                         y: starFieldM[i].y
                     });
+                    _distanceTravelled.push(0);
                 }
             }
             break;
@@ -212,6 +218,7 @@ function startTransition(newStage) {
                 } else {
                     genRanPtOutsideScreen(_goalPoints);
                 }
+                _distanceTravelled.push(0);
             }
             break;
     }
@@ -232,20 +239,36 @@ function transitionTo(newStage) {
     var transitionComplete = true;
 
     _goalMovements = [];
+    _speeds = [];
     for (var i = 0; i < vertices.length; i++) {
         var diffX = _goalPoints[i].x - vertices[i].x;
         var diffY = _goalPoints[i].y - vertices[i].y;
         var magnitude = sqrt(p(diffX) + p(diffY));
 
-        _goalMovements.push({dx: diffX/magnitude * transitionSpeed,
-                             dy: diffY/magnitude * transitionSpeed});
+        // (progress == 1) => trip is 100% complete
+        var progress = _distanceTravelled[i] / (magnitude + _distanceTravelled[i]);
+        var markerOne = 0.3;
+        var markerTwo = 0.5;
+        var speed = 0;
+        if (progress < markerOne) {
+            speed = map_range(progress, 0, markerOne, 0.5, 20);
+        } else if (progress >= markerOne && progress <= markerTwo) {
+            speed = 20;
+        } else if (progress >= markerTwo) {
+            speed = map_range(progress, markerTwo, 1, 20, 5);
+        }
+
+        _goalMovements.push({dx: diffX/magnitude * speed,
+                             dy: diffY/magnitude * speed});
+        _distanceTravelled[i] += speed;
+        _speeds.push(speed);
     }
 
     for (var i = 0; i < vertices.length; i++) {
-        if (_goalPointsSatisfied[i] == false && (vertices[i].x != _goalPoints[i].x && vertices[i].y != _goalPoints[i].y)) {
+        if (_goalPointsSatisfied[i] == false) {
             transitionComplete = false;
 
-            if (sqrt(p(_goalPoints[i].x - vertices[i].x) + p(_goalPoints[i].y - vertices[i].y)) > transitionSpeed) {
+            if (sqrt(p(_goalPoints[i].x - vertices[i].x) + p(_goalPoints[i].y - vertices[i].y)) > _speeds[i]) {
                 vertices[i].x += _goalMovements[i].dx;
                 vertices[i].y += _goalMovements[i].dy;
             } else {
@@ -295,9 +318,11 @@ var render = function () {
 
     var timeElapsed = Date.now() - startTime;
 
-    if (timeElapsed > 8000 && _stage == STAGE.SPHERE) {
+    // if (timeElapsed > 8000 && _stage == STAGE.SPHERE) {
+    if (timeElapsed > 6000 && _stage == STAGE.SPHERE) {       
         startTransition(STAGE.STARFIELD);
-    } else if (timeElapsed > 16000 && _stage == STAGE.STARFIELD) {
+    // } else if (timeElapsed > 16000 && _stage == STAGE.STARFIELD) {
+    } else if (timeElapsed > 12000 && _stage == STAGE.STARFIELD) {        
         startTransition(STAGE.STAG);
     }
 
@@ -340,6 +365,7 @@ var render = function () {
             }
 
             transitionTo(_newStage);
+            // transitionTo(_newStage);
 
             genEdges(closeEnough, ctx);
 
@@ -381,8 +407,8 @@ var render = function () {
         case STAGE.STAG:
             if (stagBorderM) {
                 stagBorderM.updateMatrixWorld();
-                stagBorderM.rotation.x += 0.01;
-                stagBorderM.rotation.y += 0.01;
+                stagBorderM.rotation.x += 0.006;
+                stagBorderM.rotation.y += 0.006;
 
                 vertices = [];
                 for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
