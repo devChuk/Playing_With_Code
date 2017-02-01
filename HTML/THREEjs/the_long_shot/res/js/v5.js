@@ -295,9 +295,9 @@ var render = function () {
 
     var timeElapsed = Date.now() - startTime;
 
-    if (timeElapsed > 6000 && _stage == STAGE.SPHERE) {
+    if (timeElapsed > 8000 && _stage == STAGE.SPHERE) {
         startTransition(STAGE.STARFIELD);
-    } else if (timeElapsed > 12000 && _stage == STAGE.STARFIELD) {
+    } else if (timeElapsed > 16000 && _stage == STAGE.STARFIELD) {
         startTransition(STAGE.STAG);
     }
 
