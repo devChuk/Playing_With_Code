@@ -5,6 +5,8 @@ Tic Tac Toe game
 #include <vector>
 #include <string>
 #include <limits>
+#include <cstdlib>
+#include <ctime>
 
 class TicTacToe {
 private:
@@ -29,7 +31,7 @@ public:
                 << std::endl;
 	}
 
-	bool makeMove(const int index) {
+	bool makePlayerMove(const int index) {
 		if (board[index] == ' ') {
 			board[index] = currTurn;
 			switch(currTurn) {
@@ -82,6 +84,26 @@ public:
 
 		return result;
 	}
+
+	void makeAIMove() {
+		// determine available spots
+		// randomly pick a spot
+		// make our move
+
+		std::vector<int> openIndices;
+
+		for (int i = 0; i < board.size(); i++) {
+			if (board[i] == ' ') {
+				openIndices.push_back(i);
+			}
+		}
+
+		srand(time(NULL));
+		int randomIndex = std::rand() % openIndices.size();
+		std::cout << randomIndex << std::endl;
+
+		makePlayerMove(openIndices[randomIndex]);
+	}
 };
 
 
@@ -92,19 +114,26 @@ int main() {
 	std::cout << "Ctrl+C to exit" << std::endl;
 	game.drawBoard();
 
-	while (winner == ' ') {
-		int index;
-		std::cin >> index;
+	bool playersTurn = true;
 
-		while (std::cin.fail() || index > 8 || index < 0 || !game.makeMove(index)) {
-			std::cout << "INVALID INPUT! Please try again." << std::endl;
-			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	while (winner == ' ') {
+		if (playersTurn) {
+			int index;
 			std::cin >> index;
+			while (std::cin.fail() || index > 8 || index < 0 || !game.makePlayerMove(index)) {
+				std::cout << "INVALID INPUT! Please try again." << std::endl;
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				std::cin >> index;
+			}
+		} else {
+			game.makeAIMove();
 		}
 
 		winner = game.checkWinner();
 		game.drawBoard();
+
+		playersTurn = !playersTurn;
 	}
 
 	if (winner == 'D') {
