@@ -54,7 +54,6 @@ int solution(int N, string &S) {
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 /*
-I finished both tasks 30 minutes early and I'm pretty sure they satisfy all cases.
 Here's a cat
 ───────────────────────────────────────
 ───▐▀▄───────▄▀▌───▄▄▄▄▄▄▄─────────────
@@ -135,3 +134,20 @@ vector<int> solution(vector<int> &T) {
 
 // Ex: 123 = [ABC][DEF][GHI]
 // based off of dictionary & hashmap of valid words
+
+
+// image problem.
+// get a 2D array of black and white pixels
+// find the largest blob of pixels and return its size
+
+
+
+// stock names and prices
+// you have a datastore of capacity C and need to implement a caching later
+// it'll store values by key and value and have insert() and get()
+// if insert is called and the datastore is at capacity, then replace the
+// least recently used element with the new item
+
+
+
+// dank memes
