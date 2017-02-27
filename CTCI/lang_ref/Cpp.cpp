@@ -302,6 +302,15 @@ int main() {
 
 	
 
+	vector<vector<bool>> isVisited(n, vector<bool>(n, false));
+    vector<array<int, 2>> pD;   // possible directions
+
+    vector<vector<int>> result;
+    result.resize(n-1);
+    for (int i = 0; i < result.size(); i++) {
+        result[i].resize(n - 1);
+    }
+
     return 0;
 }
 
