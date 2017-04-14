@@ -20,6 +20,7 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
                                         canvas: modelCanvas});
 camera.position.z = 655;
 var closeEnough = 130;
+var closeEnough2 = 370;
 opacityLvl = 0.05;
 /* 130 240 */
 
@@ -34,7 +35,8 @@ var STAGE = {
     TRANSITION: 0,
     SPHERE: 1,
     STARFIELD: 2,
-    STAG: 3,
+    CUBE: 3,
+    STAG: 4
 };
 
 var _stage = STAGE.SPHERE;
@@ -47,8 +49,9 @@ var _speeds;
 var _newStage;
 var transitionSpeed = 0.5;
 
-// sphere model
+// shape model
 var sphereM;
+var cubeM;
 
 // starfield model
 var starFieldM = [];
@@ -165,13 +168,38 @@ function initMeshes() {
             dy: Math.random() * 0.4 - 0.2
         });
     }
+    // model deets:
+    // model2       ellipsoid
+    // model3       cube
+    // model        some flat random shape
+    // sampleModel  building prisms
 
-    loader.load('./res/models/model2.json', function(geometry) {
-        stagBorderM = new THREE.Mesh(geometry);
-        stagBorderM.scale.x = stagBorderM.scale.y = stagBorderM.scale.z = 100;
+
+    loader.load('./res/models/model3.json', function(geometry) {
+        cubeM = new THREE.Mesh(geometry);
+        cubeM.scale.x = cubeM.scale.y = cubeM.scale.z = 100;
     });
 
-    
+
+    loader.load('./res/models/stag.json', function(geometry) {
+        stagBorderM = new THREE.Mesh(geometry);
+        stagBorderM.scale.x = stagBorderM.scale.y = stagBorderM.scale.z = 50000;
+    });
+
+    // setup stag model?
+    // start with a flat rectangle to figure out shape
+    // we have some scaling bug. fix it.
+    // then trace the border
+    // also, have more faith.
+
+    /*
+    var stagBorderM;
+    var stagEarM;
+    var stagEyeM;
+    var stagSnoutM;
+    var stagFadeM;
+
+    */
 }
 
 function startTransition(newStage) {
@@ -205,15 +233,15 @@ function startTransition(newStage) {
                 }
             }
             break;
-        case STAGE.STAG:
+        case STAGE.CUBE:
             transitionSpeed = 0.5;
-            stagBorderM.updateMatrixWorld();
+            cubeM.updateMatrixWorld();
             _goalPoints = [];
 
             for (var i = 0; i < starFieldM.length; i++) {
-                if (i < stagBorderM.geometry.vertices.length) {
-                    _goalPoints.push(stagBorderM.geometry.vertices[i].clone());
-                    _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
+                if (i < cubeM.geometry.vertices.length) {
+                    _goalPoints.push(cubeM.geometry.vertices[i].clone());
+                    _goalPoints[i].applyMatrix4(cubeM.matrixWorld);
                     _goalPoints[i] = projectToScreen(_goalPoints[i]);
                 } else {
                     genRanPtOutsideScreen(_goalPoints);
@@ -307,6 +335,8 @@ var setup = function () {
 
     startTime = Date.parse(new Date());
     initMeshes();
+
+    hurrdurr = 0;
 }
 
 ////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
@@ -318,12 +348,13 @@ var render = function () {
 
     var timeElapsed = Date.now() - startTime;
 
-    if (timeElapsed > 8000 && _stage == STAGE.SPHERE) {
+    //8000, 18000
+    if (timeElapsed > 1000 && _stage == STAGE.SPHERE) {
     // if (timeElapsed > 6000 && _stage == STAGE.SPHERE) {       
         startTransition(STAGE.STARFIELD);
-    } else if (timeElapsed > 18000 && _stage == STAGE.STARFIELD) {
+    } else if (timeElapsed > 5000 && _stage == STAGE.STARFIELD) {
     // } else if (timeElapsed > 12000 && _stage == STAGE.STARFIELD) {        
-        startTransition(STAGE.STAG);
+        startTransition(STAGE.CUBE);
     }
 
     var canvas = document.getElementById("2d");
@@ -349,23 +380,25 @@ var render = function () {
                     }
 
                     break;
-                case STAGE.STAG:
+                case STAGE.CUBE:
 
                     transitionSpeed += 0.1;
-                    stagBorderM.updateMatrixWorld();
-                    stagBorderM.rotation.x += 0.01;
-                    stagBorderM.rotation.y += 0.01;
+                    cubeM.updateMatrixWorld();
+                    cubeM.rotation.x += 0.01;
+                    cubeM.rotation.y += 0.01;
 
-                    for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
-                        _goalPoints[i] = stagBorderM.geometry.vertices[i].clone();
-                        _goalPoints[i].applyMatrix4(stagBorderM.matrixWorld);
+                    for (var i = 0; i < cubeM.geometry.vertices.length; i++) {
+                        _goalPoints[i] = cubeM.geometry.vertices[i].clone();
+                        _goalPoints[i].applyMatrix4(cubeM.matrixWorld);
                         _goalPoints[i] = projectToScreen(_goalPoints[i]);
+                    }
+                    if (closeEnough < closeEnough2) {
+                        closeEnough++;
                     }
                     break;
             }
 
             transitionTo(_newStage);
-            // transitionTo(_newStage);
 
             genEdges(closeEnough, ctx);
 
@@ -404,11 +437,25 @@ var render = function () {
             genEdges(closeEnough, ctx);
 
             break;
+        case STAGE.CUBE:
+            if (cubeM) {
+                cubeM.updateMatrixWorld();
+                cubeM.rotation.x += 0.006;
+                cubeM.rotation.y += 0.006;
+
+                vertices = [];
+                for (var i = 0; i < cubeM.geometry.vertices.length; i++) {
+                    vertices.push(cubeM.geometry.vertices[i].clone());
+                    vertices[i].applyMatrix4(cubeM.matrixWorld);
+                    vertices[i] = projectToScreen(vertices[i]);
+                }
+
+                genEdges(closeEnough2, ctx);
+            }
+            break;
         case STAGE.STAG:
             if (stagBorderM) {
                 stagBorderM.updateMatrixWorld();
-                stagBorderM.rotation.x += 0.006;
-                stagBorderM.rotation.y += 0.006;
 
                 vertices = [];
                 for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
@@ -417,7 +464,7 @@ var render = function () {
                     vertices[i] = projectToScreen(vertices[i]);
                 }
 
-                genEdges(closeEnough, ctx);
+                genEdges(1000, ctx);
             }
             break;
     }

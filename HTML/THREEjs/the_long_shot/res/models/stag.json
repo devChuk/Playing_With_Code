@@ -1,0 +1,20 @@
+{
+    "normals":[0,0,1],
+    "vertices":[-2.05675,-2.74489,-5.75736,1.81378,-2.74489,-5.75736,-2.05675,2.91587,-5.75736,1.81378,2.91587,-5.75736],
+    "faces":[35,0,1,3,2,0,0,0,0,0],
+    "influencesPerVertex":2,
+    "uvs":[],
+    "skinWeights":[],
+    "skinIndices":[],
+    "materials":[],
+    "metadata":{
+        "normals":1,
+        "type":"Geometry",
+        "faces":1,
+        "version":3,
+        "uvs":0,
+        "materials":0,
+        "vertices":4,
+        "generator":"io_three"
+    }
+}
