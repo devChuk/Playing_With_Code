@@ -21,7 +21,6 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
 camera.position.z = 655;
 var closeEnough = 130;
 var closeEnough2 = 370;
-opacityLvl = 0.05;
 /* 130 240 */
 
 // HTML Canvas variables
@@ -183,7 +182,7 @@ function initMeshes() {
 
     loader.load('./res/models/stag.json', function(geometry) {
         stagBorderM = new THREE.Mesh(geometry);
-        stagBorderM.scale.x = stagBorderM.scale.y = stagBorderM.scale.z = 50000;
+        stagBorderM.scale.x = stagBorderM.scale.y = 150;
     });
 
     // setup stag model?
@@ -198,7 +197,6 @@ function initMeshes() {
     var stagEyeM;
     var stagSnoutM;
     var stagFadeM;
-
     */
 }
 
@@ -464,7 +462,7 @@ var render = function () {
                     vertices[i] = projectToScreen(vertices[i]);
                 }
 
-                genEdges(1000, ctx);
+                genEdges(20000, ctx);
             }
             break;
     }
