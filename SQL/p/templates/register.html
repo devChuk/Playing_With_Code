@@ -1,0 +1,147 @@
+<!Doctype html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	</head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>This is the register page.</h1>
+	    <form action="/registerAuth" method="POST">
+	    	<label for="user_type">What type of user are you?</label>
+	    	<br>
+        	<select id="user_type" name="user_type">
+        		<option value="customer">customer</option>
+            	<option value="booking_agent">booking agent</option>
+            	<option value="airline_staff">airline staff</option>
+    		</select>
+    		<br>
+    		<br>
+    		<div id="cust">
+    			<label for="Email">Email</label><br>
+			    <input required class="cust" type="Email" name="Email" placeholder="Email">
+			    <br>
+			    <br>
+			    <label for="Password">Password</label><br>
+			    <input required class="cust" type="Passsword" name="Password" placeholder="Password">
+			    <br>
+			    <br>
+			    <label for="Name">Name</label><br>
+			    <input required class="cust" type="Name" name="Name" placeholder="Name">
+			    <br>
+			    <br>
+			    <fieldset>
+			    	<legend>Address</legend>
+			    	<label for="Building_Number">Building Number</label><br>
+				    <input required class="cust" type="Building_Number" name="Building_Number" placeholder="Building Number">
+				    <br>
+				    <br>
+				    <label for="Street">Street</label><br>
+				    <input required class="cust" type="Street" name="Street" placeholder="Street">
+				    <br>
+				    <br>
+				    <label for="City">City</label><br>
+				    <input required class="cust" type="City" name="City" placeholder="City">
+				    <br>
+				    <br>
+				    <label for="State">State</label><br>
+				    <input required class="cust" type="State" name="State" placeholder="State">
+			    </fieldset>
+			    <br>
+			    <br>
+			    <label for="Phone_Number">Phone Number</label><br>
+			    <input required class="cust" type="Phone_Number" name="Phone_Number" placeholder="Phone Number">
+			    <br>
+			    <br>
+			    <label for="Passport_Number">Passport Number</label><br>
+			    <input required class="cust" type="Passport_Number" name="Passport_Number" placeholder="Passport Number">
+			    <br>
+			    <br>
+			    <label for="Passport_Expiration">Passport Expiration</label><br>
+			    <input required class="cust" type="date" name="Passport_Expiration" placeholder="Passport Expiration">
+			    <br>
+			    <br>
+			    <label for="Passport_Country">Passport Country</label><br>
+			    <input required class="cust" type="Passport_Country" name="Passport_Country" placeholder="Passport Country">
+			    <br>
+			    <br>
+			    <label for="Date_Of_Birth">Date Of Birth</label><br>
+			    <input required class="cust" type="date" name="Date_Of_Birth" placeholder="Date Of Birth">
+			    <br>
+			    <br>
+    		</div>
+    		<div id="book">
+    			<label for="Email">Email</label><br>
+			    <input required class="book" type="Email" name="Email" placeholder="Email">
+			    <br>
+			    <br>
+			    <label for="Password">Password</label><br>
+			    <input required class="book" type="Passsword" name="Password" placeholder="Password">
+			    <br>
+			    <br>
+			    <label for="Booking_Agent_ID">Booking Agent ID</label><br>
+			    <input required class="book" type="Booking_Agent_ID" name="Booking_Agent_ID" placeholder="Booking Agent ID">
+			    <br>
+			    <br>
+    		</div>
+    		<div id="airl">
+    			<label for="Username">Username</label><br>
+			    <input required class="airl" type="Username" name="Username" placeholder="Username">
+			    <br>
+			    <br>
+			    <label for="Password">Password</label><br>
+			    <input required class="airl" type="Passsword" name="Password" placeholder="Password">
+			    <br>
+			    <br>
+			    <label for="First_Name">First Name</label><br>
+			    <input required class="airl" type="First_Name" name="First_Name" placeholder="First Name">
+			    <br>
+			    <br>
+			    <label for="Last_Name">Last Name</label><br>
+			    <input required class="airl" type="Last_Name" name="Last_Name" placeholder="Last Name">
+			    <br>
+			    <br>
+			    <label for="Date_Of_Birth">Date Of Birth</label><br>
+			    <input required class="airl" type="Date_Of_Birth" name="Date_Of_Birth" placeholder="Date Of Birth">
+			    <br>
+			    <br>
+			    <label for="Airline_Name">Airline Name</label><br>
+			    <input required class="airl" type="Airline_Name" name="Airline_Name" placeholder="Airline Name">
+			    <br>
+			    <br>
+    		</div>
+    		<input type="submit" value="Register" />
+	    </form>
+
+	    <script>
+			$("#book").hide();
+			$('.book').prop('disabled', true);
+			$("#airl").hide();
+			$('.airl').prop('disabled', true);
+
+	    	$("#user_type").on("change", function() {
+				if (this.value == "customer") {
+					$("#cust").show();
+					$('.cust').prop('disabled', false);
+					$("#book").hide();
+					$('.book').prop('disabled', true);
+					$("#airl").hide();
+					$('.airl').prop('disabled', true);
+				} else if (this.value == "booking_agent") {
+					$("#cust").hide();
+					$('.cust').prop('disabled', true);
+					$("#book").show();
+					$('.book').prop('disabled', false);
+					$("#airl").hide();
+					$('.airl').prop('disabled', true);
+				} else if (this.value == "airline_staff") {
+					$("#cust").hide();
+					$('.cust').prop('disabled', true);
+					$("#book").hide();
+					$('.book').prop('disabled', true);
+					$("#airl").show();
+					$('.airl').prop('disabled', false);
+				}
+			});
+	    </script>
+	</body>
+</html>

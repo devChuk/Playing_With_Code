@@ -1,0 +1,20 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<h1>This is the home page.</h1>
+		
+		{% if not username %}
+			<h2>You are not logged in. Please take one of the actions below.</h2>
+			<div><a href="/login">Log in</a></div>
+			<div><a href="/register">Register</a></div>
+		{% else %}
+			<h2>You are logged in. Welcome, INSERT_NAME</h2>
+			<div>INSERT_ACTIONS_HERE</div>
+
+			<br>
+			<div><a href="/logout">Log out</a></div>
+		{% endif %}
+	</body>
+
+</html>
