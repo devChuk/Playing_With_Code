@@ -23,44 +23,63 @@ conn = pymysql.connect(host='localhost',
 @app.route("/")
 def index():
 	if 'username' in session:
-		upcoming_flights = None
+		upcoming_flights = []
+		data = []
+		cursor = conn.cursor()
 
+		cursor.execute('SELECT * FROM airport')
+		airport_data = cursor.fetchall();
+		airport_dict = {};
+		for row in airport_data:
+			airport_dict[row['airport_name']] = row['airport_city']
+
+		if session['type'] == 'customer':
+			query = 'SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = %s'
+			cursor.execute(query, (session['username']))
+			data = cursor.fetchall()
+		if session['type'] == 'booking_agent':
+			cursor.execute('SELECT booking_agent_id FROM booking_agent WHERE email=%s', session['username']);
+			ID = cursor.fetchone()['booking_agent_id']
+
+			query = 'SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = %s'
+			cursor.execute(query, (ID))
+			data = cursor.fetchall()
 		if session['type'] == 'airline_staff':
-			cursor = conn.cursor()
-
 			cursor.execute('SELECT airline_name FROM airline_staff WHERE username = %s', (session['username']))		
 			airline_name = cursor.fetchone()
 			airline_name = airline_name['airline_name']
-			print airline_name
 			cursor.execute('SELECT * FROM flight WHERE airline_name = %s', (airline_name))		
 			data = cursor.fetchall()
 
-			cursor.execute('SELECT * FROM airport')
-			airport_data = cursor.fetchall();
-			airport_dict = {};
-			for row in airport_data:
-				airport_dict[row['airport_name']] = row['airport_city']
-
-			upcoming_flights = []
-			for row in data:
-				t = {
-					'airline_name': row['airline_name'],
-					'flight_num': row['flight_num'],
-					'departure_airport': row['departure_airport'],
-					'departure_time': row['departure_time'],
-					'departure_city': airport_dict[row['departure_airport']],
-					'arrival_airport': row['arrival_airport'],
-					'arrival_time': row['arrival_time'],
-					'arrival_city': airport_dict[row['arrival_airport']],
-					'price': str(row['price']),
-					'status': row['status'],
-					'airplane_ID': row['airplane_id']
-				}
-				upcoming_flights.append(t)
+		for row in data:
+			t = {
+				'airline_name': row['airline_name'],
+				'flight_num': row['flight_num'],
+				'departure_airport': row['departure_airport'],
+				'departure_time': row['departure_time'],
+				'departure_city': airport_dict[row['departure_airport']],
+				'arrival_airport': row['arrival_airport'],
+				'arrival_time': row['arrival_time'],
+				'arrival_city': airport_dict[row['arrival_airport']],
+				'price': str(row['price']),
+				'status': row['status'],
+				'airplane_ID': row['airplane_id']
+			}
+			upcoming_flights.append(t)
 
 		return render_template("index.html", username=session['username'], user_type=session['type'], upcoming_flights=upcoming_flights)
 	else:
 		return render_template("index.html", username=None)
+
+# BOOKING AGENT ACTIONS//////////////////////////////////////////////////////////////
+@app.route("/commission")
+def commission():
+	if 'username' in session and session['type'] == 'booking_agent':
+		return render_template("viewcommission.html")
+	else:
+		error = "Permission denied"
+		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
+
 
 # AIRLINE STAFF ACTIONS//////////////////////////////////////////////////////////////
 
@@ -203,7 +222,7 @@ def addAirportAuth():
 def viewBookingAgents():
 	if 'username' in session and session['type'] == 'airline_staff':
 		cursor = conn.cursor()
-		# all booking agents
+
 		cursor.execute('SELECT * FROM booking_agent')
 		all_agents = cursor.fetchall()
 
@@ -224,6 +243,77 @@ def viewBookingAgents():
 	else:
 		error = "Permission denied"
 		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
+
+@app.route("/viewCustomers")
+def viewCustomers():
+	if 'username' in session and session['type'] == 'airline_staff':
+		cursor = conn.cursor()
+		customers=[]
+
+		currtime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		query = 'SELECT customer.email, COUNT(*) as tickets FROM customer, purchases WHERE customer.email = purchases.customer_email AND datediff(purchase_date,%s)<=365 GROUP BY customer.email ORDER BY COUNT(*) DESC'
+		cursor.execute(query, (currtime))
+		customers = cursor.fetchall()
+
+		return render_template('viewcustomers.html', customers=customers)
+	else:
+		error = "Permission denied"
+		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
+
+@app.route("/viewCustomers/<email>")
+def viewCustomer(email):
+	if 'username' in session and session['type'] == 'airline_staff':
+		cursor = conn.cursor()
+		flights = []
+		
+		cursor.execute('SELECT airline_name FROM airline_staff WHERE username = %s', (session['username']))		
+		airline_name = cursor.fetchone()
+		airline_name = airline_name['airline_name']
+
+		query = 'SELECT flight_num FROM customer, purchases NATURAL JOIN ticket WHERE customer.email = purchases.customer_email AND airline_name=%s AND customer.email = %s'
+		cursor.execute(query, (airline_name, email))
+		flights = cursor.fetchall()
+
+		return render_template('viewcustomerinfo.html', email=email, flights=flights)
+	else:
+		error = "Permission denied"
+		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
+
+@app.route("/viewReports")
+def viewreports():
+	if 'username' in session and session['type'] == 'airline_staff':
+		cursor = conn.cursor()
+		cursor.execute('SELECT airline_name FROM airline_staff WHERE username = %s', (session['username']))		
+		airline_name = cursor.fetchone()
+		airline_name = airline_name['airline_name']
+
+		query = 'SELECT EXTRACT(MONTH from purchase_date) as month, COUNT(*) as count FROM purchases NATURAL JOIN ticket WHERE airline_name = %s GROUP BY EXTRACT(MONTH from purchase_date)'
+		cursor.execute(query, (airline_name))
+		monthlyReport = cursor.fetchall()
+
+		return render_template('viewreports.html', monthlyReport=monthlyReport)
+	else:
+		error = "Permission denied"
+		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
+
+@app.route("/getNumTicketsSold", methods=['POST'])
+def getNumTicketsSold():
+	if 'username' in session and session['type'] == 'airline_staff':
+		start_date = request.form['start_date']
+		end_date = request.form['end_date']
+
+		cursor = conn.cursor()
+		cursor.execute('SELECT airline_name FROM airline_staff WHERE username = %s', (session['username']))		
+		airline_name = cursor.fetchone()
+		airline_name = airline_name['airline_name']
+		query = 'SELECT COUNT(*) as total FROM purchases NATURAL JOIN ticket WHERE DATEDIFF(purchase_date, %s) >= 0 AND DATEDIFF(%s, purchase_date) >= 0 AND airline_name=%s'
+		cursor.execute(query, (start_date, end_date, airline_name))
+		count = cursor.fetchone()['total']
+		response = {'count': count}
+
+		return jsonify(response)
+	else:
+		return "Permission denied"
 
 # ACCOUNT HANDLING//////////////////////////////////////////////////////////////
 

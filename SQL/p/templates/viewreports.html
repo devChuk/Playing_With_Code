@@ -1,0 +1,93 @@
+<!Doctype html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript">
+			google.charts.load('current', {packages: ['corechart', 'bar']});
+			google.charts.setOnLoadCallback(drawTitleSubtitle);
+			
+			function drawTitleSubtitle() {
+				var arr = [['Month', 'Tickets Sold']];
+				var monthlyReport = JSON.parse('{{ monthlyReport|tojson }}');
+				var min = monthlyReport[0]['month'];
+				var max = monthlyReport[0]['month'];
+				var preExisting = [];
+				for (var i = 0; i < monthlyReport.length; i++) {
+					monthlyReport[i] = [monthlyReport[i]['month'], monthlyReport[i]['count']];
+
+					if (min > monthlyReport[i][0])
+						min = monthlyReport[i][0];
+					if (max < monthlyReport[i][0])
+						max = monthlyReport[i][0];
+					preExisting.push(monthlyReport[i][0]);
+				}
+
+				for (var i = min; i <= max; i++) {
+					if (!preExisting.includes(i))
+						monthlyReport.push([i, 0]);
+				}
+
+				monthlyReport.sort(function(a, b) {
+					return a[0] - b[0];
+				});
+
+				
+				arr = arr.concat(monthlyReport);
+
+				var data = google.visualization.arrayToDataTable(arr);
+
+				var materialOptions = {
+					chart: {},
+					hAxis: {
+						title: 'Tickets Sold',
+						minValue: 0,
+					},
+					vAxis: {
+						title: 'Month'
+					},
+					bars: 'horizontal'
+				};
+				var materialChart = new google.charts.Bar(document.getElementById('chart_div'));
+				materialChart.draw(data, materialOptions);
+			}
+		</script>
+	</head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>View reports.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<h3>Total Amount of Tickets Solds</h3>
+		<label for="After">start date</label><br>
+	    <input id="start" class="search" required type="date" value="2017-01-01" name="After"><br>
+		<label for="Before">end date</label><br>
+	    <input id="end" class="search" required type="date" value="2017-09-01"name="Before"><br>
+
+	    <p id="count"></p>
+
+
+		<h3>Tickets Sold By The Month</h3>
+		 <div id="chart_div"></div>
+
+		<script type="text/javascript">
+			$(".search").change(function() {
+				$.post("/getNumTicketsSold", {
+					start_date: $("#start").val(),
+					end_date: $("#end").val()
+				}).done(function(data) {
+					$('#count').html(data['count']);
+				});
+			});
+
+			$.post("/getNumTicketsSold", {
+				start_date: "2017-01-01",
+				end_date: "2017-09-01" })
+				.done(function(data) {
+					$('#count').html(data['count']);
+				});
+
+		</script>
+	</body>
+</html>

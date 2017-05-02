@@ -1,0 +1,20 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>View most frequent customers.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+
+		{% for cust in customers %}
+			<div>
+				<span><a href="/viewCustomers/{{cust.email}}"> {{cust.email}} </a></span>
+				<span>----</span>
+				<span> {{cust.tickets}} </span>
+			</div>
+		{% endfor %}
+
+	</body>
+</html>

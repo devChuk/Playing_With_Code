@@ -1,0 +1,42 @@
+<!Doctype html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+	</head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>View commission.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<h3>Total Amount of Tickets Solds</h3>
+		<label for="After">start date</label><br>
+	    <input id="start" class="search" required type="date" value="2017-01-01" name="After"><br>
+		<label for="Before">end date</label><br>
+	    <input id="end" class="search" required type="date" value="2017-09-01"name="Before"><br>
+
+	    <p id="count"></p>
+
+
+		<h3>Tickets Sold By The Month</h3>
+
+		<script type="text/javascript">
+			$(".search").change(function() {
+				$.post("/getNumTicketsSold", {
+					start_date: $("#start").val(),
+					end_date: $("#end").val()
+				}).done(function(data) {
+					$('#count').html(data['count']);
+				});
+			});
+
+			$.post("/getNumTicketsSold", {
+				start_date: "2017-01-01",
+				end_date: "2017-09-01" })
+				.done(function(data) {
+					$('#count').html(data['count']);
+				});
+
+		</script>
+	</body>
+</html>

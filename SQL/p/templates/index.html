@@ -17,12 +17,11 @@
 				<h2>You are logged in. Welcome</h2>
 				<p>{{ username }}</p>
 
-				<!-- <div>INSERT_ACTIONS_HERE</div> -->
+				<div><a href="/search">Search flights</a></div>
 				{% if user_type == 'customer' %}
-					<div><a href="/search">Search flights</a></div>
+					
 				{% endif %}
 				{% if user_type == 'booking_agent' %}
-					<div><a href="/search">Search flights</a></div>
 					<div><a href="/commission">View commission</a></div>
 				{% endif %}
 				{% if user_type == 'airline_staff' %}
@@ -30,7 +29,7 @@
 					<div><a href="/addPlane">Add Airplane</a></div>
 					<div><a href="/addAirport">Add Airport</a></div>
 					<div><a href="/viewBookingAgents">View Booking Agents</a></div>
-					<div><a href="/viewFCustomers">View Most Frequent Customers</a></div>
+					<div><a href="/viewCustomers">View Most Frequent Customers</a></div>
 					<div><a href="/viewReports">View Reports</a></div>
 				{% endif %}
 				<br>
@@ -127,13 +126,17 @@
 					    						item['arrival_time'] + '</td><td>' + 
 					    						item['price'] + '</td><td>' + 
 					    						item['airplane_ID'] + '</td><td>';
-					    if (item['status'] == 'On Time') {
-					    	trHTML += '<select class="status" name="Status"><option value="On Time" selected>On Time</option><option value="in progress">in progress</option><option value="delayed">delayed</option></select></td></tr>';
-					    } else if (item['status'] == 'in progress') {
-					    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress" selected>in progress</option><option value="delayed">delayed</option></select></td></tr>';
-					    } else {
-					    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress">in progress</option><option value="delayed" selected>delayed</option></select></td></tr>';
-					    }
+					    if ({{ user_type|tojson }} == 'airline_staff') {
+						    if (item['status'] == 'On Time') {
+						    	trHTML += '<select class="status" name="Status"><option value="On Time" selected>On Time</option><option value="in progress">in progress</option><option value="delayed">delayed</option></select></td></tr>';
+						    } else if (item['status'] == 'in progress') {
+						    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress" selected>in progress</option><option value="delayed">delayed</option></select></td></tr>';
+						    } else {
+						    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress">in progress</option><option value="delayed" selected>delayed</option></select></td></tr>';
+						    }
+						} else {
+							trHTML += item['status'] + '</td></tr>';
+						}
 					});
 
 					$('#flightDisplay').append(trHTML);

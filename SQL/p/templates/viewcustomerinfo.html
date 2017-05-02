@@ -1,0 +1,19 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/viewCustomers">Back to view customers</a></div>
+		<h1>View customer flights</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<h3>{{ email }}</h3>
+
+		{% for flight in flights %}
+			<div>
+				{{ flight.flight_num }}
+			</div>
+		{% endfor %}
+
+	</body>
+</html>
