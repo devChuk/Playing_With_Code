@@ -1,0 +1,37 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>Add airplane.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<form action="/addPlaneAuth" method="POST">
+	    	<br>
+			<label for="Airplane_ID">Airplane ID</label><br>
+		    <input required type="Airplane_ID" name="Airplane_ID" placeholder="Airplane ID">
+		    <br>
+		    <br>
+		    <label for="Seats">Seats</label><br>
+		    <input required type="Seats" name="Seats" placeholder="Seats">
+		    <br>
+		    <br>
+    		<input type="submit" value="Submit" />
+	    </form>
+	    <br>
+	    <br>
+	    <table>
+	    	{% if airplanes %}
+	    	<th>Airplane ID</th>
+	    	<th>Seats</th>
+	    	{% endif %}
+		    {% for plane in airplanes %}
+		    	<tr>
+		    		<td>{{plane.airplane_id}}</td>
+		    		<td>{{plane.seats}}</td>
+		    	</tr>
+		    {% endfor %}
+		</table>
+	</body>
+</html>

@@ -1,0 +1,51 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>Create flights.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<form action="/createFlightAuth" method="POST">
+	    	<br>
+		    <label for="Flight_Num">Flight Num</label><br>
+		    <input required type="Flight_Num" name="Flight_Num" placeholder="Flight Num">
+		    <br>
+		    <br>
+		    <label for="Departure_Airport">Departure_Airport</label><br>
+		    <input required type="Departure_Airport" name="Departure_Airport" placeholder="Departure Airport">
+		    <br>
+		    <br>
+		    <label for="Departure_Time">Departure Time</label><br>
+		    <input required type="datetime-local" name="Departure_Time" placeholder="Departure Time">
+		    <br>
+		    <br>
+		    <label for="Arrival_Airport">Arrival_Airport</label><br>
+		    <input required type="Arrival_Airport" name="Arrival_Airport" placeholder="Arrival Airport">
+		    <br>
+		    <br>
+		    <label for="Arrival_Time">Arrival Time</label><br>
+		    <input required type="datetime-local" name="Arrival_Time" placeholder="Arrival Time">
+		    <br>
+		    <br>
+		    <label for="Price">Price</label><br>
+		    <input required type="Price" name="Price" placeholder="Price">
+		    <br>
+		    <br>
+		    <label for="Status">Status</label><br>
+		    <select id="Status" name="Status">
+        		<option value="On TIme">On Time</option>
+            	<option value="In_Progress">In Progress</option>
+            	<option value="Delayed">Delayed</option>
+    		</select>
+		    <br>
+		    <br>
+		    <label for="Airplane_ID">Airplane ID</label><br>
+		    <input required type="Airplane_ID" name="Airplane_ID" placeholder="Airplane ID">
+		    <br>
+		    <br>
+    		<input type="submit" value="Submit" />
+	    </form>
+	</body>
+</html>

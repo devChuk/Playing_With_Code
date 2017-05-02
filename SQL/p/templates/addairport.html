@@ -1,0 +1,23 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>Add airport.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<form action="/addAirportAuth" method="POST">
+	    	<br>
+			<label for="Name">Name</label><br>
+		    <input required type="Name" name="Name" placeholder="Name">
+		    <br>
+		    <br>
+		    <label for="City">City</label><br>
+		    <input required type="City" name="City" placeholder="City">
+		    <br>
+		    <br>
+    		<input type="submit" value="Submit" />
+	    </form>	
+	</body>
+</html>

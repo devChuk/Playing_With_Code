@@ -1,0 +1,30 @@
+<!Doctype html>
+<html>
+	<head></head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>View booking agents.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<h3>All agents</h3>
+		{% for agent in all_agents %}
+			<div><span> {{agent.email}} </span><span>----</span><span> {{agent.booking_agent_id}} </span></div>
+		{% endfor %}
+
+		<h3>Top 5 In Ticket Sales In The Past Month</h3>
+		{% for agent in top_sales_month_agents %}
+			<div><span> {{agent.email}} </span><span>----</span><span> {{agent.booking_agent_id}} </span></div>
+		{% endfor %}
+
+		<h3>Top 5 In Ticket Sales In The Past Year</h3>
+		{% for agent in top_sales_year_agents %}
+			<div><span> {{agent.email}} </span><span>----</span><span> {{agent.booking_agent_id}} </span></div>
+		{% endfor %}
+
+		<h3>Top 5 In Commission In The Past Year</h3>
+		{% for agent in top_commission_year_agents %}
+			<div><span> {{agent.email}} </span><span>----</span><span> {{agent.booking_agent_id}} </span></div>
+		{% endfor %}
+	</body>
+</html>

@@ -1,3 +1,0 @@
-devmail@gmail.com
-
-bacon

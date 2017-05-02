@@ -6,7 +6,10 @@
 	<body>
 		<div><a href="/">Back to home</a></div>
 		<h1>This is the login page.</h1>
-		<form action="/registerAuth" method="POST">
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<form action="/loginAuth" method="POST">
 	    	<label for="user_type">What type of user are you?</label>
 	    	<br>
         	<select id="user_type" name="user_type">
@@ -50,7 +53,7 @@
 			    <br>
 			    <br>
     		</div>
-    		<input type="submit" value="Register" />
+    		<input type="submit" value="Login" />
 	    </form>
 
 	    <script>

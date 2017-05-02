@@ -6,6 +6,11 @@
 	<body>
 		<div><a href="/">Back to home</a></div>
 		<h1>This is the register page.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% else %}
+
+		{% endif %}
 	    <form action="/registerAuth" method="POST">
 	    	<label for="user_type">What type of user are you?</label>
 	    	<br>
@@ -101,7 +106,7 @@
 			    <br>
 			    <br>
 			    <label for="Date_Of_Birth">Date Of Birth</label><br>
-			    <input required class="airl" type="Date_Of_Birth" name="Date_Of_Birth" placeholder="Date Of Birth">
+			    <input required class="airl" type="date" name="Date_Of_Birth" placeholder="Date Of Birth">
 			    <br>
 			    <br>
 			    <label for="Airline_Name">Airline Name</label><br>

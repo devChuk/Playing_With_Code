@@ -1,19 +1,186 @@
 <!Doctype html>
 <html>
-	<head></head>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+	</head>
 	<body>
 		<h1>This is the home page.</h1>
-		
-		{% if not username %}
-			<h2>You are not logged in. Please take one of the actions below.</h2>
-			<div><a href="/login">Log in</a></div>
-			<div><a href="/register">Register</a></div>
-		{% else %}
-			<h2>You are logged in. Welcome, INSERT_NAME</h2>
-			<div>INSERT_ACTIONS_HERE</div>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		<span style="width:30vw;float:left">
+			{% if not username %}
+				<h2>You are not logged in. Please take one of the actions below.</h2>
+				<div><a href="/login">Log in</a></div>
+				<div><a href="/register">Register</a></div>
+			{% else %}
+				<h2>You are logged in. Welcome</h2>
+				<p>{{ username }}</p>
 
-			<br>
-			<div><a href="/logout">Log out</a></div>
+				<!-- <div>INSERT_ACTIONS_HERE</div> -->
+				{% if user_type == 'customer' %}
+					<div><a href="/search">Search flights</a></div>
+				{% endif %}
+				{% if user_type == 'booking_agent' %}
+					<div><a href="/search">Search flights</a></div>
+					<div><a href="/commission">View commission</a></div>
+				{% endif %}
+				{% if user_type == 'airline_staff' %}
+					<div><a href="/createFlight">Create Flights</a></div>
+					<div><a href="/addPlane">Add Airplane</a></div>
+					<div><a href="/addAirport">Add Airport</a></div>
+					<div><a href="/viewBookingAgents">View Booking Agents</a></div>
+					<div><a href="/viewFCustomers">View Most Frequent Customers</a></div>
+					<div><a href="/viewReports">View Reports</a></div>
+				{% endif %}
+				<br>
+				<div><a href="/logout">Log out</a></div>
+			{% endif %}
+		</span>
+		<span style="width:65vw">
+			{% if username %}
+				{% if user_type == 'airline_staff' %}
+					<label for="After">Departure Time After</label><br>
+				    <input id="after" class="search" required type="datetime-local" name="After"><br>
+					<label for="Before">Departure Time Before</label><br>
+				    <input id="before" class="search" required type="datetime-local" name="Before"><br>
+				    <label for="Origin">Origin</label><br>
+		    		<input id="origin" class="search" required type="Origin" name="Origin" placeholder="Origin"><br>
+		    		<label for="Destination">Destination</label><br>
+		    		<input id="destination" class="search" required type="Destination" name="Destination" placeholder="Destination">
+				    <br>
+				    <br>
+		    	{% endif %}
+
+				<h2 style="z-index:-200">Your Flights</h2>
+				<table border="1" id="flightDisplay" style="width:65vw">
+					{% if upcoming_flights %}
+			    		<th>Airline Name</th>
+			    		<th>Flight Num</th>
+			    		<th>Departure Airport</th>
+			    		<th>Departure Time</th>
+			    		<th>Arrival Airport</th>
+			    		<th>Arrival Time</th>
+			    		<th>Price</th>
+			    		<th>Airplane ID</th>
+			    		<th>Status</th>
+			    	{% endif %}
+				</table>
+
+
+
+			{% endif %}
+		</span>
+		{% if upcoming_flights %}
+			<script>
+				// SETUP
+				$(".search").change(function() {
+					searchFlights();
+				});
+
+
+				function searchFlights() {
+					// grab html input values.
+					var beforeTime = Date.parse($("#before").val());
+					var afterTime = Date.parse($("#after").val());
+					var origin = $("#origin").val();
+					var destination = $("#destination").val();
+
+					var filteredFlights = flights.slice(0);
+					filteredFlights = filteredFlights.filter(function(item){
+						var withinDates = false;
+						var originFound = true;
+						var destFound = true;
+						var itemTime = Date.parse(item['departure_time']);
+						if (itemTime >= afterTime && itemTime <= beforeTime)
+							withinDates = true;
+
+						if (origin)
+							if (item['departure_airport'].indexOf(origin) == -1 &&
+								item['departure_city'].indexOf(origin) == -1)
+								originFound = false;
+
+						if (destination)
+							if (item['arrival_airport'].indexOf(destination) == -1 &&
+								item['arrival_city'].indexOf(destination) == -1)
+								destFound = false;
+
+						return withinDates && originFound && destFound;
+					});
+					
+					renderTable(filteredFlights);
+				}
+
+				function renderTable(arr) {
+					// empty current table
+					$('#flightDisplay').find('tr').filter(function () {
+						return $(this).children("td").length > 0;
+					}).remove();
+
+					var trHTML = '';
+					$.each(arr, function (i, item) {
+					    trHTML += '<tr><td>' + 	item['airline_name'] + '</td><td>' + 
+					    						item['flight_num'] + '</td><td>' + 
+					    						item['departure_airport'] + '</td><td>' + 
+					    						item['departure_time'] + '</td><td>' + 
+					    						item['arrival_airport'] + '</td><td>' + 
+					    						item['arrival_time'] + '</td><td>' + 
+					    						item['price'] + '</td><td>' + 
+					    						item['airplane_ID'] + '</td><td>';
+					    if (item['status'] == 'On Time') {
+					    	trHTML += '<select class="status" name="Status"><option value="On Time" selected>On Time</option><option value="in progress">in progress</option><option value="delayed">delayed</option></select></td></tr>';
+					    } else if (item['status'] == 'in progress') {
+					    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress" selected>in progress</option><option value="delayed">delayed</option></select></td></tr>';
+					    } else {
+					    	trHTML += '<select class="status" name="Status"><option value="On Time">On Time</option><option value="in progress">in progress</option><option value="delayed" selected>delayed</option></select></td></tr>';
+					    }
+					});
+
+					$('#flightDisplay').append(trHTML);
+
+					$(".status").change(function() {
+						var airline = $(this).parent().parent()[0].children[0].textContent;
+						var flight_num = $(this).parent().parent()[0].children[1].textContent;
+						var status = $(this).val();
+
+						for (var i = 0; i < flights.length; i++) {
+							console.log(flights[i]['airline_name'] == airline);
+							console.log(flights[i]['flight_num'] == flight_num);
+							console.log(status);
+							if (flights[i]['airline_name'] == airline && flights[i]['flight_num'] == flight_num) {
+								flights[i]['status'] = status;
+								break;
+							}
+						}
+
+						$.post("/changeFlightStatus", {
+							airline_name: airline,
+							flight_num: flight_num,
+							status: status
+						});
+					});
+				}
+
+
+				// DATA RETRIEVAL AND BEGIN RENDER
+				var flights = JSON.parse('{{ upcoming_flights|tojson }}');
+				var flightsInThirty = flights.slice(0);
+				flightsInThirty = flightsInThirty.filter(function(item){
+					var itemTime = Date.parse(item['departure_time']);
+					var currTime = Date.now();
+					if (itemTime - currTime <= 2629746000)
+						return true;
+					else
+						return false;
+				});
+				renderTable(flightsInThirty);
+				var currTime = new Date();
+				var bString = currTime.toISOString().substr(0, currTime.toISOString().lastIndexOf("."));
+				currTime.setMonth(currTime.getMonth() + 1);
+				var aString = currTime.toISOString().substr(0, currTime.toISOString().lastIndexOf("."));
+				document.getElementById("before").defaultValue = aString;
+				document.getElementById("after").defaultValue = bString;
+			</script>
 		{% endif %}
 	</body>
 
