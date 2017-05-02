@@ -17,7 +17,7 @@ conn = pymysql.connect(host='localhost',
 	charset='utf8mb4',
 	cursorclass=pymysql.cursors.DictCursor)
 
-# Routing/Rendering template~~~~~~~~~~~~~
+# GENERAL ACTIONS//////////////////////////////////////////////////////////////
 
 # Home page
 @app.route("/")
@@ -75,11 +75,42 @@ def index():
 @app.route("/commission")
 def commission():
 	if 'username' in session and session['type'] == 'booking_agent':
-		return render_template("viewcommission.html")
+		cursor = conn.cursor()
+		cursor.execute('SELECT booking_agent_id FROM booking_agent WHERE email=%s', session['username']);
+		ID = cursor.fetchone()['booking_agent_id']
+		currtime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+		query = 'SELECT SUM(price) * 0.1 as total, AVG(price) * 0.1 as average, COUNT(*) as num FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = %s AND DATEDIFF(purchase_date, %s) >= -31'
+		cursor.execute(query, (ID, currtime))
+		data = cursor.fetchone()
+		total_commission = data['total']
+		average_commission = data['average']
+		num = data['num']
+
+
+		return render_template("viewcommission.html", total_commission=total_commission, average_commission=average_commission, num=num)
 	else:
 		error = "Permission denied"
 		return render_template('index.html', username=session['username'], user_type=session['type'], error=error)
 
+@app.route("/getCommissionAndNum", methods=['POST'])
+def getCommissionAndNum():
+	if 'username' in session and session['type'] == 'booking_agent':
+		start_date = request.form['start_date']
+		end_date = request.form['end_date']
+		cursor = conn.cursor()
+		cursor.execute('SELECT booking_agent_id FROM booking_agent WHERE email=%s', session['username']);
+		ID = cursor.fetchone()['booking_agent_id']
+
+		query = 'SELECT COUNT(*) as count, SUM(price) * 0.1 as comm FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = %s AND DATEDIFF(purchase_date, %s) >= 0 AND DATEDIFF(%s, purchase_date) >= 0'
+		cursor.execute(query, (ID, start_date, end_date))
+		data = cursor.fetchone()
+		response = {'count': data['count'],
+					'comm': str(data['comm'])}
+
+		return jsonify(response)
+	else:
+		return "Permission denied"
 
 # AIRLINE STAFF ACTIONS//////////////////////////////////////////////////////////////
 

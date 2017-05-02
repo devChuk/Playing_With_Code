@@ -9,33 +9,46 @@
 		{% if error %}
 			<p style="color:red">{{ error }}</p>
 		{% endif %}
-		<h3>Total Amount of Tickets Solds</h3>
+		<h3>Total Amount of Commission in the Past Month</h3>
+		{{ total_commission }}
+		<h3>Average Commission per Ticket in the Past Month</h3>
+		{{ average_commission }}
+		<h3>Total Number of Tickets Sold in the Past Month</h3>
+		{{ num }}
+
+		<br><br>
+		<h3>Total Amount of Tickets and Commission in Range</h3>
 		<label for="After">start date</label><br>
-	    <input id="start" class="search" required type="date" value="2017-01-01" name="After"><br>
+		<input id="start" class="search" required type="date" value="2017-01-01" name="After"><br>
 		<label for="Before">end date</label><br>
-	    <input id="end" class="search" required type="date" value="2017-09-01"name="Before"><br>
+		<input id="end" class="search" required type="date" value="2017-09-01"name="Before"><br>
+		<h4>Total Amount of Tickets</h4>
+		<p id="count"></p>
+		<h4>Total Amount of Commission</h4>
+		<p id="comm"></p>
 
-	    <p id="count"></p>
 
-
-		<h3>Tickets Sold By The Month</h3>
 
 		<script type="text/javascript">
 			$(".search").change(function() {
-				$.post("/getNumTicketsSold", {
+				$.post("/getCommissionAndNum", {
 					start_date: $("#start").val(),
 					end_date: $("#end").val()
 				}).done(function(data) {
 					$('#count').html(data['count']);
+					$('#comm').html(data['comm']);
 				});
 			});
 
-			$.post("/getNumTicketsSold", {
-				start_date: "2017-01-01",
-				end_date: "2017-09-01" })
-				.done(function(data) {
-					$('#count').html(data['count']);
-				});
+
+
+			$.post("/getCommissionAndNum", {
+				start_date: $("#start").val(),
+				end_date: $("#end").val()
+			}).done(function(data) {
+				$('#count').html(data['count']);
+				$('#comm').html(data['comm']);
+			});
 
 		</script>
 	</body>
