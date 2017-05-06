@@ -1,0 +1,136 @@
+<!Doctype html>
+<html>
+	<head>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+	</head>
+	<body>
+		<div><a href="/">Back to home</a></div>
+		<h1>Search flights.</h1>
+		{% if error %}
+			<p style="color:red">{{ error }}</p>
+		{% endif %}
+		
+		<label for="Date">Date</label><br>
+	    <input id="date" class="search" required type="date" name="Date"><br><br>
+	    <label for="Origin">Origin</label><br>
+		<input id="origin" class="search" required type="Origin" name="Origin" placeholder="Origin"><br><br>
+		<label for="Destination">Destination</label><br>
+		<input id="destination" class="search" required type="Destination" name="Destination" placeholder="Destination">
+	    <br>
+	    <br>
+	    {% if user_type == 'booking_agent' %}
+	    <label for="Customer">Customer</label><br>
+		<input id="customer" required type="Customer" name="Customer" placeholder="Customer">
+		<br><br>
+	    {% endif %}
+	    <table border="1" id="flightDisplay" style="width:90vw">
+    		<th>Airline Name</th>
+    		<th>Flight Num</th>
+    		<th>Departure Airport</th>
+    		<th>Departure Time</th>
+    		<th>Arrival Airport</th>
+    		<th>Arrival Time</th>
+    		<th>Price</th>
+    		<th>Airplane ID</th>
+    		<th>Status</th>
+    		{% if user_type != "airline_staff" and user_type != None%}
+    			<th>Buy</th>
+    		{% endif %}
+		</table>
+
+		<script type="text/javascript">
+			$(".search").change(function() {
+				searchFlights();
+			});
+
+			function searchFlights() {
+				var date = new Date(Date.parse($("#date").val()));
+				var origin = $("#origin").val();
+				var destination = $("#destination").val();
+
+				var filteredFlights = flights.slice(0);
+				filteredFlights = filteredFlights.filter(function(item){
+					var withinDates = true;
+					var originFound = true;
+					var destFound = true;
+
+					if ($("#date").val()) {
+
+						var itemTime = new Date(Date.parse(item['departure_time']));
+						if (itemTime.toDateString() != date.toDateString())
+							withinDates = false;
+					}
+
+					if (origin)
+						if (item['departure_airport'].indexOf(origin) == -1 &&
+							item['departure_city'].indexOf(origin) == -1)
+							originFound = false;
+
+					if (destination)
+						if (item['arrival_airport'].indexOf(destination) == -1 &&
+							item['arrival_city'].indexOf(destination) == -1)
+							destFound = false;
+
+					return withinDates && originFound && destFound;
+				});
+				
+				renderTable(filteredFlights);
+
+			}
+
+			function renderTable(arr) {
+				$('#flightDisplay').find('tr').filter(function () {
+					return $(this).children("td").length > 0;
+				}).remove();
+
+				var trHTML = '';
+				$.each(arr, function (i, item) {
+					// console.log(Date.parse(item['departure_time']));
+					if (Date.parse(item['departure_time']) > Date.now()) {
+					    trHTML += '<tr><td>' + 	item['airline_name'] + '</td><td>' + 
+						item['flight_num'] + '</td><td>' + 
+						item['departure_airport'] + '</td><td>' + 
+						item['departure_time'] + '</td><td>' + 
+						item['arrival_airport'] + '</td><td>' + 
+						item['arrival_time'] + '</td><td>' + 
+						item['price'] + '</td><td>' + 
+						item['airplane_id'] + '</td><td>' +
+						item['status'];
+
+						if ("{{ user_type }}" != "airline_staff" && "{{ user_type }}" != "None") {
+							trHTML += '</td><td><a class="buy" style="color:blue;cursor: pointer;">Buy</a></td></tr>';
+						} else {
+							trHTML += '</td></tr>';
+						}
+					}
+				});
+				$('#flightDisplay').append(trHTML);
+				
+				$(".buy").click(function() {
+					$(this).prop('onclick',null).off('click');
+					$(this).css({
+						'color': 'green',
+						'cursor': ''});
+					$(this).html("Bought");
+
+					var airline = $(this).parent().parent()[0].children[0].textContent;
+					var flight_num = $(this).parent().parent()[0].children[1].textContent;
+
+					var payload = {
+						airline_name: airline,
+						flight_num: flight_num
+					}
+
+					if ("{{ user_type }}" == "booking_agent") {
+						payload['customer_email'] = $("#customer").val();
+					}
+
+					$.post("/buyFlight", payload);
+				});
+			}
+
+			var flights = JSON.parse('{{ flights|tojson }}');
+			renderTable(flights);
+		</script>
+	</body>
+</html>

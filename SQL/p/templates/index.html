@@ -11,6 +11,7 @@
 		<span style="width:30vw;float:left">
 			{% if not username %}
 				<h2>You are not logged in. Please take one of the actions below.</h2>
+				<div><a href="/search">Search flights</a></div>
 				<div><a href="/login">Log in</a></div>
 				<div><a href="/register">Register</a></div>
 			{% else %}
@@ -18,7 +19,6 @@
 				<p>{{ username }}</p>
 
 				<div><a href="/search">Search flights</a></div>
-				<div><a href="/flightstatus">Check flight status</a></div>
 				{% if user_type == 'customer' %}
 					
 				{% endif %}
@@ -80,7 +80,6 @@
 
 
 				function searchFlights() {
-					// grab html input values.
 					var beforeTime = Date.parse($("#before").val());
 					var afterTime = Date.parse($("#after").val());
 					var origin = $("#origin").val();
@@ -112,21 +111,21 @@
 				}
 
 				function renderTable(arr) {
-					// empty current table
 					$('#flightDisplay').find('tr').filter(function () {
 						return $(this).children("td").length > 0;
 					}).remove();
 
 					var trHTML = '';
 					$.each(arr, function (i, item) {
-					    trHTML += '<tr><td>' + 	item['airline_name'] + '</td><td>' + 
-					    						item['flight_num'] + '</td><td>' + 
-					    						item['departure_airport'] + '</td><td>' + 
-					    						item['departure_time'] + '</td><td>' + 
-					    						item['arrival_airport'] + '</td><td>' + 
-					    						item['arrival_time'] + '</td><td>' + 
-					    						item['price'] + '</td><td>' + 
-					    						item['airplane_ID'] + '</td><td>';
+					    trHTML += '<tr><td>' + 
+					    	item['airline_name'] + '</td><td>' + 
+    						item['flight_num'] + '</td><td>' + 
+    						item['departure_airport'] + '</td><td>' + 
+    						item['departure_time'] + '</td><td>' + 
+    						item['arrival_airport'] + '</td><td>' + 
+    						item['arrival_time'] + '</td><td>' + 
+    						item['price'] + '</td><td>' + 
+    						item['airplane_ID'] + '</td><td>';
 					    if ({{ user_type|tojson }} == 'airline_staff') {
 						    if (item['status'] == 'On Time') {
 						    	trHTML += '<select class="status" name="Status"><option value="On Time" selected>On Time</option><option value="in progress">in progress</option><option value="delayed">delayed</option></select></td></tr>';

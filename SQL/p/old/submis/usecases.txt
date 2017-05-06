@@ -1,0 +1,149 @@
+USE CASES
+
+REQUIRED Application Use Cases
+==============================
+
+1) View Public Info:
+	SELECT * FROM flight
+
+
+2) Register:
+	SELECT * FROM customer WHERE email = %s
+	INSERT INTO customer VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+
+	SELECT * FROM booking_agent WHERE email = %s
+	INSERT INTO booking_agent VALUES (%s, %s, %s)
+
+	SELECT * FROM airline_staff WHERE username = %s
+	INSERT INTO airline_staff VALUES (%s, %s, %s, %s, %s, %s)
+
+	The initial query checks if the account already exists in the database. The second one actually registers/inserts it.
+	_as shown, one Python method handles registration for all 3 types_
+
+3) Login:
+	SELECT * FROM customer WHERE email = %s AND password = %s
+	SELECT * FROM booking_agent WHERE email = %s AND password = %s AND booking_agent_id = %s
+	SELECT * FROM airline_staff WHERE username = %s AND password = %s
+
+	The queries checks if the account exists in the database
+	_as shown, one Python method handles login for all 3 types_
+
+
+Customer Use Cases
+==================
+
+4) View My Flights:
+	SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = %s
+
+	Gets all flights bought by a customer
+
+5) Purchase Tickets:
+	SELECT MAX(ticket_id) as max_id FROM ticket
+	INSERT INTO ticket VALUES (%s, %s, %s)
+	INSERT INTO purchases VALUES (%s, %s, %s, %s)
+
+	Gets the current largest ticket_id, then adds a ticket and purchase
+
+6) Search for Flights:
+	SELECT * FROM airport
+	SELECT * FROM flight
+
+7) Logout:
+
+
+Booking Agent Use Cases
+========================
+4) View My Flights:
+	SELECT booking_agent_id FROM booking_agent WHERE email=%s
+	SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE booking_agent_id = %s
+
+5) Purchase Tickets:
+	SELECT MAX(ticket_id) as max_id FROM ticket
+	INSERT INTO ticket VALUES (%s, %s, %s)
+	SELECT booking_agent_id FROM booking_agent WHERE email = %s
+	INSERT INTO purchases VALUES (%s, %s, %s, %s)
+
+	Gets the current largest ticket_id, then adds a ticket and purchase. Also gets the booking_agent_id of the currently logged in booking_agent
+
+6) Search for Flights:
+	SELECT * FROM airport
+	SELECT * FROM flight
+
+7) View my Commission:
+	SELECT booking_agent_id FROM booking_agent WHERE email=%s
+	
+	SELECT SUM(price) * 0.1 as total, AVG(price) * 0.1 as average, COUNT(*) as num 
+	FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight 
+	WHERE booking_agent_id = %s AND DATEDIFF(purchase_date, %s) >= -31
+
+	SELECT COUNT(*) as count, SUM(price) * 0.1 as comm
+	FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight
+	WHERE booking_agent_id = %s AND DATEDIFF(purchase_date, %s) >= 0 AND DATEDIFF(%s, purchase_date) >= 0
+
+	The second query returns the total amount of commission received in the past 30 days
+	and the average commission the agent received per ticket booked in the past 30 days and total number of tickets sold by him/her in the past 30 days.
+
+	The third one returns the number of tickets sold and total commission over a range of dates
+
+8) Logout:
+
+
+Airline Staff Use Cases
+========================
+4) View My Flights:
+	SELECT airline_name FROM airline_staff WHERE username = %s
+	SELECT * FROM flight WHERE airline_name = %s
+
+5) Create New Flights:
+	SELECT airline_name FROM airline_staff WHERE username = %s
+	SELECT * FROM flight WHERE airline_name = %s AND flight_num = %s
+	INSERT INTO flight VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+
+	Second query is to check if flight already exists. Third one is to add it.
+
+6) Change Status of Flights:
+	UPDATE flight SET status=%s WHERE airline_name=%s and flight_num=%s
+
+7) Add Airplane in the system:
+	SELECT airline_name FROM airline_staff WHERE username = %s
+	SELECT * FROM airplane WHERE airline_name = %s AND airplane_id = %s
+	INSERT INTO airplane VALUES (%s, %s, %s)
+	SELECT * FROM airplane WHERE airline_name = %s
+
+	The second one checks if the airplane already exists.
+
+8) Add new airport in the system:
+	SELECT * FROM airport WHERE airport_name = %s
+	INSERT INTO airport VALUES (%s, %s)
+
+9) View all the booking agents:
+	SELECT * FROM booking_agent
+	SELECT booking_agent.email, booking_agent.booking_agent_id FROM booking_agent NATURAL JOIN purchases WHERE datediff(purchase_date,%s)<=31 GROUP BY booking_agent.email ORDER BY COUNT(*) DESC
+
+	SELECT booking_agent.email, booking_agent.booking_agent_id FROM booking_agent NATURAL JOIN purchases WHERE datediff(purchase_date,%s)<=365 GROUP BY booking_agent.email ORDER BY COUNT(*) DESC
+
+	SELECT booking_agent.email, booking_agent.booking_agent_id FROM booking_agent NATURAL JOIN purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE datediff(purchase_date,%s)<=365 GROUP BY booking_agent.email ORDER BY SUM(price) DESC
+
+	Top 5 booking agents based on number of tickets sales for the past
+	month and past year. Top 5 booking agents based on the amount of commission received for the last
+	year.
+
+10) View frequent customers:
+	SELECT customer.email, COUNT(*) as tickets FROM customer, purchases WHERE customer.email = purchases.customer_email AND datediff(purchase_date,%s)<=365 GROUP BY customer.email ORDER BY COUNT(*) DESC
+
+	SELECT airline_name FROM airline_staff WHERE username = %s
+	SELECT flight_num FROM customer, purchases NATURAL JOIN ticket WHERE customer.email = purchases.customer_email AND airline_name=%s AND customer.email = %s
+
+	the most frequent customer within
+	the last year. In addition, Airline Staff will be able to see a list of all flights a particular Customer has
+	taken only on that particular airline.
+
+11) View reports:
+	SELECT EXTRACT(MONTH from purchase_date) as month, COUNT(*) as count FROM purchases NATURAL JOIN ticket WHERE airline_name = %s GROUP BY EXTRACT(MONTH from purchase_date)
+
+	SELECT COUNT(*) as total FROM purchases NATURAL JOIN ticket WHERE DATEDIFF(purchase_date, %s) >= 0 AND DATEDIFF(%s, purchase_date) >= 0 AND airline_name=%s
+
+	First query is for the bar chart. It gives months and purchases within the month.
+	Second query is for how many tickets sold within a range
+
+12) Logout

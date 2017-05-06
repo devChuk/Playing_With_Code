@@ -71,6 +71,59 @@ def index():
 	else:
 		return render_template("index.html", username=None)
 
+@app.route("/search")
+def search():
+	cursor = conn.cursor()
+
+	cursor.execute('SELECT * FROM airport')
+	airport_data = cursor.fetchall();
+	airport_dict = {};
+	for row in airport_data:
+		airport_dict[row['airport_name']] = row['airport_city']
+
+	cursor.execute('SELECT * FROM flight')
+	data = cursor.fetchall()
+	for row in data:
+		row['price'] = str(row['price'])
+		row['departure_city'] = airport_dict[row['departure_airport']]
+		row['arrival_city'] = airport_dict[row['arrival_airport']]
+
+	if 'username' in session:
+		return render_template("search.html", user_type=session['type'], flights=data)
+	else:
+		return render_template("search.html", user_type=None, flights=data)
+
+@app.route("/buyFlight", methods=['POST'])
+def buyFlight():
+	if 'username' in session and (session['type'] == 'customer' or session['type'] == 'booking_agent'):
+		airline_name = request.form['airline_name']
+		flight_num = request.form['flight_num']
+
+		cursor = conn.cursor()
+		cursor.execute('SELECT MAX(ticket_id) as max_id FROM ticket')
+		ID = cursor.fetchone()['max_id'] + 1
+
+		ticket_query = 'INSERT INTO ticket VALUES (%s, %s, %s)'
+		cursor.execute(ticket_query, (ID, airline_name, flight_num))
+
+		email = session['username']
+		booking_agent_id = None
+
+		if (session['type'] == 'booking_agent'):
+			email = request.form['customer_email']
+			cursor.execute('SELECT booking_agent_id FROM booking_agent WHERE email = %s', session['username'])
+			booking_agent_id = cursor.fetchone()['booking_agent_id']
+		purchase_date=datetime.datetime.now().strftime("%Y-%m-%d")
+
+		purchases_query = 'INSERT INTO purchases VALUES (%s, %s, %s, %s)'
+		cursor.execute(purchases_query, (ID, email, booking_agent_id, purchase_date))
+
+		conn.commit()
+		cursor.close()
+		return "Success"
+	else:
+		return "Not logged in as valid user"	
+
 # BOOKING AGENT ACTIONS//////////////////////////////////////////////////////////////
 @app.route("/commission")
 def commission():

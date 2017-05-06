@@ -1,0 +1,48 @@
+SOURCE CODE/
+	app.py
+	templates/
+		index.html
+		search.html
+		addairport.html
+		viewcustomerinfo.html
+		addplane.html
+		login.html
+		viewbookingagents.html
+		viewcustomers.html
+		createflight.html
+		register.html
+		viewcommission.html
+		viewreports.html
+
+
+
+
+SOURCE CODE/
+	app.py ~ the python file that runs the Flask Python server
+
+	templates/ ~ stores Jinja2 HTML templates
+
+		index.html ~ home page. When logged in displays 
+		
+		register.html ~ registers the user, supports the 3 types
+
+		login.html ~ logs in the user, supports the 3 types
+
+		search.html ~ searches all flights based on date, origin, destination. also allows flight buying
+
+		addairport.html ~ adds an airport to the database
+		
+		viewcustomerinfo.html ~ displays a list of all flights a particular Customer has taken only on a particular airline.
+
+		addplane.html ~ adds a plane to the database
+
+		viewbookingagents.html ~ views all the booking agents as an airline staff
+
+		viewcustomers.html ~ views most frequent customers as an airline staff
+
+		createflight.html ~ creates a flight and add it to the database
+
+		viewcommission.html ~ shows commission of logged in boooking agent
+
+		viewreports.html ~ shows reports of logged in airline staff
+
