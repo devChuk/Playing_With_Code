@@ -67,7 +67,7 @@ function reset() {
     setup();
 }
 
-window.addEventListener( 'resize', onWindowResize, false );
+window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
     vw = window.innerWidth; vh = window.innerHeight;
     camera.aspect = vw / vh;
@@ -108,28 +108,40 @@ function genEdges(distanceThreshold, ctx) {
     }
 }
 
-function genRanPtOutsideScreen(array) {
+function genRanPtOutsideScreen(array, flag) {
     var perimeter = (canvas.width+ canvas.height) * 2;
-    var ptLoc = Math.random() * perimeter;
+    var LEFT = flag != null && flag.indexOf("LEFT") !== -1;
+    var RIGHT = flag != null && flag.indexOf("RIGHT") !== -1;
+
+    var ptLoc;
+    if (LEFT) {
+        ptLoc = Math.random() * canvas.height;
+        console.log("left");
+    }
+    else if (RIGHT)
+        ptLoc = Math.random() * canvas.height + canvas.width + canvas.height;
+    else
+        ptLoc = Math.random() * perimeter;
+
     if (ptLoc < canvas.height && ptLoc > 0) {
         array.push({
-            x: Math.random() * -500,
+            x: Math.random() * -250,
             y: ptLoc
         });
     } else if (ptLoc < canvas.height + canvas.width && ptLoc > canvas.height) {
         array.push({
             x: ptLoc - canvas.height,
-            y: canvas.height + Math.random() * 500
+            y: canvas.height + Math.random() * 250
         });
     } else if (ptLoc < canvas.height * 2 + canvas.width && ptLoc > canvas.height + canvas.width) {
         array.push({
-            x: canvas.width + Math.random() * 500,
+            x: canvas.width + Math.random() * 250,
             y: ptLoc - canvas.height - canvas.width
         });
     } else {
         array.push({
             x: ptLoc - canvas.height * 2 - canvas.width,
-            y: Math.random() * -500
+            y: Math.random() * -250
         });
     }
 }
@@ -211,7 +223,7 @@ function startTransition(newStage) {
                 _goalPoints.length = 250;
 
                 for (var i = 250; i < 500; i++) {
-                    genRanPtOutsideScreen(vertices);
+                    genRanPtOutsideScreen(vertices, "LEFT");
 
                     _goalPoints.push({
                         x: starFieldM[i].x,
@@ -232,7 +244,7 @@ function startTransition(newStage) {
                     _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                     _goalPoints[i] = projectToScreen(_goalPoints[i]);
                 } else {
-                    genRanPtOutsideScreen(_goalPoints);
+                    genRanPtOutsideScreen(_goalPoints, "RIGHT");
                 }
                 _distanceTravelled.push(0);
             }
@@ -312,7 +324,7 @@ var setup = function () {
     canvas = document.getElementById("2d");
     canvas.width = vw;
     canvas.height = vh;
-    stats = new Stats();                    //Generate FPS counter.
+    stats = new Stats();                    //Generate FPS counter
     container.appendChild( stats.dom );
     starFieldM = [];
     starVelocities = [];
@@ -320,7 +332,7 @@ var setup = function () {
     initMeshes();
 }
 
-////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
+////////////////////////////////////////RENDERING & ANIMATING/////////////////////////
 
 var render = function () {
     window.requestAnimationFrame( render );
@@ -422,6 +434,7 @@ var render = function () {
     renderer.render(scene, camera);
 };
 
-////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
+////////////////////////////////////////RUN/////////////////////////
+
 setup();
 render();
