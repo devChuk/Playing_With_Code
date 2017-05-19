@@ -1,11 +1,6 @@
 /*
 Brian Chuk (brianch.uk)
-
-
-Last resort:
-http://www.blendswap.com/blends/view/21278
-https://www.turbosquid.com/3d-models/deer-blender-3d-model/822899
-
+Message me on my website and say hello! :)
 */
 
 ////////////////////////////////////////SETUP////////////////////////////////////////
@@ -21,55 +16,51 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
 camera.position.z = 655;
 var closeEnough = 130;
 var closeEnough2 = 200;
-/* 130 240 */
 
 // HTML Canvas variables
 var canvas;
 var starCloseEnough;
 
-// runtime values
+// Runtime values
 var startTime;
 var timeElapsed;
 var STAGE = {
     TRANSITION: 0,
     SPHERE: 1,
     STARFIELD: 2,
-    CUBE: 3,
-    STAG: 4
+    STAG: 3
 };
 
-var _stage = STAGE.SPHERE;
-var vertices;
-var _distanceTravelled;
-var _goalPoints;
-var _goalMovements;
-var _goalPointsSatisfied;
-var _speeds;
-var _newStage;
+// TRANSITION VALUES
+var _stage = STAGE.SPHERE;      // keeps track of current stage
+var vertices;                   // contains all the vertices to render
+var _distanceTravelled;         // records distance travelled for each vertex during transitions
+var _goalPoints;                // contains the destinations of each vertex after transitions
+var _goalMovements;             // contains directions used for transitions for each vertex
+var _goalPointsSatisfied;       // contains status of transition completion for each vertex
+var _speeds;                    // contains the speeds of each vertex during transitions. Ideally for Material Design
+var _newStage;                  // contains the goal stage
 var transitionSpeed = 0.5;
 
-// shape model
+// Blender 3D models
+var sBorderM;                   // (the s stands for stag. Which means yung male deer)
+var sEarM;
+var sEyeM;
+var sSnoutM;
+var sFadeM;
+
+// Runtime generated models
 var sphereM;
-var cubeM;
+var starFieldM = [];            // contains vertices of a randomized starfield
+var starVelocities = [];        // contains velocities of said starfield
 
-// starfield model
-var starFieldM = [];
-var starVelocities = [];
 
-// stag model
-var stagBorderM;
-var stagEarM;
-var stagEyeM;
-var stagSnoutM;
-var stagFadeM;
 
 ////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
 
 function p(num) {return Math.pow(num, 2);}
 function sqrt(num) {return Math.sqrt(num);}
-function map_range(value, low1, high1, low2, high2) {
-    return (low2 + (high2 - low2) * (value - low1) / (high1 - low1));
-}
+function map_range(value, low1, high1, low2, high2) {return (low2 + (high2 - low2) * (value - low1) / (high1 - low1));}
 
 function reset() {
     this.scene = new THREE.Scene();
@@ -97,14 +88,14 @@ function projectToScreen(obj){
     return vector;
 };
 
-function distanceBetween(p1, p2) {
+function distanceBetweenDimTwo(p1, p2) {
     return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));
 }
 
 function genEdges(distanceThreshold, ctx) {
     for (var i = 0; i < vertices.length; i++) {
         for (var j = i + 1; j < vertices.length; j++) {
-            var dist = distanceBetween(vertices[i], vertices[j]);
+            var dist = distanceBetweenDimTwo(vertices[i], vertices[j]);
             if (dist < distanceThreshold) {
                 ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
                 ctx.beginPath();
@@ -143,10 +134,19 @@ function genRanPtOutsideScreen(array) {
     }
 }
 
+function projectModelVertices(MODEL) {
+    vertices = [];
+    for (var i = 0; i < MODEL.geometry.vertices.length; i++) {
+        vertices.push(MODEL.geometry.vertices[i].clone());
+        vertices[i].applyMatrix4(MODEL.matrixWorld);
+        vertices[i] = projectToScreen(vertices[i]);
+    }
+}
+
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
+
 function initMeshes() {
     var loader = new THREE.JSONLoader();
-
     var sphereG = new THREE.SphereGeometry(300, 15, 15);
     sphereM = new THREE.Mesh(sphereG);
 
@@ -167,38 +167,26 @@ function initMeshes() {
             dy: Math.random() * 0.4 - 0.2
         });
     }
+
     // model deets:
     // model2       ellipsoid
     // model3       cube
     // model        some flat random shape
     // sampleModel  building prisms
     // test         this is pretty arbitrary
-
+    // test1        currently a stagborder.
 
     loader.load('./res/models/test1.json', function(geometry) {
-        cubeM = new THREE.Mesh(geometry);
-        // cubeM.scale.x = cubeM.scale.y = cubeM.scale.z = 100;
-        cubeM.scale.x = cubeM.scale.y = 200;
+        sBorderM = new THREE.Mesh(geometry);
+        sBorderM.scale.x = sBorderM.scale.y = 200;
     });
-
-
-    loader.load('./res/models/stag.json', function(geometry) {
-        stagBorderM = new THREE.Mesh(geometry);
-        stagBorderM.scale.x = stagBorderM.scale.y = 150;
-    });
-
-    // setup stag model?
-    // start with a flat rectangle to figure out shape
-    // we have some scaling bug. fix it.
-    // then trace the border
-    // also, have more faith.
 
     /*
-    var stagBorderM;
-    var stagEarM;
-    var stagEyeM;
-    var stagSnoutM;
-    var stagFadeM;
+    TODO
+    var sEarM;
+    var sEyeM;
+    var sSnoutM;
+    var sFadeM;
     */
 }
 
@@ -233,15 +221,15 @@ function startTransition(newStage) {
                 }
             }
             break;
-        case STAGE.CUBE:
+        case STAGE.STAG:
             transitionSpeed = 0.5;
-            cubeM.updateMatrixWorld();
+            sBorderM.updateMatrixWorld();
             _goalPoints = [];
 
             for (var i = 0; i < starFieldM.length; i++) {
-                if (i < cubeM.geometry.vertices.length) {
-                    _goalPoints.push(cubeM.geometry.vertices[i].clone());
-                    _goalPoints[i].applyMatrix4(cubeM.matrixWorld);
+                if (i < sBorderM.geometry.vertices.length) {
+                    _goalPoints.push(sBorderM.geometry.vertices[i].clone());
+                    _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                     _goalPoints[i] = projectToScreen(_goalPoints[i]);
                 } else {
                     genRanPtOutsideScreen(_goalPoints);
@@ -321,42 +309,30 @@ var setup = function () {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
     scene.background = new THREE.Color( 0x1b1b19 );
-
     canvas = document.getElementById("2d");
     canvas.width = vw;
     canvas.height = vh;
-
-    //Generate FPS counter.
-    stats = new Stats();
+    stats = new Stats();                    //Generate FPS counter.
     container.appendChild( stats.dom );
-
     starFieldM = [];
     starVelocities = [];
-
     startTime = Date.parse(new Date());
     initMeshes();
-
-    hurrdurr = 0;
 }
 
 ////////////////////////////////////////RENDERING&&ANIMATING/////////////////////////
 
-var vertCount = 0;
-
 var render = function () {
     window.requestAnimationFrame( render );
-    //Update FPS counter.
-    stats.update();
+    stats.update();    //Update FPS counter.
 
     var timeElapsed = Date.now() - startTime;
 
     //8000, 18000
     if (timeElapsed > 1000 && _stage == STAGE.SPHERE) {
-    // if (timeElapsed > 6000 && _stage == STAGE.SPHERE) {       
         startTransition(STAGE.STARFIELD);
     } else if (timeElapsed > 5000 && _stage == STAGE.STARFIELD) {
-    // } else if (timeElapsed > 12000 && _stage == STAGE.STARFIELD) {        
-        startTransition(STAGE.CUBE);
+        startTransition(STAGE.STAG);
     }
 
     var canvas = document.getElementById("2d");
@@ -382,104 +358,63 @@ var render = function () {
                     }
 
                     break;
-                case STAGE.CUBE:
 
+                case STAGE.STAG:
                     transitionSpeed += 0.1;
-                    cubeM.updateMatrixWorld();
+                    sBorderM.updateMatrixWorld();
 
-                    for (var i = 0; i < cubeM.geometry.vertices.length; i++) {
-                        _goalPoints[i] = cubeM.geometry.vertices[i].clone();
-                        _goalPoints[i].applyMatrix4(cubeM.matrixWorld);
+                    for (var i = 0; i < sBorderM.geometry.vertices.length; i++) {
+                        _goalPoints[i] = sBorderM.geometry.vertices[i].clone();
+                        _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                         _goalPoints[i] = projectToScreen(_goalPoints[i]);
                     }
-                    if (closeEnough > 20) {
+                    if (closeEnough > 20)
                         closeEnough -= 0.025;
-                    }
+
                     break;
             }
-
             transitionTo(_newStage);
-
             genEdges(closeEnough, ctx);
-
             break;
+
         case STAGE.SPHERE:
             sphereM.updateMatrixWorld();
             sphereM.rotation.x += 0.001;
             sphereM.rotation.y += 0.001;
             sphereM.rotation.z += 0.001;
-
-            vertices = [];
-            for (var i = 0; i < sphereM.geometry.vertices.length; i++) {
-                vertices.push(sphereM.geometry.vertices[i].clone());
-                vertices[i].applyMatrix4(sphereM.matrixWorld);
-                vertices[i] = projectToScreen(vertices[i]);
-            }
-
+            projectModelVertices(sphereM);
             genEdges(closeEnough, ctx);
             break;
+
         case STAGE.STARFIELD:
             vertices = [];
-
             for (var i = 0; i < starFieldM.length; i++) {
                 starFieldM[i].x += starVelocities[i].dx;
                 starFieldM[i].y += starVelocities[i].dy;
-
                 if (starFieldM[i].x < 0 || starFieldM[i].x > canvas.width)
                     starVelocities[i].dx *= -1;
-
                 if (starFieldM[i].y < 0 || starFieldM[i].y > canvas.height)
                     starVelocities[i].dy *= -1;
-
                 vertices.push(starFieldM[i]);
             }
 
             genEdges(closeEnough, ctx);
-
             break;
-        case STAGE.CUBE:
-            if (cubeM) {
-                cubeM.updateMatrixWorld();
-                // cubeM.rotation.x += 0.006;
-                // cubeM.rotation.y += 0.006;
 
-                vertices = [];
-                for (var i = 0; i < cubeM.geometry.vertices.length; i++) {
-                    vertices.push(cubeM.geometry.vertices[i].clone());
-                    vertices[i].applyMatrix4(cubeM.matrixWorld);
-                    vertices[i] = projectToScreen(vertices[i]);
-                }
-                
+        case STAGE.STAG:
+            if (sBorderM) {
+                sBorderM.updateMatrixWorld();
+                projectModelVertices(sBorderM);
                 
                 for (var i = 0; i < vertices.length - 1; i++) {
-                    var dist = distanceBetween(vertices[i], vertices[i+1]);
+                    var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
                     ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-                    // ctx.globalAlpha = 1;
-                    // ctx.lineWidth=0.4;
                     ctx.beginPath();
                     ctx.moveTo(vertices[i].x, vertices[i].y);
                     ctx.lineTo(vertices[i+1].x, vertices[i+1].y);
                     ctx.strokeStyle = '#ffffff';
                     ctx.stroke();
                 }
-                
-
-
-            }
-            break;
-        case STAGE.STAG:
-            if (stagBorderM) {
-                stagBorderM.updateMatrixWorld();
-
-                vertices = [];
-                for (var i = 0; i < stagBorderM.geometry.vertices.length; i++) {
-                    vertices.push(stagBorderM.geometry.vertices[i].clone());
-                    vertices[i].applyMatrix4(stagBorderM.matrixWorld);
-                    vertices[i] = projectToScreen(vertices[i]);
-                }
-
-                genEdges(20000, ctx);
-                console.log(stagBorderM.geometry.vertices);
             }
             break;
     }
