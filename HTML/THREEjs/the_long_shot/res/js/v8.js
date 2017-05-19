@@ -233,6 +233,7 @@ function startTransition(newStage) {
                 }
             }
             break;
+
         case STAGE.STAG:
             transitionSpeed = 0.5;
             sBorderM.updateMatrixWorld();
@@ -278,6 +279,21 @@ function transitionTo(newStage) {
         var markerOne = 0.3;
         var markerTwo = 0.4;
         var speed = 0;
+
+        // We can check if the point is either coming into or out of the screen by its index maybe.
+        // then check if it's coming into or out by its corresponding goalPoint
+
+        switch(newStage) {
+            case STAGE.STARFIELD:
+
+            break;
+
+            case STAGE.STAG:
+
+            break;
+        }
+        // var isBorderPoint = 
+
         if (progress < markerOne) {
             speed = map_range(progress, 0, markerOne, 0.5, 20);
         } else if (progress >= markerOne && progress <= markerTwo) {
