@@ -15,7 +15,6 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
                                         canvas: modelCanvas});
 camera.position.z = 655;
 var closeEnough = 130;
-var closeEnough2 = 200;
 
 // HTML Canvas variables
 var canvas;
@@ -114,10 +113,8 @@ function genRanPtOutsideScreen(array, flag) {
     var RIGHT = flag != null && flag.indexOf("RIGHT") !== -1;
 
     var ptLoc;
-    if (LEFT) {
+    if (LEFT)
         ptLoc = Math.random() * canvas.height;
-        console.log("left");
-    }
     else if (RIGHT)
         ptLoc = Math.random() * canvas.height + canvas.width + canvas.height;
     else
@@ -283,23 +280,29 @@ function transitionTo(newStage) {
         // We can check if the point is either coming into or out of the screen by its index maybe.
         // then check if it's coming into or out by its corresponding goalPoint
 
+        var SKIP_SPEEDUP = false;
+        var SKIP_SLOWDOWN = false;
         switch(newStage) {
             case STAGE.STARFIELD:
-
+                if (i >= 250)
+                    SKIP_SPEEDUP = true;
             break;
 
             case STAGE.STAG:
+                if (i >= sBorderM.geometry.vertices.length)
+                    SKIP_SLOWDOWN = true;
 
             break;
         }
-        // var isBorderPoint = 
 
-        if (progress < markerOne) {
+        if (progress < markerOne && !SKIP_SPEEDUP) {
             speed = map_range(progress, 0, markerOne, 0.5, 20);
-        } else if (progress >= markerOne && progress <= markerTwo) {
+        } else if (/*progress >= markerOne && */progress <= markerTwo) {
             speed = 20;
-        } else if (progress >= markerTwo) {
-            speed = map_range(progress, markerTwo, 1, 20, 5);
+        } else if (progress >= markerTwo && !SKIP_SLOWDOWN) {
+            speed = map_range(progress, markerTwo, 1, 20, 3);
+        } else {
+            speed = 20;
         }
 
         _goalMovements.push({dx: diffX/magnitude * speed,
@@ -356,7 +359,7 @@ var render = function () {
 
     var timeElapsed = Date.now() - startTime;
 
-    //8000, 18000
+    //8000, 18000.   1000, 5000
     if (timeElapsed > 1000 && _stage == STAGE.SPHERE) {
         startTransition(STAGE.STARFIELD);
     } else if (timeElapsed > 5000 && _stage == STAGE.STARFIELD) {
@@ -396,8 +399,11 @@ var render = function () {
                         _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                         _goalPoints[i] = projectToScreen(_goalPoints[i]);
                     }
-                    if (closeEnough > 20)
-                        closeEnough -= 0.025;
+
+                    if (closeEnough > 10)
+                        closeEnough -= 1;
+
+                    // GENERATE NEW EDGES.
 
                     break;
             }
