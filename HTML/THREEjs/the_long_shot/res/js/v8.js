@@ -15,10 +15,10 @@ var renderer = new THREE.WebGLRenderer({antialias: true,
                                         canvas: modelCanvas});
 camera.position.z = 655;
 var closeEnough = 130;
+var finalcloseEnough = 10;
 
 // HTML Canvas variables
 var canvas;
-var starCloseEnough;
 
 // Runtime values
 var startTime;
@@ -39,14 +39,16 @@ var _goalMovements;             // contains directions used for transitions for 
 var _goalPointsSatisfied;       // contains status of transition completion for each vertex
 var _speeds;                    // contains the speeds of each vertex during transitions. Ideally for Material Design
 var _newStage;                  // contains the goal stage
-var transitionSpeed = 0.5;
+var _transitionSpeed = 0.5;
+var _sFadeIn = 0;
+var _sGoalDistance = [];
 
 // Blender 3D models
 var sBorderM;                   // (the s stands for stag. Which means yung male deer)
-var sEarM;
 var sEyeM;
+var sEarLM;
+var sEarRM;
 var sSnoutM;
-var sFadeM;
 
 // Runtime generated models
 var sphereM;
@@ -144,11 +146,11 @@ function genRanPtOutsideScreen(array, flag) {
 }
 
 function projectModelVertices(MODEL) {
-    vertices = [];
+    var startPoint = vertices.length;
     for (var i = 0; i < MODEL.geometry.vertices.length; i++) {
         vertices.push(MODEL.geometry.vertices[i].clone());
-        vertices[i].applyMatrix4(MODEL.matrixWorld);
-        vertices[i] = projectToScreen(vertices[i]);
+        vertices[i + startPoint].applyMatrix4(MODEL.matrixWorld);
+        vertices[i + startPoint] = projectToScreen(vertices[i + startPoint]);
     }
 }
 
@@ -185,17 +187,34 @@ function initMeshes() {
     // test         this is pretty arbitrary
     // test1        currently a stagborder.
 
-    loader.load('./res/models/test1.json', function(geometry) {
+    loader.load('./res/models/sBorder.json', function(geometry) {
         sBorderM = new THREE.Mesh(geometry);
         sBorderM.scale.x = sBorderM.scale.y = 200;
     });
 
+    loader.load('./res/models/sEye.json', function(geometry) {
+        sEyeM = new THREE.Mesh(geometry);
+        sEyeM.scale.x = sEyeM.scale.y = 200;
+    });
+
+    loader.load('./res/models/sEarL.json', function(geometry) {
+        sEarLM = new THREE.Mesh(geometry);
+        sEarLM.scale.x = sEarLM.scale.y = 200;
+    });
+
+    loader.load('./res/models/sEarR.json', function(geometry) {
+        sEarRM = new THREE.Mesh(geometry);
+        sEarRM.scale.x = sEarRM.scale.y = 200;
+    });
+
+    loader.load('./res/models/sSnout.json', function(geometry) {
+        sSnoutM = new THREE.Mesh(geometry);
+        sSnoutM.scale.x = sSnoutM.scale.y = 200;
+    });
+
     /*
     TODO
-    var sEarM;
-    var sEyeM;
     var sSnoutM;
-    var sFadeM;
     */
 }
 
@@ -204,7 +223,7 @@ function startTransition(newStage) {
     _distanceTravelled = [];
     switch(newStage) {
         case STAGE.STARFIELD:
-            transitionSpeed = 1;
+            _transitionSpeed = 1;
             _goalPoints = [];
             _distanceTravelled = [];
             for (var i = 0; i < 250; i++) {
@@ -232,7 +251,7 @@ function startTransition(newStage) {
             break;
 
         case STAGE.STAG:
-            transitionSpeed = 0.5;
+            _transitionSpeed = 0.5;
             sBorderM.updateMatrixWorld();
             _goalPoints = [];
 
@@ -241,11 +260,24 @@ function startTransition(newStage) {
                     _goalPoints.push(sBorderM.geometry.vertices[i].clone());
                     _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                     _goalPoints[i] = projectToScreen(_goalPoints[i]);
+
+                    if (i >= 1) {
+                        _sGoalDistance.push(distanceBetweenDimTwo(
+                            _goalPoints[i-1],
+                            _goalPoints[i]
+                        ));
+                    }
+
                 } else {
                     genRanPtOutsideScreen(_goalPoints, "RIGHT");
                 }
                 _distanceTravelled.push(0);
             }
+
+            // var goalDist = distanceBetweenDimTwo(sBorderM.geometry.vertices[i], sBorderM.geometry.vertices[i+1]);
+            
+            // var goalDist = distanceBetweenDimTwo(sBorderM.geometry.vertices[i], sBorderM.geometry.vertices[i+1]);
+
             break;
     }
     for (var i = 0; i < _goalPoints.length; i++) {
@@ -329,7 +361,11 @@ function transitionTo(newStage) {
         }
     }
 
-    if (transitionComplete)
+    var closeEnoughChange = true;
+    if (newStage == STAGE.STAG && closeEnough > finalcloseEnough)
+        closeEnoughChange = false;
+
+    if (transitionComplete && closeEnoughChange)
         _stage = newStage;
 }
 
@@ -374,7 +410,7 @@ var render = function () {
         case STAGE.TRANSITION:
             switch(_newStage) {
                 case STAGE.STARFIELD:
-                    transitionSpeed += 0.1;
+                    _transitionSpeed += 0.1;
                     for (var i = 0; i < starFieldM.length; i++) {
                         starFieldM[i].x += starVelocities[i].dx;
                         starFieldM[i].y += starVelocities[i].dy;
@@ -391,19 +427,35 @@ var render = function () {
                     break;
 
                 case STAGE.STAG:
-                    transitionSpeed += 0.1;
+                    _transitionSpeed += 0.1;
                     sBorderM.updateMatrixWorld();
 
                     for (var i = 0; i < sBorderM.geometry.vertices.length; i++) {
                         _goalPoints[i] = sBorderM.geometry.vertices[i].clone();
                         _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
                         _goalPoints[i] = projectToScreen(_goalPoints[i]);
+
+                        if (i < sBorderM.geometry.vertices.length - 1) {
+                            var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
+                            // var goalDist = distanceBetweenDimTwo(sBorderM.geometry.vertices[i], sBorderM.geometry.vertices[i+1]);
+                            // console.log(dist, goalDist);
+                            if (dist < 70 || dist < _sGoalDistance[i] * 1.001) {
+                                ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1) * _sFadeIn;
+                                ctx.beginPath();
+                                ctx.moveTo(vertices[i].x, vertices[i].y);
+                                ctx.lineTo(vertices[i+1].x, vertices[i+1].y);
+                                ctx.strokeStyle = '#ffffff';
+                                ctx.stroke();
+                            }
+
+                        }
                     }
 
-                    if (closeEnough > 10)
-                        closeEnough -= 1;
+                    if (closeEnough > finalcloseEnough)
+                        closeEnough -= 0.5;
 
-                    // GENERATE NEW EDGES.
+                    if (_sFadeIn <= 1 && closeEnough <= finalcloseEnough + 50)
+                        _sFadeIn += 0.01;
 
                     break;
             }
@@ -416,6 +468,8 @@ var render = function () {
             sphereM.rotation.x += 0.001;
             sphereM.rotation.y += 0.001;
             sphereM.rotation.z += 0.001;
+
+            vertices = [];
             projectModelVertices(sphereM);
             genEdges(closeEnough, ctx);
             break;
@@ -436,10 +490,59 @@ var render = function () {
             break;
 
         case STAGE.STAG:
-            if (sBorderM) {
+            if (sBorderM && sEyeM && sEarLM && sEarRM && sSnoutM) {
                 sBorderM.updateMatrixWorld();
+                sEyeM.updateMatrixWorld();
+                sEarLM.updateMatrixWorld();
+                sEarRM.updateMatrixWorld();
+                sSnoutM.updateMatrixWorld();
+
+                vertices = [];
                 projectModelVertices(sBorderM);
+                // projectModelVertices(sEyeM);
                 
+                ctx.fillStyle = "#f00"//"#1b1b19"
+                ctx.beginPath();
+                for (var i = 0; i < sEyeM.geometry.vertices.length; i++) {
+                    var b = sEyeM.geometry.vertices[i].clone();
+                    b.applyMatrix4(sEyeM.matrixWorld);
+                    var b = projectToScreen(b);
+                    ctx.lineTo(b.x, b.y);
+                    // ctx.fillRect(b.x, b.y, 1, 1);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                for (var i = 0; i < sEarLM.geometry.vertices.length; i++) {
+                    var b = sEarLM.geometry.vertices[i].clone();
+                    b.applyMatrix4(sEarLM.matrixWorld);
+                    var b = projectToScreen(b);
+                    ctx.lineTo(b.x, b.y);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                for (var i = 0; i < sEarRM.geometry.vertices.length; i++) {
+                    var b = sEarRM.geometry.vertices[i].clone();
+                    b.applyMatrix4(sEarRM.matrixWorld);
+                    var b = projectToScreen(b);
+                    ctx.lineTo(b.x, b.y);
+                }
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                for (var i = 0; i < sSnoutM.geometry.vertices.length; i++) {
+                    var b = sSnoutM.geometry.vertices[i].clone();
+                    b.applyMatrix4(sSnoutM.matrixWorld);
+                    var b = projectToScreen(b);
+                    ctx.lineTo(b.x, b.y);
+                }
+                ctx.closePath();
+                ctx.fill();
+
                 for (var i = 0; i < vertices.length - 1; i++) {
                     var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
                     ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
