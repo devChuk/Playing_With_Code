@@ -396,9 +396,9 @@ var render = function () {
     var timeElapsed = Date.now() - startTime;
 
     //8000, 18000.   1000, 5000
-    if (timeElapsed > 1000 && _stage == STAGE.SPHERE) {
+    if (timeElapsed > 7000 && _stage == STAGE.SPHERE) {
         startTransition(STAGE.STARFIELD);
-    } else if (timeElapsed > 5000 && _stage == STAGE.STARFIELD) {
+    } else if (timeElapsed > 13000 && _stage == STAGE.STARFIELD) {
         startTransition(STAGE.STAG);
     }
 
@@ -492,56 +492,15 @@ var render = function () {
         case STAGE.STAG:
             if (sBorderM && sEyeM && sEarLM && sEarRM && sSnoutM) {
                 sBorderM.updateMatrixWorld();
-                sEyeM.updateMatrixWorld();
-                sEarLM.updateMatrixWorld();
-                sEarRM.updateMatrixWorld();
-                sSnoutM.updateMatrixWorld();
 
                 vertices = [];
                 projectModelVertices(sBorderM);
-                // projectModelVertices(sEyeM);
                 
                 ctx.fillStyle = "#f00"//"#1b1b19"
-                ctx.beginPath();
-                for (var i = 0; i < sEyeM.geometry.vertices.length; i++) {
-                    var b = sEyeM.geometry.vertices[i].clone();
-                    b.applyMatrix4(sEyeM.matrixWorld);
-                    var b = projectToScreen(b);
-                    ctx.lineTo(b.x, b.y);
-                    // ctx.fillRect(b.x, b.y, 1, 1);
-                }
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.beginPath();
-                for (var i = 0; i < sEarLM.geometry.vertices.length; i++) {
-                    var b = sEarLM.geometry.vertices[i].clone();
-                    b.applyMatrix4(sEarLM.matrixWorld);
-                    var b = projectToScreen(b);
-                    ctx.lineTo(b.x, b.y);
-                }
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.beginPath();
-                for (var i = 0; i < sEarRM.geometry.vertices.length; i++) {
-                    var b = sEarRM.geometry.vertices[i].clone();
-                    b.applyMatrix4(sEarRM.matrixWorld);
-                    var b = projectToScreen(b);
-                    ctx.lineTo(b.x, b.y);
-                }
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.beginPath();
-                for (var i = 0; i < sSnoutM.geometry.vertices.length; i++) {
-                    var b = sSnoutM.geometry.vertices[i].clone();
-                    b.applyMatrix4(sSnoutM.matrixWorld);
-                    var b = projectToScreen(b);
-                    ctx.lineTo(b.x, b.y);
-                }
-                ctx.closePath();
-                ctx.fill();
+                // tempFill(ctx, sEyeM);
+                // tempFill(ctx, sEarLM);
+                // tempFill(ctx, sEarRM);
+                // tempFill(ctx, sSnoutM);
 
                 for (var i = 0; i < vertices.length - 1; i++) {
                     var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
@@ -558,6 +517,21 @@ var render = function () {
 
     renderer.render(scene, camera);
 };
+
+function tempFill(ctx, model) {
+    model.updateMatrixWorld();
+
+    ctx.beginPath();
+    for (var i = 0; i < model.geometry.vertices.length; i++) {
+        var b = model.geometry.vertices[i].clone();
+        b.applyMatrix4(model.matrixWorld);
+        var b = projectToScreen(b);
+        ctx.lineTo(b.x, b.y);
+        // ctx.fillRect(b.x, b.y, 1, 1);
+    }
+    ctx.closePath();
+    ctx.fill();
+}
 
 ////////////////////////////////////////RUN/////////////////////////
 
