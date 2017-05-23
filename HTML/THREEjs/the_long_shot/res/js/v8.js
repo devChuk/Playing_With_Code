@@ -50,6 +50,8 @@ var sEarLM;
 var sEarRM;
 var sSnoutM;
 
+var triangles = [];
+
 // Runtime generated models
 var sphereM;
 var starFieldM = [];            // contains vertices of a randomized starfield
@@ -152,6 +154,18 @@ function projectModelVertices(MODEL) {
         vertices[i + startPoint].applyMatrix4(MODEL.matrixWorld);
         vertices[i + startPoint] = projectToScreen(vertices[i + startPoint]);
     }
+}
+
+function flatten(arrayOfVertices) {
+    var flattenedArray = [];
+    for (var i = 0; i < arrayOfVertices.length; i++) {
+        flattenedArray.push(arrayOfVertices[i].x);
+        flattenedArray.push(arrayOfVertices[i].y);
+    }
+
+    triangles = earcut(flattenedArray);
+
+    console.log(earcut.deviation(flattenedArray, null, 2, triangles));
 }
 
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
@@ -396,9 +410,9 @@ var render = function () {
     var timeElapsed = Date.now() - startTime;
 
     //8000, 18000.   1000, 5000
-    if (timeElapsed > 7000 && _stage == STAGE.SPHERE) {
+    if (timeElapsed > 1000 && _stage == STAGE.SPHERE) {
         startTransition(STAGE.STARFIELD);
-    } else if (timeElapsed > 13000 && _stage == STAGE.STARFIELD) {
+    } else if (timeElapsed > 5000 && _stage == STAGE.STARFIELD) {
         startTransition(STAGE.STAG);
     }
 
@@ -501,6 +515,31 @@ var render = function () {
                 // tempFill(ctx, sEarLM);
                 // tempFill(ctx, sEarRM);
                 // tempFill(ctx, sSnoutM);
+
+                if (triangles.length == 0) {
+                    flatten(vertices);
+                    triangleColors = [];
+                    for (var i = 0; i < 351; i++) {
+                        triangleColors.push('hsl(' + /*360 * Math.random()*/i + ', 50%, 50%)');
+                    }
+                }
+
+                if (triangles.length > 0) {
+                    // ctx.fillStyle = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
+                    for (var i = 0; i < triangles.length; i += 3) {
+                        ctx.fillStyle = triangleColors[i];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
+                        ctx.globalAlpha = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(vertices[triangles[i]].x, vertices[triangles[i]].y);
+                        ctx.lineTo(vertices[triangles[i+1]].x, vertices[triangles[i+1]].y);
+                        ctx.lineTo(vertices[triangles[i+2]].x, vertices[triangles[i+2]].y);
+                        // ctx.fillRect(triangles[i].x, triangles[i].y, 1, 1);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.strokeStyle = '#ffff00';
+                        ctx.stroke();
+                    }
+                }
 
                 for (var i = 0; i < vertices.length - 1; i++) {
                     var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
