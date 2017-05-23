@@ -156,16 +156,37 @@ function projectModelVertices(MODEL) {
     }
 }
 
-function flatten(arrayOfVertices) {
+function triangulate(arrayOfVertices, holeOne, holeTwo) {
     var flattenedArray = [];
     for (var i = 0; i < arrayOfVertices.length; i++) {
         flattenedArray.push(arrayOfVertices[i].x);
         flattenedArray.push(arrayOfVertices[i].y);
     }
 
-    triangles = earcut(flattenedArray);
+    var holeOneIndex = arrayOfVertices.length;
+    
 
-    console.log(earcut.deviation(flattenedArray, null, 2, triangles));
+    for (var i = 0; i < holeOne.geometry.vertices.length; i++) {
+        var b = holeOne.geometry.vertices[i].clone();
+        b.applyMatrix4(holeOne.matrixWorld);
+        b = projectToScreen(b);
+        flattenedArray.push(b.x);
+        flattenedArray.push(b.y);
+    }
+
+    var holeTwoIndex = arrayOfVertices.length + holeOne.geometry.vertices.length;
+
+    for (var i = 0; i < holeTwo.geometry.vertices.length; i++) {
+        var b = holeTwo.geometry.vertices[i].clone();
+        b.applyMatrix4(holeTwo.matrixWorld);
+        b = projectToScreen(b);
+        flattenedArray.push(b.x);
+        flattenedArray.push(b.y);
+    }
+
+    console.log(flattenedArray.length/2, holeOneIndex, holeTwoIndex);
+
+    triangles = earcut(flattenedArray, [holeOneIndex, holeTwoIndex]);
 }
 
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
@@ -226,10 +247,6 @@ function initMeshes() {
         sSnoutM.scale.x = sSnoutM.scale.y = 200;
     });
 
-    /*
-    TODO
-    var sSnoutM;
-    */
 }
 
 function startTransition(newStage) {
@@ -506,25 +523,35 @@ var render = function () {
         case STAGE.STAG:
             if (sBorderM && sEyeM && sEarLM && sEarRM && sSnoutM) {
                 sBorderM.updateMatrixWorld();
+                sEyeM.updateMatrixWorld();
+                sSnoutM.updateMatrixWorld();
 
                 vertices = [];
                 projectModelVertices(sBorderM);
-                
-                ctx.fillStyle = "#f00"//"#1b1b19"
-                // tempFill(ctx, sEyeM);
-                // tempFill(ctx, sEarLM);
-                // tempFill(ctx, sEarRM);
-                // tempFill(ctx, sSnoutM);
 
                 if (triangles.length == 0) {
-                    flatten(vertices);
+                    triangulate(vertices, sEyeM, sSnoutM);
                     triangleColors = [];
-                    for (var i = 0; i < 351; i++) {
-                        triangleColors.push('hsl(' + /*360 * Math.random()*/i + ', 50%, 50%)');
+                    for (var i = 0; i < 383; i++) {
+                        triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
                     }
                 }
 
                 if (triangles.length > 0) {
+                    for (var i = 0; i < sEyeM.geometry.vertices.length; i++) {
+                        var b = sEyeM.geometry.vertices[i].clone();
+                        b.applyMatrix4(sEyeM.matrixWorld);
+                        b = projectToScreen(b);
+                        vertices.push(b);
+                    }
+
+                    for (var i = 0; i < sSnoutM.geometry.vertices.length; i++) {
+                        var b = sSnoutM.geometry.vertices[i].clone();
+                        b.applyMatrix4(sSnoutM.matrixWorld);
+                        b = projectToScreen(b);
+                        vertices.push(b);
+                    }
+
                     // ctx.fillStyle = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
                     for (var i = 0; i < triangles.length; i += 3) {
                         ctx.fillStyle = triangleColors[i];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
@@ -540,6 +567,12 @@ var render = function () {
                         ctx.stroke();
                     }
                 }
+
+                ctx.fillStyle = "#f00"//"#1b1b19"
+                // tempFill(ctx, sEyeM);
+                tempFill(ctx, sEarLM);
+                tempFill(ctx, sEarRM);
+                // tempFill(ctx, sSnoutM);
 
                 for (var i = 0; i < vertices.length - 1; i++) {
                     var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
