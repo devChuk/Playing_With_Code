@@ -14,7 +14,8 @@ var camera = new THREE.PerspectiveCamera( 75, vw/vh, 0.1, 1000 );
 var renderer = new THREE.WebGLRenderer({antialias: true});
 camera.position.z = 655;
 var closeEnough = 130;
-var finalcloseEnough = 10;
+var earCloseEnough = 40;
+var finalcloseEnough = 30;
 
 // HTML Canvas variables
 var canvas;
@@ -76,6 +77,8 @@ var rightEarTriangles = {
 };
 
 var innerBorderPts = [];
+var leftEarPts = [];
+var rightEarPts = [];
 
 // DEBUGGING
 var triangleColors = [];
@@ -542,8 +545,13 @@ function setupStag() {
     genTriangles(leftEarTriangles, sEarLV);
     genTriangles(rightEarTriangles, sEarRV);
 
-    for (var i = 0; i < 200; i++) {
+    for (var i = 0; i < 800; i++) {
         genRandPtFromTriangles(innerBorderPts, baseTriangles);
+        if (i < 20) {
+            genRandPtFromTriangles(leftEarPts, leftEarTriangles);
+            genRandPtFromTriangles(rightEarPts, rightEarTriangles);
+        }
+
     }
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -555,21 +563,52 @@ function setupStag() {
 
 function renderStag(ctx) {
     vertices = [];
-    vertices = baseTriangles.v;
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (var j = 0; j < baseTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(vertices[baseTriangles.i[j][0]].x, vertices[baseTriangles.i[j][0]].y);ctx.lineTo(vertices[baseTriangles.i[j][1]].x, vertices[baseTriangles.i[j][1]].y);ctx.lineTo(vertices[baseTriangles.i[j][2]].x, vertices[baseTriangles.i[j][2]].y);/* ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);*/ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
-    for (var j = 0; j < rightEarTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(sEarRV[rightEarTriangles.i[j][0]].x, sEarRV[rightEarTriangles.i[j][0]].y);ctx.lineTo(sEarRV[rightEarTriangles.i[j][1]].x, sEarRV[rightEarTriangles.i[j][1]].y);ctx.lineTo(sEarRV[rightEarTriangles.i[j][2]].x, sEarRV[rightEarTriangles.i[j][2]].y);ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
-    for (var j = 0; j < leftEarTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(sEarLV[leftEarTriangles.i[j][0]].x, sEarLV[leftEarTriangles.i[j][0]].y);ctx.lineTo(sEarLV[leftEarTriangles.i[j][1]].x, sEarLV[leftEarTriangles.i[j][1]].y);ctx.lineTo(sEarLV[leftEarTriangles.i[j][2]].x, sEarLV[leftEarTriangles.i[j][2]].y);ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
-    // ctx.fillStyle = "#f00"//"#1b1b19"
-    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // tempTriangleDraw(ctx, baseTriangles);
+    // tempTriangleDraw(ctx, leftEarTriangles);
+    // tempTriangleDraw(ctx, rightEarTriangles);
 
-    ctx.fillStyle = "white";
+    // ctx.fillStyle = "#f00"//"#1b1b19"
+    // ctx.fillStyle = "white";
+    // for (var i = 0; i < innerBorderPts.length; i++) {
+    //     var b = innerBorderPts[i];
+    //     ctx.fillRect(b.x, b.y, 10, 10);
+    // }
+    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // closeEnough = 45;
+
+    // connects all inner points to each other. looks like we want to randomize the closeEnough too
     for (var i = 0; i < innerBorderPts.length; i++) {
-        var b = innerBorderPts[i];
-        ctx.fillRect(b.x, b.y, 10, 10);
+        for (var j = i + 1; j < innerBorderPts.length; j++) {
+            var dist = distanceBetweenDimTwo(innerBorderPts[i], innerBorderPts[j]);
+            if (dist < closeEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
+                ctx.lineTo(innerBorderPts[j].x, innerBorderPts[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+    
+    // connects all inner points to border points
+    for (var i = 0; i < innerBorderPts.length; i++) {
+        for (var j = 0; j < sBorderV.length; j++) {
+            var dist = distanceBetweenDimTwo(innerBorderPts[i], sBorderV[j]);
+            if (dist < closeEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
+                ctx.lineTo(sBorderV[j].x, sBorderV[j].y);
+                ctx.stroke();
+            }
+        }
     }
 
+    // connects all border points together
     for (var i = 0; i < sBorderV.length - 1; i++) {
         var dist = distanceBetweenDimTwo(sBorderV[i], sBorderV[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
@@ -579,10 +618,89 @@ function renderStag(ctx) {
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
     }
+
+    // EARS
+    // connect all earPts to each other
+    for (var i = 0; i < leftEarPts.length; i++) {
+        for (var j = i + 1; j < leftEarPts.length; j++) {
+            var dist = distanceBetweenDimTwo(leftEarPts[i], leftEarPts[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
+                ctx.lineTo(leftEarPts[j].x, leftEarPts[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    for (var i = 0; i < rightEarPts.length; i++) {
+        for (var j = i + 1; j < rightEarPts.length; j++) {
+            var dist = distanceBetweenDimTwo(rightEarPts[i], rightEarPts[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(rightEarPts[i].x, rightEarPts[i].y);
+                ctx.lineTo(rightEarPts[j].x, rightEarPts[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+    // connects earPts to ear outlines 
+    for (var i = 0; i < leftEarPts.length; i++) {
+        for (var j = 0; j < sEarLV.length; j++) {
+            var dist = distanceBetweenDimTwo(leftEarPts[i], sEarLV[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
+                ctx.lineTo(sEarLV[j].x, sEarLV[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    for (var i = 0; i < rightEarPts.length; i++) {
+        for (var j = 0; j < sEarRV.length; j++) {
+            var dist = distanceBetweenDimTwo(rightEarPts[i], sEarRV[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(rightEarPts[i].x, rightEarPts[i].y);
+                ctx.lineTo(sEarRV[j].x, sEarRV[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // eye
+    ctx.fillStyle = "#1b1b19";
+    tempFill(ctx, sEyeV);
+    // snout
+}
+
+function tempTriangleDraw(ctx, triObj) {
+    for (var j = 0; j < triObj.i.length; j++) {
+        ctx.fillStyle = triangleColors[j];
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.moveTo(triObj.v[triObj.i[j][0]].x, triObj.v[triObj.i[j][0]].y);
+        ctx.lineTo(triObj.v[triObj.i[j][1]].x, triObj.v[triObj.i[j][1]].y);
+        ctx.lineTo(triObj.v[triObj.i[j][2]].x, triObj.v[triObj.i[j][2]].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#ffff00';
+        ctx.stroke();
+    }
 }
 
 function tempFill(ctx, modelVertices) {
     ctx.beginPath();
+    ctx.globalAlpha = 1;
     for (var i = 0; i < modelVertices.length; i++) {
         ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
         // ctx.fillRect(b.x, b.y, 1, 1);
