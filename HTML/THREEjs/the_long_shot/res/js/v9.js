@@ -40,6 +40,12 @@ var sEarLM;
 var sEarRM;
 var sSnoutM;
 
+var sBorderV = [];
+var sEyeV = [];
+var sEarLV = [];
+var sEarRV = [];
+var sSnoutV = [];
+
 // TRANSITION VALUES
 var _stage = STAGE.SPHERE;      // keeps track of current stage
 var vertices;                   // contains all the vertices to render
@@ -53,7 +59,7 @@ var _sFadeIn = 0;               // fades in stag connections
 var _sGoalDistance = [];        //stores the goal distances of the stag border vertices
 
 // Triangulation magic
-baseTriangles = [];
+var baseTriangles = [];
 
 // var baseTriangles = {
 //     vertices: [],
@@ -104,6 +110,17 @@ function projectModelVertices(mesh) {
         vertices.push(mesh.geometry.vertices[i].clone());
         vertices[i + startIndex].applyMatrix4(mesh.matrixWorld);
         vertices[i + startIndex] = projectToScreen(vertices[i + startIndex]);
+    }
+}
+
+function genProjectedVertices(model, projectedVertices) {
+    model.updateMatrixWorld();
+
+    for (var i = 0; i < model.geometry.vertices.length; i++) {
+        var b = model.geometry.vertices[i].clone();
+        b.applyMatrix4(model.matrixWorld);
+        b = projectToScreen(b);
+        projectedVertices.push(b);
     }
 }
 
@@ -235,24 +252,16 @@ function startTransition(newStage) {
     switch(newStage) {
         case STAGE.STARFIELD:
 
-            // _goalPoints = starFieldM;
+            _goalPoints = starFieldM;
             for (var i = 0; i < 250; i++) {
-                _goalPoints.push({
-                    x: starFieldM[i].x,
-                    y: starFieldM[i].y
-                });
                 _distanceTravelled.push(0);
             }
 
             if (vertices.length < starFieldM.length) {
                 vertices.length = 250;
 
-                for (var i = 250; i < 500; i++) {
+                for (var i = 250; i < starFieldM.length; i++) {
                     genRandPtOutsideScreen(vertices, "LEFT");
-                    _goalPoints.push({
-                        x: starFieldM[i].x,
-                        y: starFieldM[i].y
-                    });
                     _distanceTravelled.push(0);
                 }
             }
@@ -260,11 +269,19 @@ function startTransition(newStage) {
 
         case STAGE.STAG:
             sBorderM.updateMatrixWorld();
+            genProjectedVertices(sBorderM, sBorderV);
+            sEyeM.updateMatrixWorld();
+            genProjectedVertices(sEyeM, sEyeV);
+            sEarLM.updateMatrixWorld();
+            genProjectedVertices(sEarLM, sEarLV);
+            sEarRM.updateMatrixWorld();
+            genProjectedVertices(sEarRM, sEarRV);
+            sSnoutM.updateMatrixWorld();
+            genProjectedVertices(sSnoutM, sSnoutV);
+
             for (var i = 0; i < starFieldM.length; i++) {
-                if (i < sBorderM.geometry.vertices.length) {
-                    _goalPoints.push(sBorderM.geometry.vertices[i].clone());
-                    _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
-                    _goalPoints[i] = projectToScreen(_goalPoints[i]);
+                if (i < sBorderV.length) {
+                    _goalPoints.push(sBorderV[i]);
                     if (i >= 1) {
                         _sGoalDistance.push(distanceBetweenDimTwo(
                             _goalPoints[i-1],
@@ -307,7 +324,7 @@ function transitionTo(newStage) {
         
         if (newStage === STAGE.STARFIELD && i >= 250) {
             SKIP_SPEEDUP = true;
-        } else if (newStage === STAGE.STAG && i >= sBorderM.geometry.vertices.length) {
+        } else if (newStage === STAGE.STAG && i >= sBorderV.length) {
             SKIP_SLOWDOWN = true;
         }
         
@@ -387,12 +404,9 @@ function renderTransitions(ctx) {
             break;
 
         case STAGE.STAG:
-            sBorderM.updateMatrixWorld();
-            for (var i = 0; i < sBorderM.geometry.vertices.length; i++) {
-                _goalPoints[i] = sBorderM.geometry.vertices[i].clone();
-                _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
-                _goalPoints[i] = projectToScreen(_goalPoints[i]);
-                if (i < sBorderM.geometry.vertices.length - 1) {
+            for (var i = 0; i < sBorderV.length; i++) {
+                _goalPoints[i] = sBorderV[i];
+                if (i < sBorderV.length - 1) {
                     var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
                     if (dist < 70 || dist < _sGoalDistance[i] * 1.001) {
                         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1) * _sFadeIn;
@@ -404,6 +418,22 @@ function renderTransitions(ctx) {
                     }
                 }
             }
+            // for (var i = 0; i < sBorderM.geometry.vertices.length; i++) {
+            //     _goalPoints[i] = sBorderM.geometry.vertices[i].clone();
+            //     _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
+            //     _goalPoints[i] = projectToScreen(_goalPoints[i]);
+            //     if (i < sBorderM.geometry.vertices.length - 1) {
+            //         var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
+            //         if (dist < 70 || dist < _sGoalDistance[i] * 1.001) {
+            //             ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1) * _sFadeIn;
+            //             ctx.beginPath();
+            //             ctx.moveTo(vertices[i].x, vertices[i].y);
+            //             ctx.lineTo(vertices[i+1].x, vertices[i+1].y);
+            //             ctx.strokeStyle = '#ffffff';
+            //             ctx.stroke();
+            //         }
+            //     }
+            // }
             if (closeEnough > finalcloseEnough)
                 closeEnough -= 0.5;
             if (_sFadeIn <= 1 && closeEnough <= finalcloseEnough + 50)
@@ -420,7 +450,8 @@ function renderSphere(ctx) {
     sphereM.rotation.y += 0.001;
     sphereM.rotation.z += 0.001;
     vertices = [];
-    projectModelVertices(sphereM);
+    // projectModelVertices(sphereM);
+    genProjectedVertices(sphereM, vertices);
     drawConnections(closeEnough, ctx);
 }
 
@@ -439,6 +470,7 @@ function renderStarfield(ctx) {
 }
 
 function renderStag(ctx) {
+    // CLEAN THIS FUNCTION
     sBorderM.updateMatrixWorld();
     sEyeM.updateMatrixWorld();
     sEarLM.updateMatrixWorld();
