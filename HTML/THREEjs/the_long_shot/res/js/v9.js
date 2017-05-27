@@ -75,6 +75,8 @@ var rightEarTriangles = {
     aR: []
 };
 
+var innerBorderPts = [];
+
 // DEBUGGING
 var triangleColors = [];
 
@@ -86,6 +88,31 @@ function sqrt(num) {return Math.sqrt(num);}
 function map_range(value, low1, high1, low2, high2) {return (low2 + (high2 - low2) * (value - low1) / (high1 - low1));}
 function reset() {this.scene = new THREE.Scene(); setup();}
 function distanceBetweenDimTwo(p1, p2) {return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));}
+
+function areaOfTriangle(data, tIndexes) {
+    // shoelace theorem
+    var a = tIndexes[0];
+    var b = tIndexes[1];
+    var c = tIndexes[2];
+
+    return Math.abs(
+            (data[a].x - data[c].x) * (data[b].y - data[a].y) -
+            (data[a].x - data[b].x) * (data[c].y - data[a].y)) / 2;
+}
+
+function scalarPtMultiply(k, pt) {
+    return {
+        x: k*pt.x,
+        y: k*pt.y
+    };
+}
+
+function pointAdd(a, b) {
+    return {
+        x: a.x + b.x,
+        y: a.y + b.y
+    };
+}
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
@@ -124,23 +151,8 @@ function genProjectedVertices(model, projectedVertices) {
         var b = model.geometry.vertices[i].clone();
         b.applyMatrix4(model.matrixWorld);
         b = projectToScreen(b);
+        delete b.z;
         projectedVertices.push(b);
-    }
-}
-
-function drawConnections(distanceThreshold, ctx) {
-    for (var i = 0; i < vertices.length; i++) {
-        for (var j = i + 1; j < vertices.length; j++) {
-            var dist = distanceBetweenDimTwo(vertices[i], vertices[j]);
-            if (dist < distanceThreshold) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(vertices[i].x, vertices[i].y);
-                ctx.lineTo(vertices[j].x, vertices[j].y);
-                ctx.stroke();
-            }
-        }
     }
 }
 
@@ -182,6 +194,31 @@ function genRandPtOutsideScreen(array, flag) {
     }
 }
 
+function genRandPtFromTriangles(array, triObj) {
+    var x = Math.random()
+    var index = -1;
+    while (x >= 0 && index <= triObj.aR.length - 1) {
+        // selects a random triangle from the set
+        x -= triObj.aR[++index];
+    }
+    if (triObj.i[index] == undefined) {
+        console.log(index);
+        return;
+    }
+
+    var a = triObj.v[triObj.i[index][0]];
+    var b = triObj.v[triObj.i[index][1]];
+    var c = triObj.v[triObj.i[index][2]];
+    // gen rand pt in triangle
+
+    // from https://math.stackexchange.com/questions/18686/uniform-random-point-in-triangle
+    var r1 = Math.random(), r2 = Math.random();
+    a = pointAdd(scalarPtMultiply(1 - sqrt(r1), a),
+                 scalarPtMultiply(sqrt(r1) * (1 - r2), b));
+    array.push(pointAdd(scalarPtMultiply(sqrt(r1) * r2, c),
+                        a));
+}
+
 function triangulate(arrayOfVertices, holeVertices) {
     var flattenedArray = [];
     var holeIndexes = [];
@@ -202,7 +239,6 @@ function triangulate(arrayOfVertices, holeVertices) {
             }
         }
     }
-    // return earcut(flattenedArray, holeIndexes);
     var triangulation = earcut(flattenedArray, holeIndexes);
     for (var i = 0; i < triangulation.length; i += 3) {
         result.push([triangulation[i], triangulation[i+1], triangulation[i+2]]);
@@ -210,9 +246,43 @@ function triangulate(arrayOfVertices, holeVertices) {
     return result;
 }
 
-// function generateTriangles() {
+function genTriangles(triangleObject, arrayOfVertices, holeVertices) {
+    triangleObject.i = triangulate(arrayOfVertices, holeVertices);
+    triangleObject.v = arrayOfVertices;
+    if (holeVertices) {
+        for (var i = 0; i < holeVertices.length; i++) {
+            triangleObject.v = triangleObject.v.concat(holeVertices[i]);
+        }
+    }
+    
+    var totalPolygonArea = 0;
+    var triangleAreas = [];
+    for (var j = 0; j < triangleObject.i.length; j++) {
+        var area = areaOfTriangle(triangleObject.v, triangleObject.i[j]);
+        triangleAreas.push(area);
+        totalPolygonArea += area;
+    }
 
-// }
+    for (var i = 0; i < triangleAreas.length; i++) {
+        triangleObject.aR.push(triangleAreas[i]/totalPolygonArea);
+    }
+}
+
+function drawConnections(distanceThreshold, ctx) {
+    for (var i = 0; i < vertices.length; i++) {
+        for (var j = i + 1; j < vertices.length; j++) {
+            var dist = distanceBetweenDimTwo(vertices[i], vertices[j]);
+            if (dist < distanceThreshold) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(vertices[i].x, vertices[i].y);
+                ctx.lineTo(vertices[j].x, vertices[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
 
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
 
@@ -367,6 +437,22 @@ function transitionTo(newStage) {
             break;
 
             case STAGE.STAG:
+                sBorderM.geometry.dispose();
+                sBorderM.material.dispose();
+                sBorderM = undefined;
+                sEyeM.geometry.dispose();
+                sEyeM.material.dispose();
+                sEyeM = undefined;
+                sEarLM.geometry.dispose();
+                sEarLM.material.dispose();
+                sEarLM = undefined;
+                sEarRM.geometry.dispose();
+                sEarRM.material.dispose();
+                sEarRM = undefined;
+                sSnoutM.geometry.dispose();
+                sSnoutM.material.dispose();
+                sSnoutM = undefined;
+
                 starFieldM = undefined;
                 starVelocities = undefined;
                 _distanceTravelled = undefined;
@@ -423,13 +509,12 @@ function renderTransitions(ctx) {
 }
 
 function renderSphere(ctx) {
-    sphereM.updateMatrixWorld();
-    sphereM.rotation.x += 0.001;
-    sphereM.rotation.y += 0.001;
-    sphereM.rotation.z += 0.001;
     vertices = [];
     genProjectedVertices(sphereM, vertices);
     drawConnections(closeEnough, ctx);
+    sphereM.rotation.x += 0.001;
+    sphereM.rotation.y += 0.001;
+    sphereM.rotation.z += 0.001;
 }
 
 function renderStarfield(ctx) {
@@ -447,57 +532,43 @@ function renderStarfield(ctx) {
 }
 
 function setupStag() {
-    sBorderM.updateMatrixWorld();
     genProjectedVertices(sBorderM, sBorderV);
-    sEyeM.updateMatrixWorld();
     genProjectedVertices(sEyeM, sEyeV);
-    sEarLM.updateMatrixWorld();
     genProjectedVertices(sEarLM, sEarLV);
-    sEarRM.updateMatrixWorld();
     genProjectedVertices(sEarRM, sEarRV);
-    sSnoutM.updateMatrixWorld();
     genProjectedVertices(sSnoutM, sSnoutV);
 
-    baseTriangles.i = triangulate(sBorderV, [sEyeV, sSnoutV]);
-    baseTriangles.v = baseTriangles.v.concat(sBorderV);
-    baseTriangles.v = baseTriangles.v.concat(sEyeV);
-    baseTriangles.v = baseTriangles.v.concat(sSnoutV);
+    genTriangles(baseTriangles, sBorderV, [sEyeV, sSnoutV]);
+    genTriangles(leftEarTriangles, sEarLV);
+    genTriangles(rightEarTriangles, sEarRV);
 
+    for (var i = 0; i < 200; i++) {
+        genRandPtFromTriangles(innerBorderPts, baseTriangles);
+    }
+
+    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for (var i = 0; i < 383; i++) {
         triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
     }
-    
+    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
 function renderStag(ctx) {
-    sBorderM.updateMatrixWorld();
-    sEyeM.updateMatrixWorld();
-    sEarLM.updateMatrixWorld();
-    sEarRM.updateMatrixWorld();
-    sSnoutM.updateMatrixWorld();
-
     vertices = [];
     vertices = baseTriangles.v;
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (var j = 0; j < baseTriangles.i.length; j++) {
-        ctx.fillStyle = triangleColors[j];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-        ctx.globalAlpha = 1;
-        ctx.beginPath();
-        ctx.moveTo(vertices[baseTriangles.i[j][0]].x, vertices[baseTriangles.i[j][0]].y);
-        ctx.lineTo(vertices[baseTriangles.i[j][1]].x, vertices[baseTriangles.i[j][1]].y);
-        ctx.lineTo(vertices[baseTriangles.i[j][2]].x, vertices[baseTriangles.i[j][2]].y);
-        // ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = '#ffff00';
-        ctx.stroke();
-    }
-
-    ctx.fillStyle = "#f00"//"#1b1b19"
-    tempFill(ctx, sEarLV);
-    tempFill(ctx, sEarRV);
+    for (var j = 0; j < baseTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(vertices[baseTriangles.i[j][0]].x, vertices[baseTriangles.i[j][0]].y);ctx.lineTo(vertices[baseTriangles.i[j][1]].x, vertices[baseTriangles.i[j][1]].y);ctx.lineTo(vertices[baseTriangles.i[j][2]].x, vertices[baseTriangles.i[j][2]].y);/* ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);*/ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
+    for (var j = 0; j < rightEarTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(sEarRV[rightEarTriangles.i[j][0]].x, sEarRV[rightEarTriangles.i[j][0]].y);ctx.lineTo(sEarRV[rightEarTriangles.i[j][1]].x, sEarRV[rightEarTriangles.i[j][1]].y);ctx.lineTo(sEarRV[rightEarTriangles.i[j][2]].x, sEarRV[rightEarTriangles.i[j][2]].y);ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
+    for (var j = 0; j < leftEarTriangles.i.length; j++) {ctx.fillStyle = triangleColors[j];ctx.globalAlpha = 1;ctx.beginPath();ctx.moveTo(sEarLV[leftEarTriangles.i[j][0]].x, sEarLV[leftEarTriangles.i[j][0]].y);ctx.lineTo(sEarLV[leftEarTriangles.i[j][1]].x, sEarLV[leftEarTriangles.i[j][1]].y);ctx.lineTo(sEarLV[leftEarTriangles.i[j][2]].x, sEarLV[leftEarTriangles.i[j][2]].y);ctx.closePath();ctx.fill();ctx.strokeStyle = '#ffff00';ctx.stroke();}
+    // ctx.fillStyle = "#f00"//"#1b1b19"
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ctx.fillStyle = "white";
+    for (var i = 0; i < innerBorderPts.length; i++) {
+        var b = innerBorderPts[i];
+        ctx.fillRect(b.x, b.y, 10, 10);
+    }
 
     for (var i = 0; i < sBorderV.length - 1; i++) {
         var dist = distanceBetweenDimTwo(sBorderV[i], sBorderV[i+1]);
