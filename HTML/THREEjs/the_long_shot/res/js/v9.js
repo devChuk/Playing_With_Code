@@ -46,7 +46,7 @@ var sEarLV = [];
 var sEarRV = [];
 var sSnoutV = [];
 
-// TRANSITION VALUES
+// Transition values
 var _stage = STAGE.SPHERE;      // keeps track of current stage
 var vertices;                   // contains all the vertices to render
 var _distanceTravelled;         // records distance travelled for each vertex during transitions
@@ -56,23 +56,23 @@ var _goalPointsSatisfied;       // contains status of transition completion for 
 var _speeds;                    // contains the speeds of each vertex during transitions. Ideally for Material Design
 var _newStage;                  // contains the goal stage
 var _sFadeIn = 0;               // fades in stag connections
-var _sGoalDistance = [];        //stores the goal distances of the stag border vertices
+var _sGoalDistance = [];        // stores the goal distances of the stag border vertices
 
 // Triangulation magic
-// var baseTriangles = [];
-
 var baseTriangles = {
+    v: [],                      // stores vertices of triangles
+    i: [],                      // stores the actual triangles
+    aR: []                      // stores the ratios of triangle areas to entire area
+};
+var leftEarTriangles = {
     v: [],
     i: [],
     aR: []
 };
-var leftEarTriangles = {
-    v: [],
-    areaRatios: []
-};
 var rightEarTriangles = {
     v: [],
-    areaRatios: []
+    i: [],
+    aR: []
 };
 
 // DEBUGGING
@@ -184,14 +184,13 @@ function genRandPtOutsideScreen(array, flag) {
 
 function triangulate(arrayOfVertices, holeVertices) {
     var flattenedArray = [];
+    var holeIndexes = [];
+    var result = [];
 
     for (var i = 0; i < arrayOfVertices.length; i++) {
         flattenedArray.push(arrayOfVertices[i].x);
         flattenedArray.push(arrayOfVertices[i].y);
     }
-
-    var holeIndexes = [];
-
     if (holeVertices) {
         for (var i = 0; i < holeVertices.length; i++) {
             holeIndexes.push(flattenedArray.length / 2);
@@ -203,8 +202,12 @@ function triangulate(arrayOfVertices, holeVertices) {
             }
         }
     }
-
-    return earcut(flattenedArray, holeIndexes);
+    // return earcut(flattenedArray, holeIndexes);
+    var triangulation = earcut(flattenedArray, holeIndexes);
+    for (var i = 0; i < triangulation.length; i += 3) {
+        result.push([triangulation[i], triangulation[i+1], triangulation[i+2]]);
+    }
+    return result;
 }
 
 // function generateTriangles() {
@@ -463,8 +466,6 @@ function setupStag() {
     for (var i = 0; i < 383; i++) {
         triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
     }
-
-
     
 }
 
@@ -479,31 +480,31 @@ function renderStag(ctx) {
     vertices = baseTriangles.v;
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // for (var i = 0; i < baseTriangles.i.length; i += 3) {
-    //     ctx.fillStyle = triangleColors[i];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-    //     ctx.globalAlpha = 1;
-    //     ctx.beginPath();
-    //     ctx.moveTo(vertices[baseTriangles.i[i]].x, vertices[baseTriangles.i[i]].y);
-    //     ctx.lineTo(vertices[baseTriangles.i[i+1]].x, vertices[baseTriangles.i[i+1]].y);
-    //     ctx.lineTo(vertices[baseTriangles.i[i+2]].x, vertices[baseTriangles.i[i+2]].y);
-    //     // ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);
-    //     ctx.closePath();
-    //     ctx.fill();
-    //     ctx.strokeStyle = '#ffff00';
-    //     ctx.stroke();
-    // }
+    for (var j = 0; j < baseTriangles.i.length; j++) {
+        ctx.fillStyle = triangleColors[j];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.moveTo(vertices[baseTriangles.i[j][0]].x, vertices[baseTriangles.i[j][0]].y);
+        ctx.lineTo(vertices[baseTriangles.i[j][1]].x, vertices[baseTriangles.i[j][1]].y);
+        ctx.lineTo(vertices[baseTriangles.i[j][2]].x, vertices[baseTriangles.i[j][2]].y);
+        // ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#ffff00';
+        ctx.stroke();
+    }
 
-    // ctx.fillStyle = "#f00"//"#1b1b19"
-    // tempFill(ctx, sEarLV);
-    // tempFill(ctx, sEarRV);
+    ctx.fillStyle = "#f00"//"#1b1b19"
+    tempFill(ctx, sEarLV);
+    tempFill(ctx, sEarRV);
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    for (var i = 0; i < vertices.length - 1; i++) {
-        var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
+    for (var i = 0; i < sBorderV.length - 1; i++) {
+        var dist = distanceBetweenDimTwo(sBorderV[i], sBorderV[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
         ctx.beginPath();
-        ctx.moveTo(vertices[i].x, vertices[i].y);
-        ctx.lineTo(vertices[i+1].x, vertices[i+1].y);
+        ctx.moveTo(sBorderV[i].x, sBorderV[i].y);
+        ctx.lineTo(sBorderV[i+1].x, sBorderV[i+1].y);
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
     }
