@@ -59,20 +59,24 @@ var _sFadeIn = 0;               // fades in stag connections
 var _sGoalDistance = [];        //stores the goal distances of the stag border vertices
 
 // Triangulation magic
-var baseTriangles = [];
+// var baseTriangles = [];
 
-// var baseTriangles = {
-//     vertices: [],
-//     areaRatios: []
-// };
+var baseTriangles = {
+    v: [],
+    i: [],
+    aR: []
+};
 var leftEarTriangles = {
-    vertices: [],
+    v: [],
     areaRatios: []
 };
 var rightEarTriangles = {
-    vertices: [],
+    v: [],
     areaRatios: []
 };
+
+// DEBUGGING
+var triangleColors = [];
 
 
 ////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
@@ -178,7 +182,7 @@ function genRandPtOutsideScreen(array, flag) {
     }
 }
 
-function triangulate(arrayOfVertices, holeMeshes) {
+function triangulate(arrayOfVertices, holeVertices) {
     var flattenedArray = [];
 
     for (var i = 0; i < arrayOfVertices.length; i++) {
@@ -188,14 +192,12 @@ function triangulate(arrayOfVertices, holeMeshes) {
 
     var holeIndexes = [];
 
-    if (holeMeshes) {
-        for (var i = 0; i < holeMeshes.length; i++) {
+    if (holeVertices) {
+        for (var i = 0; i < holeVertices.length; i++) {
             holeIndexes.push(flattenedArray.length / 2);
 
-            for (var j = 0; j < holeMeshes[i].geometry.vertices.length; j++) {
-                var b = holeMeshes[i].geometry.vertices[j].clone();
-                b.applyMatrix4(holeMeshes[i].matrixWorld);
-                b = projectToScreen(b);
+            for (var j = 0; j < holeVertices[i].length; j++) {
+                var b = holeVertices[i][j];
                 flattenedArray.push(b.x);
                 flattenedArray.push(b.y);
             }
@@ -251,7 +253,6 @@ function startTransition(newStage) {
 
     switch(newStage) {
         case STAGE.STARFIELD:
-
             _goalPoints = starFieldM;
             for (var i = 0; i < 250; i++) {
                 _distanceTravelled.push(0);
@@ -268,17 +269,7 @@ function startTransition(newStage) {
             break;
 
         case STAGE.STAG:
-            sBorderM.updateMatrixWorld();
-            genProjectedVertices(sBorderM, sBorderV);
-            sEyeM.updateMatrixWorld();
-            genProjectedVertices(sEyeM, sEyeV);
-            sEarLM.updateMatrixWorld();
-            genProjectedVertices(sEarLM, sEarLV);
-            sEarRM.updateMatrixWorld();
-            genProjectedVertices(sEarRM, sEarRV);
-            sSnoutM.updateMatrixWorld();
-            genProjectedVertices(sSnoutM, sSnoutV);
-
+            setupStag();
             for (var i = 0; i < starFieldM.length; i++) {
                 if (i < sBorderV.length) {
                     _goalPoints.push(sBorderV[i]);
@@ -418,22 +409,6 @@ function renderTransitions(ctx) {
                     }
                 }
             }
-            // for (var i = 0; i < sBorderM.geometry.vertices.length; i++) {
-            //     _goalPoints[i] = sBorderM.geometry.vertices[i].clone();
-            //     _goalPoints[i].applyMatrix4(sBorderM.matrixWorld);
-            //     _goalPoints[i] = projectToScreen(_goalPoints[i]);
-            //     if (i < sBorderM.geometry.vertices.length - 1) {
-            //         var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
-            //         if (dist < 70 || dist < _sGoalDistance[i] * 1.001) {
-            //             ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1) * _sFadeIn;
-            //             ctx.beginPath();
-            //             ctx.moveTo(vertices[i].x, vertices[i].y);
-            //             ctx.lineTo(vertices[i+1].x, vertices[i+1].y);
-            //             ctx.strokeStyle = '#ffffff';
-            //             ctx.stroke();
-            //         }
-            //     }
-            // }
             if (closeEnough > finalcloseEnough)
                 closeEnough -= 0.5;
             if (_sFadeIn <= 1 && closeEnough <= finalcloseEnough + 50)
@@ -450,7 +425,6 @@ function renderSphere(ctx) {
     sphereM.rotation.y += 0.001;
     sphereM.rotation.z += 0.001;
     vertices = [];
-    // projectModelVertices(sphereM);
     genProjectedVertices(sphereM, vertices);
     drawConnections(closeEnough, ctx);
 }
@@ -469,8 +443,32 @@ function renderStarfield(ctx) {
     drawConnections(closeEnough, ctx);
 }
 
+function setupStag() {
+    sBorderM.updateMatrixWorld();
+    genProjectedVertices(sBorderM, sBorderV);
+    sEyeM.updateMatrixWorld();
+    genProjectedVertices(sEyeM, sEyeV);
+    sEarLM.updateMatrixWorld();
+    genProjectedVertices(sEarLM, sEarLV);
+    sEarRM.updateMatrixWorld();
+    genProjectedVertices(sEarRM, sEarRV);
+    sSnoutM.updateMatrixWorld();
+    genProjectedVertices(sSnoutM, sSnoutV);
+
+    baseTriangles.i = triangulate(sBorderV, [sEyeV, sSnoutV]);
+    baseTriangles.v = baseTriangles.v.concat(sBorderV);
+    baseTriangles.v = baseTriangles.v.concat(sEyeV);
+    baseTriangles.v = baseTriangles.v.concat(sSnoutV);
+
+    for (var i = 0; i < 383; i++) {
+        triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+    }
+
+
+    
+}
+
 function renderStag(ctx) {
-    // CLEAN THIS FUNCTION
     sBorderM.updateMatrixWorld();
     sEyeM.updateMatrixWorld();
     sEarLM.updateMatrixWorld();
@@ -478,48 +476,27 @@ function renderStag(ctx) {
     sSnoutM.updateMatrixWorld();
 
     vertices = [];
-    projectModelVertices(sBorderM);
+    vertices = baseTriangles.v;
 
-    if (baseTriangles.length == 0) {
-        baseTriangles = triangulate(vertices, [sEyeM, sSnoutM]);
-        triangleColors = [];
-        for (var i = 0; i < 383; i++) {
-            triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
-        }
-    }
+    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // for (var i = 0; i < baseTriangles.i.length; i += 3) {
+    //     ctx.fillStyle = triangleColors[i];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
+    //     ctx.globalAlpha = 1;
+    //     ctx.beginPath();
+    //     ctx.moveTo(vertices[baseTriangles.i[i]].x, vertices[baseTriangles.i[i]].y);
+    //     ctx.lineTo(vertices[baseTriangles.i[i+1]].x, vertices[baseTriangles.i[i+1]].y);
+    //     ctx.lineTo(vertices[baseTriangles.i[i+2]].x, vertices[baseTriangles.i[i+2]].y);
+    //     // ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);
+    //     ctx.closePath();
+    //     ctx.fill();
+    //     ctx.strokeStyle = '#ffff00';
+    //     ctx.stroke();
+    // }
 
-    for (var i = 0; i < sEyeM.geometry.vertices.length; i++) {
-        var b = sEyeM.geometry.vertices[i].clone();
-        b.applyMatrix4(sEyeM.matrixWorld);
-        b = projectToScreen(b);
-        vertices.push(b);
-    }
-
-    for (var i = 0; i < sSnoutM.geometry.vertices.length; i++) {
-        var b = sSnoutM.geometry.vertices[i].clone();
-        b.applyMatrix4(sSnoutM.matrixWorld);
-        b = projectToScreen(b);
-        vertices.push(b);
-    }
-
-
-    for (var i = 0; i < baseTriangles.length; i += 3) {
-        ctx.fillStyle = triangleColors[i];//'hsl(' + 360 * Math.random() + ', 50%, 50%)';
-        ctx.globalAlpha = 1;
-        ctx.beginPath();
-        ctx.moveTo(vertices[baseTriangles[i]].x, vertices[baseTriangles[i]].y);
-        ctx.lineTo(vertices[baseTriangles[i+1]].x, vertices[baseTriangles[i+1]].y);
-        ctx.lineTo(vertices[baseTriangles[i+2]].x, vertices[baseTriangles[i+2]].y);
-        // ctx.fillRect(baseTriangles[i].x, baseTriangles[i].y, 1, 1);
-        ctx.closePath();
-        ctx.fill();
-        ctx.strokeStyle = '#ffff00';
-        ctx.stroke();
-    }
-
-    ctx.fillStyle = "#f00"//"#1b1b19"
-    tempFill(ctx, sEarLM);
-    tempFill(ctx, sEarRM);
+    // ctx.fillStyle = "#f00"//"#1b1b19"
+    // tempFill(ctx, sEarLV);
+    // tempFill(ctx, sEarRV);
+    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     for (var i = 0; i < vertices.length - 1; i++) {
         var dist = distanceBetweenDimTwo(vertices[i], vertices[i+1]);
@@ -530,6 +507,16 @@ function renderStag(ctx) {
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
     }
+}
+
+function tempFill(ctx, modelVertices) {
+    ctx.beginPath();
+    for (var i = 0; i < modelVertices.length; i++) {
+        ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
+        // ctx.fillRect(b.x, b.y, 1, 1);
+    }
+    ctx.closePath();
+    ctx.fill();
 }
 
 ////////////////////////////////////////CREATING OBJECTS/////////////////////////////
@@ -581,19 +568,6 @@ var render = function () {
         startTransition(STAGE.STAG);
     renderer.render(scene, camera);
 };
-
-function tempFill(ctx, model) {
-    ctx.beginPath();
-    for (var i = 0; i < model.geometry.vertices.length; i++) {
-        var b = model.geometry.vertices[i].clone();
-        b.applyMatrix4(model.matrixWorld);
-        var b = projectToScreen(b);
-        ctx.lineTo(b.x, b.y);
-        // ctx.fillRect(b.x, b.y, 1, 1);
-    }
-    ctx.closePath();
-    ctx.fill();
-}
 
 ////////////////////////////////////////RUN/////////////////////////
 
