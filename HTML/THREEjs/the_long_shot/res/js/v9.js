@@ -12,10 +12,8 @@ var vh = window.innerHeight;
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, vw/vh, 0.1, 1000 );
 var renderer = new THREE.WebGLRenderer({antialias: true});
+var renderID;
 camera.position.z = 655;
-var closeEnough = 130;
-var earCloseEnough = 40;
-var finalcloseEnough = 30;
 
 // HTML Canvas variables
 var canvas;
@@ -28,6 +26,8 @@ var STAGE = {
     STARFIELD: 2,
     STAG: 3
 };
+var closeEnough = 130;
+
 
 // Runtime generated models
 var sphereM;
@@ -59,7 +59,13 @@ var _newStage;                  // contains the goal stage
 var _sFadeIn = 0;               // fades in stag connections
 var _sGoalDistance = [];        // stores the goal distances of the stag border vertices
 
-// Triangulation magic
+// Stag rendering values
+var earCloseEnough = 35;
+var finalcloseEnough = 100;
+var numInnerStagPts = 250;
+_stage = STAGE.STARFIELD;
+var proxThres = [];
+
 var baseTriangles = {
     v: [],                      // stores vertices of triangles
     i: [],                      // stores the actual triangles
@@ -79,6 +85,7 @@ var rightEarTriangles = {
 var innerBorderPts = [];
 var leftEarPts = [];
 var rightEarPts = [];
+var mainStagV = [];
 
 // DEBUGGING
 var triangleColors = [];
@@ -91,6 +98,8 @@ function sqrt(num) {return Math.sqrt(num);}
 function map_range(value, low1, high1, low2, high2) {return (low2 + (high2 - low2) * (value - low1) / (high1 - low1));}
 function reset() {this.scene = new THREE.Scene(); setup();}
 function distanceBetweenDimTwo(p1, p2) {return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));}
+function scalarPtMultiply(k, pt) {return {x: k*pt.x,y: k*pt.y};}
+function pointAdd(a, b) {return {x: a.x + b.x,y: a.y + b.y};}
 
 function areaOfTriangle(data, tIndexes) {
     // shoelace theorem
@@ -103,19 +112,75 @@ function areaOfTriangle(data, tIndexes) {
             (data[a].x - data[b].x) * (data[c].y - data[a].y)) / 2;
 }
 
-function scalarPtMultiply(k, pt) {
-    return {
-        x: k*pt.x,
-        y: k*pt.y
-    };
+function onSeg(a, b, c) {
+    // checks if b lies on ac
+    return distanceBetweenDimTwo(a,b) + distanceBetweenDimTwo(b,c) == distanceBetweenDimTwo(a,c);
+    // -epsilon < (distance(a, c) + distance(c, b) - distance(a, b)) < epsilon
 }
 
-function pointAdd(a, b) {
-    return {
-        x: a.x + b.x,
-        y: a.y + b.y
-    };
+function orientation(p, q, r) {
+    var val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    if (val == 0) {
+        return 0;  // colinear
+    }
+    return (val > 0) ? 1: 2; // clock or counterclock wise
 }
+
+function doIntersect(p1, q1, p2, q2) { //border first
+    // checks for p1-q1 vs p2-q2
+
+    // Find the four orientations needed for general and special cases
+    var o1 = orientation(p1, q1, p2);
+    var o2 = orientation(p1, q1, q2);
+    var o3 = orientation(p2, q2, p1);
+    var o4 = orientation(p2, q2, q1);
+ 
+    // Special Cases
+    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+    if (o1 == 0 && onSeg(p1, p2, q1)) return false;
+ 
+    // p1, q1 and p2 are colinear and q2 lies on segment p1q1
+    if (o2 == 0 && onSeg(p1, q2, q1)) return false;
+ 
+    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+    if (o3 == 0 && onSeg(p2, p1, q2)) return false;
+ 
+     // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+    if (o4 == 0 && onSeg(p2, q1, q2)) return false;
+ 
+    // General case
+    if (o1 != o2 && o3 != o4) {
+        
+        return true;
+    }
+ 
+    
+ 
+    return false; // Doesn't fall in any of the above cases
+}
+
+function lineSegExitsPolygn(a, b, polygon) {
+    // loop thru all line segments of the polygon
+    for (var i = 0; i < polygon.length - 1; i++) {
+        var c = polygon[i];
+        var d = polygon[i+1];
+
+        if (doIntersect(c, d, a, b) == true) {
+            return true;
+        }
+    }
+        // check if line segments intersect
+        
+        // OPTION A
+        // if there are more than 1 intersection, then it intersects
+
+        // if there is an intersection point, check if it's actually one of the endpoints
+            // if it is, it doesn't exit
+            // if it isn't, it exits
+    return false;
+}
+
+
 
 window.addEventListener('resize', onWindowResize, false);
 function onWindowResize(){
@@ -545,8 +610,18 @@ function setupStag() {
     genTriangles(leftEarTriangles, sEarLV);
     genTriangles(rightEarTriangles, sEarRV);
 
-    for (var i = 0; i < 800; i++) {
+    // 200
+    // 600
+    // 
+    for (var i = 0; i < numInnerStagPts; i++) {
         genRandPtFromTriangles(innerBorderPts, baseTriangles);
+        innerBorderPts[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
+
         if (i < 20) {
             genRandPtFromTriangles(leftEarPts, leftEarTriangles);
             genRandPtFromTriangles(rightEarPts, rightEarTriangles);
@@ -554,10 +629,24 @@ function setupStag() {
 
     }
 
-    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (var i = 0; i < 383; i++) {
-        triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+    // generate connections
+    mainStagV = sBorderV.concat(innerBorderPts);
+    for (var i = 0; i < innerBorderPts.length; i++) {
+        for (var j = i + 1; j < mainStagV.length; j++) {
+            var dist = distanceBetweenDimTwo(innerBorderPts[i], mainStagV[j]);
+            if (dist < proxThres[i] && !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
+                innerBorderPts[i].conn.push({
+                    index: j,
+                    alpha: map_range(dist, 0, proxThres[i], 0.5, 0)
+                });
+            }
+        }
     }
+
+    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // for (var i = 0; i < 383; i++) {
+    //     triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+    // }
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
@@ -577,36 +666,19 @@ function renderStag(ctx) {
     // }
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // closeEnough = 45;
+    ctx.strokeStyle = '#ffffff';
+    for (var i = 0; i < innerBorderPts.length; i++) {
+        // connects all inner points to each other
+        for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
+            ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
+            var point = mainStagV[innerBorderPts[i].conn[j].index];
 
-    // connects all inner points to each other. looks like we want to randomize the closeEnough too
-    for (var i = 0; i < innerBorderPts.length; i++) {
-        for (var j = i + 1; j < innerBorderPts.length; j++) {
-            var dist = distanceBetweenDimTwo(innerBorderPts[i], innerBorderPts[j]);
-            if (dist < closeEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
-                ctx.lineTo(innerBorderPts[j].x, innerBorderPts[j].y);
-                ctx.stroke();
-            }
+            ctx.beginPath();
+            ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
         }
-    }
-    
-    // connects all inner points to border points
-    for (var i = 0; i < innerBorderPts.length; i++) {
-        for (var j = 0; j < sBorderV.length; j++) {
-            var dist = distanceBetweenDimTwo(innerBorderPts[i], sBorderV[j]);
-            if (dist < closeEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, closeEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
-                ctx.lineTo(sBorderV[j].x, sBorderV[j].y);
-                ctx.stroke();
-            }
-        }
-    }
+    }    
 
     // connects all border points together
     for (var i = 0; i < sBorderV.length - 1; i++) {
@@ -620,7 +692,7 @@ function renderStag(ctx) {
     }
 
     // EARS
-    // connect all earPts to each other
+    // connect earpoints
     for (var i = 0; i < leftEarPts.length; i++) {
         for (var j = i + 1; j < leftEarPts.length; j++) {
             var dist = distanceBetweenDimTwo(leftEarPts[i], leftEarPts[j]);
@@ -630,6 +702,18 @@ function renderStag(ctx) {
                 ctx.beginPath();
                 ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
                 ctx.lineTo(leftEarPts[j].x, leftEarPts[j].y);
+                ctx.stroke();
+            }
+        }
+
+        for (var j = 0; j < sEarLV.length; j++) {
+            var dist = distanceBetweenDimTwo(leftEarPts[i], sEarLV[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.beginPath();
+                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
+                ctx.lineTo(sEarLV[j].x, sEarLV[j].y);
                 ctx.stroke();
             }
         }
@@ -647,23 +731,7 @@ function renderStag(ctx) {
                 ctx.stroke();
             }
         }
-    }
-    // connects earPts to ear outlines 
-    for (var i = 0; i < leftEarPts.length; i++) {
-        for (var j = 0; j < sEarLV.length; j++) {
-            var dist = distanceBetweenDimTwo(leftEarPts[i], sEarLV[j]);
-            if (dist < earCloseEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
-                ctx.lineTo(sEarLV[j].x, sEarLV[j].y);
-                ctx.stroke();
-            }
-        }
-    }
 
-    for (var i = 0; i < rightEarPts.length; i++) {
         for (var j = 0; j < sEarRV.length; j++) {
             var dist = distanceBetweenDimTwo(rightEarPts[i], sEarRV[j]);
             if (dist < earCloseEnough && true) {
@@ -728,7 +796,7 @@ var setup = function () {
 ////////////////////////////////////////RENDERING & ANIMATING/////////////////////////
 
 var render = function () {
-    window.requestAnimationFrame( render );
+    renderID = window.requestAnimationFrame( render );
     stats.update();    //Update FPS counter.
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -751,10 +819,10 @@ var render = function () {
             break;
     }
 
-    var timeElapsed = Date.now() - startTime;                       //8000, 18000.   1000, 5000
+    var timeElapsed = Date.now() - startTime;                       //8000, 18000.   1000, 5000.  2000, 7000
     if (timeElapsed > 2000 && _stage == STAGE.SPHERE)
         startTransition(STAGE.STARFIELD);
-    else if (timeElapsed > 7000 && _stage == STAGE.STARFIELD)
+    else if (timeElapsed > 1000 && _stage == STAGE.STARFIELD)
         startTransition(STAGE.STAG);
     renderer.render(scene, camera);
 };
@@ -773,3 +841,5 @@ THREE.DefaultLoadingManager.onLoad = function() {
 }
 
 setup();
+
+// cancelAnimationFrame( renderID );
