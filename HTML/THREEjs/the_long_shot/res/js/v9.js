@@ -62,8 +62,9 @@ var _sGoalDistance = [];        // stores the goal distances of the stag border 
 // Stag rendering values
 var earCloseEnough = 35;
 var finalcloseEnough = 100;
-var numInnerStagPts = 250;
-_stage = STAGE.STARFIELD;
+var numInnerStagPts = 190;
+var numHeadStagPts = 35;
+_stage = STAGE.STARFIELD;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! remember to change timing too.
 var proxThres = [];
 
 var baseTriangles = {
@@ -262,8 +263,14 @@ function genRandPtOutsideScreen(array, flag) {
     }
 }
 
-function genRandPtFromTriangles(array, triObj) {
-    var x = Math.random()
+function genRandPtFromTriangles(array, triObj, upperRandBound) {
+    var x;
+    if (upperRandBound) {
+        x = Math.random() * upperRandBound;
+    } else {
+        x = Math.random();
+    }
+
     var index = -1;
     while (x >= 0 && index <= triObj.aR.length - 1) {
         // selects a random triangle from the set
@@ -610,9 +617,32 @@ function setupStag() {
     genTriangles(leftEarTriangles, sEarLV);
     genTriangles(rightEarTriangles, sEarRV);
 
+    headTriangles = {
+        v: baseTriangles.v,
+        i: [],
+        aR: []
+    }
+
+    var aRTotal = 0;
+
+    for (var j = 0; j < baseTriangles.i.length; j++) {
+        // if all 3 points satisfy the conditions, then add it to headTriangles
+        // 360
+        // 530
+        var a = baseTriangles.v[baseTriangles.i[j][0]];
+        var b = baseTriangles.v[baseTriangles.i[j][1]];
+        var c = baseTriangles.v[baseTriangles.i[j][2]];
+
+        if (360 <= a.y && a.y <= 530 && 360 <= b.y && b.y <= 530 && 360 <= c.y && c.y <= 530) {
+            headTriangles.i.push(baseTriangles.i[j]);
+            headTriangles.aR.push(baseTriangles.aR[j]);
+            aRTotal += baseTriangles.aR[j];
+        }
+    }
+
     // 200
     // 600
-    // 
+
     for (var i = 0; i < numInnerStagPts; i++) {
         genRandPtFromTriangles(innerBorderPts, baseTriangles);
         innerBorderPts[i].conn = [];
@@ -626,7 +656,16 @@ function setupStag() {
             genRandPtFromTriangles(leftEarPts, leftEarTriangles);
             genRandPtFromTriangles(rightEarPts, rightEarTriangles);
         }
+    }
 
+    for (var i = numInnerStagPts; i < numInnerStagPts + numHeadStagPts; i++) {
+        genRandPtFromTriangles(innerBorderPts, headTriangles, aRTotal);
+        innerBorderPts[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
     }
 
     // generate connections
@@ -643,10 +682,12 @@ function setupStag() {
         }
     }
 
+    
+
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // for (var i = 0; i < 383; i++) {
-    //     triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
-    // }
+    for (var i = 0; i < 383; i++) {
+        triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+    }
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
@@ -659,13 +700,14 @@ function renderStag(ctx) {
     // tempTriangleDraw(ctx, rightEarTriangles);
 
     // ctx.fillStyle = "#f00"//"#1b1b19"
-    // ctx.fillStyle = "white";
+    // ctx.fillStyle = "red";
     // for (var i = 0; i < innerBorderPts.length; i++) {
     //     var b = innerBorderPts[i];
     //     ctx.fillRect(b.x, b.y, 10, 10);
     // }
+    // ctx.fillRect(658, 530, 10, 10);
+    // ctx.fillRect(658, 360, 10, 10);
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // closeEnough = 45;
     ctx.strokeStyle = '#ffffff';
     for (var i = 0; i < innerBorderPts.length; i++) {
         // connects all inner points to each other
@@ -678,7 +720,7 @@ function renderStag(ctx) {
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
         }
-    }    
+    }
 
     // connects all border points together
     for (var i = 0; i < sBorderV.length - 1; i++) {
@@ -687,7 +729,6 @@ function renderStag(ctx) {
         ctx.beginPath();
         ctx.moveTo(sBorderV[i].x, sBorderV[i].y);
         ctx.lineTo(sBorderV[i+1].x, sBorderV[i+1].y);
-        ctx.strokeStyle = '#ffffff';
         ctx.stroke();
     }
 
@@ -753,7 +794,13 @@ function renderStag(ctx) {
 
 function tempTriangleDraw(ctx, triObj) {
     for (var j = 0; j < triObj.i.length; j++) {
+        // ctx.fillStyle = "#00000";//triangleColors[j];
         ctx.fillStyle = triangleColors[j];
+
+        // if (baseTriangles.v.length === 383 && 360 < j && j < 383) {
+        //     ctx.fillStyle = "#ff0000";
+        // }
+
         ctx.globalAlpha = 1;
         ctx.beginPath();
         ctx.moveTo(triObj.v[triObj.i[j][0]].x, triObj.v[triObj.i[j][0]].y);
