@@ -62,8 +62,8 @@ var _sGoalDistance = [];        // stores the goal distances of the stag border 
 // Stag rendering values
 var earCloseEnough = 35;
 var finalcloseEnough = 100;
-var numInnerStagPts = 190;
-var numHeadStagPts = 35;
+var numInnerStagPts = 230;
+var numHeadStagPts = 20;
 _stage = STAGE.STARFIELD;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! remember to change timing too.
 var proxThres = [];
 
@@ -672,8 +672,12 @@ function setupStag() {
     mainStagV = sBorderV.concat(innerBorderPts);
     for (var i = 0; i < innerBorderPts.length; i++) {
         for (var j = i + 1; j < mainStagV.length; j++) {
+            var isBorder = j < sBorderV.length;
+
             var dist = distanceBetweenDimTwo(innerBorderPts[i], mainStagV[j]);
-            if (dist < proxThres[i] && !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
+            // if ((/*(isBorder && dist < 50) ||*/ dist < proxThres[i]) &&
+            if (((isBorder && dist < 50) || dist < proxThres[i]) &&
+                !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
                 innerBorderPts[i].conn.push({
                     index: j,
                     alpha: map_range(dist, 0, proxThres[i], 0.5, 0)
