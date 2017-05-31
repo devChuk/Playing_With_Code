@@ -679,8 +679,17 @@ function setupStag() {
     }
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // innerBorderPts = innerBorderPts.concat(sEyeDetailV);
-    // add 
+    var prevLength = innerBorderPts.length;
+    innerBorderPts = innerBorderPts.concat(sEyeDetailV);
+    // add proximities and conn array!
+    for (var i = prevLength; i < prevLength + sEyeDetailV.length; i++) {
+        innerBorderPts[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
+    }
 
     // generate connections
     mainStagV = innerBorderPts.concat(sBorderV);//sBorderV.concat(innerBorderPts);
@@ -706,8 +715,6 @@ function setupStag() {
             }
         }
     }
-
-    
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     for (var i = 0; i < 383; i++) {
@@ -763,6 +770,15 @@ function renderStag(ctx) {
         ctx.lineTo(sBorderV[i+1].x, sBorderV[i+1].y);
         ctx.stroke();
     }
+
+    // for (var i = 0; i < sSnoutV.length - 1; i++) {
+    //     var dist = distanceBetweenDimTwo(sSnoutV[i], sSnoutV[i+1]);
+    //     ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
+    //     ctx.beginPath();
+    //     ctx.moveTo(sSnoutV[i].x, sSnoutV[i].y);
+    //     ctx.lineTo(sSnoutV[i+1].x, sSnoutV[i+1].y);
+    //     ctx.stroke();
+    // }
 
     // EARS
     // connect earpoints
