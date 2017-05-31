@@ -37,12 +37,14 @@ var starVelocities = [];        // contains velocities of said starfield
 // Blender 3D models
 var sBorderM;                   // (the s stands for stag. Which means yung male deer)
 var sEyeM;
+var sEyeDetailM;
 var sEarLM;
 var sEarRM;
 var sSnoutM;
 
 var sBorderV = [];
 var sEyeV = [];
+var sEyeDetailV = [];
 var sEarLV = [];
 var sEarRV = [];
 var sSnoutV = [];
@@ -161,8 +163,14 @@ function doIntersect(p1, q1, p2, q2) { //border first
 }
 
 function lineSegExitsPolygn(a, b, polygon) {
+    if (a.y >= 530 && b.y >= 530) {
+        return false;
+    }
+
     // loop thru all line segments of the polygon
-    for (var i = 0; i < polygon.length - 1; i++) {
+    // for (var i = 0; i < polygon.length - 1; i++) {
+        //60
+    for (var i = 80; i < 310; i++) {
         var c = polygon[i];
         var d = polygon[i+1];
 
@@ -389,6 +397,7 @@ function initMeshes() {
     var stagScale = 200;
     loader.load('./res/models/sBorder.json', function(geometry) {sBorderM = new THREE.Mesh(geometry);sBorderM.scale.x = sBorderM.scale.y = stagScale;});
     loader.load('./res/models/sEye.json', function(geometry) {sEyeM = new THREE.Mesh(geometry);sEyeM.scale.x = sEyeM.scale.y = stagScale;});
+    loader.load('./res/models/sEyeDetail.json', function(geometry) {sEyeDetailM = new THREE.Mesh(geometry);sEyeDetailM.scale.x = sEyeDetailM.scale.y = stagScale;});
     loader.load('./res/models/sEarL.json', function(geometry) {sEarLM = new THREE.Mesh(geometry);sEarLM.scale.x = sEarLM.scale.y = stagScale;});
     loader.load('./res/models/sEarR.json', function(geometry) {sEarRM = new THREE.Mesh(geometry);sEarRM.scale.x = sEarRM.scale.y = stagScale;});
     loader.load('./res/models/sSnout.json', function(geometry) {sSnoutM = new THREE.Mesh(geometry);sSnoutM.scale.x = sSnoutM.scale.y = stagScale;});
@@ -609,6 +618,7 @@ function renderStarfield(ctx) {
 function setupStag() {
     genProjectedVertices(sBorderM, sBorderV);
     genProjectedVertices(sEyeM, sEyeV);
+    genProjectedVertices(sEyeDetailM, sEyeDetailV);
     genProjectedVertices(sEarLM, sEarLV);
     genProjectedVertices(sEarRM, sEarRV);
     genProjectedVertices(sSnoutM, sSnoutV);
@@ -668,8 +678,12 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // innerBorderPts = innerBorderPts.concat(sEyeDetailV);
+    // add 
+
     // generate connections
-    mainStagV = sBorderV.concat(innerBorderPts);
+    mainStagV = innerBorderPts.concat(sBorderV);//sBorderV.concat(innerBorderPts);
     for (var i = 0; i < innerBorderPts.length; i++) {
         for (var j = i + 1; j < mainStagV.length; j++) {
             var isBorder = j < sBorderV.length;
@@ -678,9 +692,16 @@ function setupStag() {
             // if ((/*(isBorder && dist < 50) ||*/ dist < proxThres[i]) &&
             if (((isBorder && dist < 50) || dist < proxThres[i]) &&
                 !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
+                var a;
+                if (isBorder && dist < 50) {
+                    a = map_range(dist, 0, 100, 0.1, 0.04);
+                } else {
+                    a = map_range(dist, 0, proxThres[i], 0.1, 0.04);
+                }
+
                 innerBorderPts[i].conn.push({
                     index: j,
-                    alpha: map_range(dist, 0, proxThres[i], 0.5, 0)
+                    alpha: a
                 });
             }
         }
@@ -704,13 +725,20 @@ function renderStag(ctx) {
     // tempTriangleDraw(ctx, rightEarTriangles);
 
     // ctx.fillStyle = "#f00"//"#1b1b19"
-    // ctx.fillStyle = "red";
+    ctx.fillStyle = "red";
     // for (var i = 0; i < innerBorderPts.length; i++) {
     //     var b = innerBorderPts[i];
     //     ctx.fillRect(b.x, b.y, 10, 10);
     // }
     // ctx.fillRect(658, 530, 10, 10);
     // ctx.fillRect(658, 360, 10, 10);
+    // ctx.fillRect(300, 530, 10, 10);
+    // var b = sBorderV[80];
+    // ctx.fillRect(b.x, b.y, 10, 10);
+    // var c = sBorderV[310];
+    // ctx.fillRect(c.x, c.y, 10, 10);
+
+
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ctx.strokeStyle = '#ffffff';
     for (var i = 0; i < innerBorderPts.length; i++) {
@@ -867,6 +895,7 @@ var render = function () {
 
         case STAGE.STAG:
             renderStag(ctx);
+            cancelAnimationFrame(renderID);
             break;
     }
 
