@@ -41,6 +41,7 @@ var sEyeDetailM;
 var sEarLM;
 var sEarRM;
 var sSnoutM;
+var sSnoutBridgeM;
 
 var sBorderV = [];
 var sEyeV = [];
@@ -48,6 +49,7 @@ var sEyeDetailV = [];
 var sEarLV = [];
 var sEarRV = [];
 var sSnoutV = [];
+var sSnoutBridgeV = [];
 
 // Transition values
 var _stage = STAGE.SPHERE;      // keeps track of current stage
@@ -401,6 +403,7 @@ function initMeshes() {
     loader.load('./res/models/sEarL.json', function(geometry) {sEarLM = new THREE.Mesh(geometry);sEarLM.scale.x = sEarLM.scale.y = stagScale;});
     loader.load('./res/models/sEarR.json', function(geometry) {sEarRM = new THREE.Mesh(geometry);sEarRM.scale.x = sEarRM.scale.y = stagScale;});
     loader.load('./res/models/sSnout.json', function(geometry) {sSnoutM = new THREE.Mesh(geometry);sSnoutM.scale.x = sSnoutM.scale.y = stagScale;});
+    loader.load('./res/models/sSnoutBridge.json', function(geometry) {sSnoutBridgeM = new THREE.Mesh(geometry);sSnoutBridgeM.scale.x = sSnoutBridgeM.scale.y = stagScale;});
 }
 
 function startTransition(newStage) {
@@ -622,6 +625,7 @@ function setupStag() {
     genProjectedVertices(sEarLM, sEarLV);
     genProjectedVertices(sEarRM, sEarRV);
     genProjectedVertices(sSnoutM, sSnoutV);
+    genProjectedVertices(sSnoutBridgeM, sSnoutBridgeV);
 
     genTriangles(baseTriangles, sBorderV, [sEyeV, sSnoutV]);
     genTriangles(leftEarTriangles, sEarLV);
@@ -691,6 +695,29 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
+    prevLength = innerBorderPts.length;
+    innerBorderPts = innerBorderPts.concat(sSnoutV);
+    for (var i = prevLength; i < prevLength + sSnoutV.length; i++) {
+        innerBorderPts[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
+    }
+
+    prevLength = innerBorderPts.length;
+    innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
+    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
+        innerBorderPts[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
+    }    
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // generate connections
     mainStagV = innerBorderPts.concat(sBorderV);//sBorderV.concat(innerBorderPts);
     for (var i = 0; i < innerBorderPts.length; i++) {
@@ -771,14 +798,14 @@ function renderStag(ctx) {
         ctx.stroke();
     }
 
-    // for (var i = 0; i < sSnoutV.length - 1; i++) {
-    //     var dist = distanceBetweenDimTwo(sSnoutV[i], sSnoutV[i+1]);
-    //     ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-    //     ctx.beginPath();
-    //     ctx.moveTo(sSnoutV[i].x, sSnoutV[i].y);
-    //     ctx.lineTo(sSnoutV[i+1].x, sSnoutV[i+1].y);
-    //     ctx.stroke();
-    // }
+    for (var i = 0; i < sSnoutV.length - 1; i++) {
+        var dist = distanceBetweenDimTwo(sSnoutV[i], sSnoutV[i+1]);
+        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
+        ctx.beginPath();
+        ctx.moveTo(sSnoutV[i].x, sSnoutV[i].y);
+        ctx.lineTo(sSnoutV[i+1].x, sSnoutV[i+1].y);
+        ctx.stroke();
+    }
 
     // EARS
     // connect earpoints
