@@ -706,35 +706,66 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
+    // add snout bridges normally
+    // prevLength = innerBorderPts.length;
+    // innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
+    // for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
+    //     innerBorderPts[i].conn = [];
+    //     var proximity = Math.random() * finalcloseEnough;
+    //     if (proximity < 25) {
+    //         proximity = 25;
+    //     }
+    //     proxThres.push(proximity);
+    // }
+
+    // add snout bridges
+    // set connections to only snout tip, if they're close enough.
     prevLength = innerBorderPts.length;
+    console.log(prevLength);
     innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
-    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
+    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {   
         innerBorderPts[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
-        if (proximity < 25) {
-            proximity = 25;
-        }
+        proximity = 60;
+        // var proximity = Math.random() * finalcloseEnough;
+    //     if (proximity < 25) {
+    //         proximity = 25;
+    //     }
         proxThres.push(proximity);
     }    
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // generate connections
     mainStagV = innerBorderPts.concat(sBorderV);//sBorderV.concat(innerBorderPts);
-    for (var i = 0; i < innerBorderPts.length; i++) {
+    for (var i = 0; i < prevLength; i++) {
         for (var j = i + 1; j < mainStagV.length; j++) {
-            var isBorder = j < sBorderV.length;
+            if (j < prevLength || j > prevLength + sSnoutBridgeV.length) {
+                var isBorder = j < sBorderV.length;
 
-            var dist = distanceBetweenDimTwo(innerBorderPts[i], mainStagV[j]);
-            // if ((/*(isBorder && dist < 50) ||*/ dist < proxThres[i]) &&
-            if (((isBorder && dist < 50) || dist < proxThres[i]) &&
-                !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
-                var a;
-                if (isBorder && dist < 50) {
-                    a = map_range(dist, 0, 100, 0.1, 0.04);
-                } else {
-                    a = map_range(dist, 0, proxThres[i], 0.1, 0.04);
+                var dist = distanceBetweenDimTwo(innerBorderPts[i], mainStagV[j]);
+                // if ((/*(isBorder && dist < 50) ||*/ dist < proxThres[i]) &&
+                if (((isBorder && dist < 50) || dist < proxThres[i]) &&
+                    !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
+                    var a;
+                    if (isBorder && dist < 50) {
+                        a = map_range(dist, 0, 100, 0.1, 0.04);
+                    } else {
+                        a = map_range(dist, 0, proxThres[i], 0.1, 0.04);
+                    }
+
+                    innerBorderPts[i].conn.push({
+                        index: j,
+                        alpha: a
+                    });
                 }
+            }
+        }
+    }
 
+    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
+        for (var j = 0; j < sSnoutV.length; j++) {
+            var dist = distanceBetweenDimTwo(innerBorderPts[i], sSnoutV[j]);
+            if (dist < proxThres[i]) {
+                var a = map_range(dist, 0, proxThres[i], 0.1, 0.07);
                 innerBorderPts[i].conn.push({
                     index: j,
                     alpha: a
@@ -744,9 +775,9 @@ function setupStag() {
     }
 
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (var i = 0; i < 383; i++) {
-        triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
-    }
+    // for (var i = 0; i < 383; i++) {
+    //     triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+    // }
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
@@ -771,6 +802,9 @@ function renderStag(ctx) {
     // ctx.fillRect(b.x, b.y, 10, 10);
     // var c = sBorderV[310];
     // ctx.fillRect(c.x, c.y, 10, 10);
+    // for (var i = 0; i < sSnoutBridgeV.length; i++) {
+    //     ctx.fillRect(sSnoutBridgeV[i].x, sSnoutBridgeV[i].y, 10, 10);
+    // }
 
 
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -778,8 +812,23 @@ function renderStag(ctx) {
     for (var i = 0; i < innerBorderPts.length; i++) {
         // connects all inner points to each other
         for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
+            var prevLength = 270;
+            if (i < prevLength || i > prevLength + sSnoutBridgeV.length) {
+                ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
+                var point = mainStagV[innerBorderPts[i].conn[j].index];
+
+                ctx.beginPath();
+                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
+                ctx.lineTo(point.x, point.y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
+        for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
-            var point = mainStagV[innerBorderPts[i].conn[j].index];
+            var point = sSnoutV[innerBorderPts[i].conn[j].index];
 
             ctx.beginPath();
             ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
