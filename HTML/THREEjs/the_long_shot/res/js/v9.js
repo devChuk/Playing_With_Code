@@ -42,6 +42,7 @@ var sEarLM;
 var sEarRM;
 var sSnoutM;
 var sSnoutBridgeM;
+var sSnoutDetailAM;
 
 var sBorderV = [];
 var sEyeV = [];
@@ -50,6 +51,8 @@ var sEarLV = [];
 var sEarRV = [];
 var sSnoutV = [];
 var sSnoutBridgeV = [];
+var sSnoutDetailAV = [];
+var sSnoutDetailBV = [];
 
 // Transition values
 var _stage = STAGE.SPHERE;      // keeps track of current stage
@@ -68,7 +71,7 @@ var earCloseEnough = 35;
 var finalcloseEnough = 100;
 var numInnerStagPts = 230;
 var numHeadStagPts = 20;
-_stage = STAGE.STARFIELD;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! remember to change timing too.
+// _stage = STAGE.STARFIELD;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! remember to change timing too.
 var proxThres = [];
 
 var baseTriangles = {
@@ -86,11 +89,17 @@ var rightEarTriangles = {
     i: [],
     aR: []
 };
+var snoutTriangles = {
+    v: [],
+    i: [],
+    aR: []
+};
 
 var innerBorderPts = [];
 var leftEarPts = [];
 var rightEarPts = [];
 var mainStagV = [];
+var innerSnoutPts = [];
 
 // DEBUGGING
 var triangleColors = [];
@@ -404,6 +413,8 @@ function initMeshes() {
     loader.load('./res/models/sEarR.json', function(geometry) {sEarRM = new THREE.Mesh(geometry);sEarRM.scale.x = sEarRM.scale.y = stagScale;});
     loader.load('./res/models/sSnout.json', function(geometry) {sSnoutM = new THREE.Mesh(geometry);sSnoutM.scale.x = sSnoutM.scale.y = stagScale;});
     loader.load('./res/models/sSnoutBridge.json', function(geometry) {sSnoutBridgeM = new THREE.Mesh(geometry);sSnoutBridgeM.scale.x = sSnoutBridgeM.scale.y = stagScale;});
+    loader.load('./res/models/sSnoutDetailA.json', function(geometry) {sSnoutDetailAM = new THREE.Mesh(geometry);sSnoutDetailAM.scale.x = sSnoutDetailAM.scale.y = stagScale;});
+    loader.load('./res/models/sSnoutDetailB.json', function(geometry) {sSnoutDetailBM = new THREE.Mesh(geometry);sSnoutDetailBM.scale.x = sSnoutDetailBM.scale.y = stagScale;});
 }
 
 function startTransition(newStage) {
@@ -626,10 +637,13 @@ function setupStag() {
     genProjectedVertices(sEarRM, sEarRV);
     genProjectedVertices(sSnoutM, sSnoutV);
     genProjectedVertices(sSnoutBridgeM, sSnoutBridgeV);
+    genProjectedVertices(sSnoutDetailAM, sSnoutDetailAV);
+    genProjectedVertices(sSnoutDetailBM, sSnoutDetailBV);
 
     genTriangles(baseTriangles, sBorderV, [sEyeV, sSnoutV]);
     genTriangles(leftEarTriangles, sEarLV);
     genTriangles(rightEarTriangles, sEarRV);
+    genTriangles(snoutTriangles, sSnoutV);
 
     headTriangles = {
         v: baseTriangles.v,
@@ -706,22 +720,9 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
-    // add snout bridges normally
-    // prevLength = innerBorderPts.length;
-    // innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
-    // for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
-    //     innerBorderPts[i].conn = [];
-    //     var proximity = Math.random() * finalcloseEnough;
-    //     if (proximity < 25) {
-    //         proximity = 25;
-    //     }
-    //     proxThres.push(proximity);
-    // }
-
     // add snout bridges
     // set connections to only snout tip, if they're close enough.
     prevLength = innerBorderPts.length;
-    console.log(prevLength);
     innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
     for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {   
         innerBorderPts[i].conn = [];
@@ -731,7 +732,28 @@ function setupStag() {
     //         proximity = 25;
     //     }
         proxThres.push(proximity);
-    }    
+    }
+
+
+    // INNER SNOUT
+
+    innerSnoutPts = sSnoutDetailBV;
+    for (var i = 0; i < innerSnoutPts.length; i++) {
+        innerSnoutPts[i].conn = [];
+    }
+
+    for (var i = 0; i < innerSnoutPts.length; i++) {
+        for (var j = i; j < innerSnoutPts.length; j++) {
+            var dist = distanceBetweenDimTwo(innerSnoutPts[i], innerSnoutPts[j]);
+            if (dist < 8) {
+                var a = 0.1;
+                innerSnoutPts[i].conn.push({
+                    index: j,
+                    alpha: a
+                });
+            }
+        }
+    }
 
     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // generate connections
@@ -854,6 +876,30 @@ function renderStag(ctx) {
         ctx.moveTo(sSnoutV[i].x, sSnoutV[i].y);
         ctx.lineTo(sSnoutV[i+1].x, sSnoutV[i+1].y);
         ctx.stroke();
+    }
+
+    for (var i = 0; i < sSnoutDetailAV.length - 1; i++) {
+        var dist = distanceBetweenDimTwo(sSnoutDetailAV[i], sSnoutDetailAV[i+1]);
+        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
+        ctx.beginPath();
+        ctx.moveTo(sSnoutDetailAV[i].x, sSnoutDetailAV[i].y);
+        ctx.lineTo(sSnoutDetailAV[i+1].x, sSnoutDetailAV[i+1].y);
+        ctx.stroke();
+    }
+
+
+
+    // SNOUT
+    for (var i = 0; i < innerSnoutPts.length; i++) {
+        for (var j = 0; j < innerSnoutPts[i].conn.length; j++) {
+            ctx.globalAlpha = innerSnoutPts[i].conn[j].alpha;
+            var point = innerSnoutPts[innerSnoutPts[i].conn[j].index];
+
+            ctx.beginPath();
+            ctx.moveTo(innerSnoutPts[i].x, innerSnoutPts[i].y);
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
+        }
     }
 
     // EARS
@@ -994,7 +1040,7 @@ var render = function () {
     var timeElapsed = Date.now() - startTime;                       //8000, 18000.   1000, 5000.  2000, 7000
     if (timeElapsed > 2000 && _stage == STAGE.SPHERE)
         startTransition(STAGE.STARFIELD);
-    else if (timeElapsed > 1000 && _stage == STAGE.STARFIELD)
+    else if (timeElapsed > 7000 && _stage == STAGE.STARFIELD)
         startTransition(STAGE.STAG);
     renderer.render(scene, camera);
 };
