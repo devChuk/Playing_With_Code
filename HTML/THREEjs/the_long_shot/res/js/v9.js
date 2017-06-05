@@ -43,6 +43,7 @@ var sEarRM;
 var sSnoutM;
 var sSnoutBridgeM;
 var sSnoutDetailAM;
+var sAntlerDetailM;
 
 var sBorderV = [];
 var sEyeV = [];
@@ -53,6 +54,7 @@ var sSnoutV = [];
 var sSnoutBridgeV = [];
 var sSnoutDetailAV = [];
 var sSnoutDetailBV = [];
+var sAntlerDetailV = [];
 
 // Transition values
 var _stage = STAGE.SPHERE;      // keeps track of current stage
@@ -71,7 +73,6 @@ var earCloseEnough = 35;
 var finalcloseEnough = 100;
 var numInnerStagPts = 230;
 var numHeadStagPts = 20;
-// _stage = STAGE.STARFIELD;   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! remember to change timing too.
 var proxThres = [];
 
 var baseTriangles = {
@@ -177,10 +178,8 @@ function lineSegExitsPolygn(a, b, polygon) {
     return false;
 }
 
-
-
 window.addEventListener('resize', onWindowResize, false);
-function onWindowResize(){
+function onWindowResize() {
     vw = window.innerWidth; vh = window.innerHeight;
     camera.aspect = vw / vh;
     camera.updateProjectionMatrix();
@@ -188,7 +187,7 @@ function onWindowResize(){
     reset();
 }
 
-function projectToScreen(threeDimPoint){
+function projectToScreen(threeDimPoint) {
     var point = threeDimPoint.clone();
     var winWidthHalf = (document.documentElement.clientWidth/2);
     var winHeightHalf = (document.documentElement.clientHeight/2);
@@ -339,6 +338,36 @@ function genTriangles(triangleObject, arrayOfVertices, holeVertices) {
     }
 }
 
+function populateWithRandomPts(amount, target, triangles, upperRandBound) {
+    var prevLength = target.length;
+    for (var i = prevLength; i < prevLength + amount; i++) {
+        genRandPtFromTriangles(target, triangles, upperRandBound);
+        target[i].conn = [];
+        var proximity = Math.random() * finalcloseEnough;
+        if (proximity < 25) {
+            proximity = 25;
+        }
+        proxThres.push(proximity);
+    }
+}
+
+// JS only passes non-object arguments by value so this func requires some extra steps beforehand
+function setupPtObj(prevLength, target, payload, overrideProx) {
+    for (var i = prevLength; i < prevLength + payload.length; i++) {
+        target[i].conn = [];
+        var proximity;
+        if (overrideProx) {
+            proximity = 60;
+        } else {
+            proximity = Math.random() * finalcloseEnough;
+            if (proximity < 25) {
+                proximity = 25;
+            }
+        }
+        proxThres.push(proximity);
+    }
+}
+
 function drawLine(a, b, ctx) {
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
@@ -359,11 +388,20 @@ function drawConnections(distanceThreshold, ctx) {
     }
 }
 
-function drawConnectionsInOrder(points, ctx) {
+function drawConnectionsInOrder(points, ctx, exceptions) {
+    var index;
+    if (exceptions) {
+        index = 0;
+    }
+
     for (var i = 0; i < points.length - 1; i++) {
+        if (exceptions && index != exceptions.length && i === exceptions[index]) {
+            index++;
+            continue;
+        }
         var dist = distanceBetweenDimTwo(points[i], points[i+1]);
-        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-        drawLine(points[i], points[i+1], ctx)
+        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.2);
+        drawLine(points[i], points[i+1], ctx);
     }
 }
 
@@ -437,6 +475,7 @@ function initMeshes() {
     loader.load('./res/models/sSnoutBridge.json', function(geometry) {sSnoutBridgeM = new THREE.Mesh(geometry);sSnoutBridgeM.scale.x = sSnoutBridgeM.scale.y = stagScale;});
     loader.load('./res/models/sSnoutDetailA.json', function(geometry) {sSnoutDetailAM = new THREE.Mesh(geometry);sSnoutDetailAM.scale.x = sSnoutDetailAM.scale.y = stagScale;});
     loader.load('./res/models/sSnoutDetailB.json', function(geometry) {sSnoutDetailBM = new THREE.Mesh(geometry);sSnoutDetailBM.scale.x = sSnoutDetailBM.scale.y = stagScale;});
+    loader.load('./res/models/sAntlerDetail.json', function(geometry) {sAntlerDetailM = new THREE.Mesh(geometry);sAntlerDetailM.scale.x = sAntlerDetailM.scale.y = stagScale;});
 }
 
 function startTransition(newStage) {
@@ -661,92 +700,71 @@ function setupStag() {
     genProjectedVertices(sSnoutBridgeM, sSnoutBridgeV);
     genProjectedVertices(sSnoutDetailAM, sSnoutDetailAV);
     genProjectedVertices(sSnoutDetailBM, sSnoutDetailBV);
+    genProjectedVertices(sAntlerDetailM, sAntlerDetailV);
 
     genTriangles(baseTriangles, sBorderV, [sEyeV, sSnoutV]);
     genTriangles(leftEarTriangles, sEarLV);
     genTriangles(rightEarTriangles, sEarRV);
     genTriangles(snoutTriangles, sSnoutV);
 
-    // generate headtriangles
+    // initialize headTriangles and antlerTriangles
     var headTriangles = {
         v: baseTriangles.v,
         i: [],
         aR: []
     }
-    var aRTotal = 0;
+    var headARTotal = 0;
+
+    var antlerTriangles = {
+        v: baseTriangles.v,
+        i: [],
+        aR: []
+    }
+    var antlerARTotal = 0;
+
+    // populate headTriangles and antlerTriangles
     for (var j = 0; j < baseTriangles.i.length; j++) {
-        // if all 3 points satisfy the conditions, then add it to headTriangles
         var a = baseTriangles.v[baseTriangles.i[j][0]];
         var b = baseTriangles.v[baseTriangles.i[j][1]];
         var c = baseTriangles.v[baseTriangles.i[j][2]];
-
         if (360 <= a.y && a.y <= 530 && 360 <= b.y && b.y <= 530 && 360 <= c.y && c.y <= 530) {
             headTriangles.i.push(baseTriangles.i[j]);
             headTriangles.aR.push(baseTriangles.aR[j]);
-            aRTotal += baseTriangles.aR[j];
+            headARTotal += baseTriangles.aR[j];
+        }
+        if (a.y <= 390 && b.y <= 390 && c.y <= 390) {
+            antlerTriangles.i.push(baseTriangles.i[j]);
+            antlerTriangles.aR.push(baseTriangles.aR[j]);
+            antlerARTotal += baseTriangles.aR[j];   
         }
     }
 
     // generate random inner stag points
-    for (var i = 0; i < numInnerStagPts; i++) {
-        genRandPtFromTriangles(innerBorderPts, baseTriangles);
-        innerBorderPts[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
-        if (proximity < 25) {
-            proximity = 25;
-        }
-        proxThres.push(proximity);
-
-        if (i < 20) {
-            genRandPtFromTriangles(leftEarPts, leftEarTriangles);
-            genRandPtFromTriangles(rightEarPts, rightEarTriangles);
-        }
-    }
-
+    populateWithRandomPts(numInnerStagPts, innerBorderPts, baseTriangles);
+    
     // generate random inner stag head points
-    for (var i = numInnerStagPts; i < numInnerStagPts + numHeadStagPts; i++) {
-        genRandPtFromTriangles(innerBorderPts, headTriangles, aRTotal);
-        innerBorderPts[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
-        if (proximity < 25) {
-            proximity = 25;
-        }
-        proxThres.push(proximity);
+    populateWithRandomPts(numHeadStagPts, innerBorderPts, headTriangles, headARTotal);
+
+    for (var i = 0; i < 20; i++) {
+        genRandPtFromTriangles(leftEarPts, leftEarTriangles);
+        genRandPtFromTriangles(rightEarPts, rightEarTriangles);
     }
 
     // add eye detail to inner stag points
     var prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sEyeDetailV);
-    for (var i = prevLength; i < prevLength + sEyeDetailV.length; i++) {
-        innerBorderPts[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
-        if (proximity < 25) {
-            proximity = 25;
-        }
-        proxThres.push(proximity);
-    }
+    setupPtObj(prevLength, innerBorderPts, sEyeDetailV);
 
     // add snout vertices to inner stag points
     prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sSnoutV);
-    for (var i = prevLength; i < prevLength + sSnoutV.length; i++) {
-        innerBorderPts[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
-        if (proximity < 25) {
-            proximity = 25;
-        }
-        proxThres.push(proximity);
-    }
+    setupPtObj(prevLength, innerBorderPts, sSnoutV);
 
     // add snout bridge vertices to inner stag points
     // set connections to only snout tip, if they're close enough.
     prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
-    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {   
-        innerBorderPts[i].conn = [];
-        proximity = 60;
-        proxThres.push(proximity);
-    }
+    setupPtObj(prevLength, innerBorderPts, sSnoutBridgeV, 60);
 
     // set connections for inner snout points
     innerSnoutPts = sSnoutDetailBV;
@@ -767,6 +785,9 @@ function setupStag() {
         }
     }
 
+    // customize connection code for antlers?
+    populateWithRandomPts(100, innerBorderPts, antlerTriangles, antlerARTotal);
+
     // generate connections for innerBorderPoints
     mainStagV = innerBorderPts.concat(sBorderV);
     for (var i = 0; i < prevLength; i++) {
@@ -775,7 +796,6 @@ function setupStag() {
                 var isBorder = j < sBorderV.length;
 
                 var dist = distanceBetweenDimTwo(innerBorderPts[i], mainStagV[j]);
-                // if ((/*(isBorder && dist < 50) ||*/ dist < proxThres[i]) &&
                 if (((isBorder && dist < 50) || dist < proxThres[i]) &&
                     !lineSegExitsPolygn(innerBorderPts[i], mainStagV[j], sBorderV)) {
                     var a;
@@ -795,6 +815,7 @@ function setupStag() {
     }
 
     // generate connections for snout bridge points
+    // currently prevLength is set to snoutBridge points
     for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
         for (var j = 0; j < sSnoutV.length; j++) {
             var dist = distanceBetweenDimTwo(innerBorderPts[i], sSnoutV[j]);
@@ -808,43 +829,45 @@ function setupStag() {
         }
     }
 
-    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // for (var i = 0; i < 383; i++) {
-    //     triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
-    // }
-    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (true) {
+        // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // for (var i = 0; i < 383; i++) {
+        //     triangleColors.push('hsl(' + 360 * Math.random() + ', 50%, 50%)');
+        // }
+        // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 }
 
 function renderStag(ctx) {
     vertices = [];
     ctx.strokeStyle = '#ffffff';
-    // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // tempTriangleDraw(ctx, baseTriangles);
-    // tempTriangleDraw(ctx, leftEarTriangles);
-    // tempTriangleDraw(ctx, rightEarTriangles);
+    if (true) {
+        // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // tempTriangleDraw(ctx, baseTriangles);
+        // tempTriangleDraw(ctx, leftEarTriangles);
+        // tempTriangleDraw(ctx, rightEarTriangles);
+        // tempTriangleDraw(ctx, antlerTriangles);
 
-    // ctx.fillStyle = "#f00"//"#1b1b19"
-    ctx.fillStyle = "red";
-    // for (var i = 0; i < innerBorderPts.length; i++) {
-    //     var b = innerBorderPts[i];
-    //     ctx.fillRect(b.x, b.y, 10, 10);
-    // }
-    // ctx.fillRect(658, 530, 10, 10);
-    // ctx.fillRect(658, 360, 10, 10);
-    // ctx.fillRect(300, 530, 10, 10);
-    // var b = sBorderV[80];
-    // ctx.fillRect(b.x, b.y, 10, 10);
-    // var c = sBorderV[310];
-    // ctx.fillRect(c.x, c.y, 10, 10);
-    // for (var i = 0; i < sSnoutBridgeV.length; i++) {
-    //     ctx.fillRect(sSnoutBridgeV[i].x, sSnoutBridgeV[i].y, 10, 10);
-    // }
-    // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    // connects all border points in order
-    drawConnectionsInOrder(sBorderV, ctx);
-    drawConnectionsInOrder(sSnoutV, ctx);
-    drawConnectionsInOrder(sSnoutDetailAV, ctx);
+        // ctx.fillStyle = "#f00"//"#1b1b19"
+        // ctx.fillStyle = "red";
+        // for (var i = 0; i < innerBorderPts.length; i++) {
+        //     var b = innerBorderPts[i];
+        //     ctx.fillRect(b.x, b.y, 10, 10);
+        // }
+        // ctx.globalAlpha = 1;
+        // ctx.fillRect(658, 390, 1000, 10);
+        // ctx.fillRect(658, 530, 10, 10);
+        // ctx.fillRect(658, 360, 10, 10);
+        // ctx.fillRect(300, 530, 10, 10);
+        // var b = sBorderV[80];
+        // ctx.fillRect(b.x, b.y, 10, 10);
+        // var c = sBorderV[310];
+        // ctx.fillRect(c.x, c.y, 10, 10);
+        // for (var i = 0; i < sSnoutBridgeV.length; i++) {
+        //     ctx.fillRect(sSnoutBridgeV[i].x, sSnoutBridgeV[i].y, 10, 10);
+        // }
+        // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
     // connects all inner stag points to each other
     for (var i = 0; i < innerBorderPts.length; i++) {
@@ -870,13 +893,19 @@ function renderStag(ctx) {
         }
     }
 
+    // connects all border points in order
+    drawConnectionsInOrder(sBorderV, ctx);
+    drawConnectionsInOrder(sSnoutV, ctx);
+    drawConnectionsInOrder(sSnoutDetailAV, ctx);
+    drawConnectionsInOrder(sAntlerDetailV, ctx, [23, 46, 62, 67]);
+
     // EARS
-    // connect earpoints
     drawEars(leftEarPts, sEarLV, ctx);
     drawEars(rightEarPts, sEarRV, ctx);
 
-    // eye
-    ctx.fillStyle = "#1b1b19";
+    // EYE
+    // ctx.fillStyle = "#1b1b19";
+    ctx.fillStyle = "#CECECE";
     fillPolygon(ctx, sEyeV);
     // snout
 }
@@ -959,8 +988,6 @@ var render = function () {
 
 THREE.DefaultLoadingManager.onLoad = function() {
     startTime = Date.parse(new Date());
-    // generateTriangles();
-
     render();
 }
 
