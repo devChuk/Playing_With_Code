@@ -339,6 +339,13 @@ function genTriangles(triangleObject, arrayOfVertices, holeVertices) {
     }
 }
 
+function drawLine(a, b, ctx) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+}
+
 function drawConnections(distanceThreshold, ctx) {
     for (var i = 0; i < vertices.length; i++) {
         for (var j = i + 1; j < vertices.length; j++) {
@@ -346,17 +353,52 @@ function drawConnections(distanceThreshold, ctx) {
             if (dist < distanceThreshold) {
                 ctx.strokeStyle = '#ffffff';
                 ctx.globalAlpha = map_range(dist, 0, distanceThreshold, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(vertices[i].x, vertices[i].y);
-                ctx.lineTo(vertices[j].x, vertices[j].y);
-                ctx.stroke();
+                drawLine(vertices[i], vertices[j], ctx);
             }
         }
     }
 }
 
-// !!!
-// function drawConnectionsInOrder()
+function drawConnectionsInOrder(points, ctx) {
+    for (var i = 0; i < points.length - 1; i++) {
+        var dist = distanceBetweenDimTwo(points[i], points[i+1]);
+        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
+        drawLine(points[i], points[i+1], ctx)
+    }
+}
+
+function drawEars(innerPts, borderPts, ctx) {
+    for (var i = 0; i < innerPts.length; i++) {
+        for (var j = i + 1; j < innerPts.length; j++) {
+            var dist = distanceBetweenDimTwo(innerPts[i], innerPts[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                drawLine(innerPts[i], innerPts[j], ctx);
+            }
+        }
+
+        for (var j = 0; j < borderPts.length; j++) {
+            var dist = distanceBetweenDimTwo(innerPts[i], borderPts[j]);
+            if (dist < earCloseEnough && true) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                drawLine(innerPts[i], borderPts[j], ctx);
+            }
+        }
+    }
+}
+
+function fillPolygon(ctx, modelVertices) {
+    ctx.beginPath();
+    ctx.globalAlpha = 1;
+    for (var i = 0; i < modelVertices.length; i++) {
+        ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
+        // ctx.fillRect(b.x, b.y, 1, 1);
+    }
+    ctx.closePath();
+    ctx.fill();
+}
 
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
 
@@ -799,63 +841,24 @@ function renderStag(ctx) {
     // }
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    // connects all border points in order
+    drawConnectionsInOrder(sBorderV, ctx);
+    drawConnectionsInOrder(sSnoutV, ctx);
+    drawConnectionsInOrder(sSnoutDetailAV, ctx);
+
     // connects all inner stag points to each other
     for (var i = 0; i < innerBorderPts.length; i++) {
         for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             var prevLength = 270;
-            if (i < prevLength || i > prevLength + sSnoutBridgeV.length) {
-                ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
-                var point = mainStagV[innerBorderPts[i].conn[j].index];
-
-                ctx.beginPath();
-                ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
-                ctx.lineTo(point.x, point.y);
-                ctx.stroke();
-            }
-        }
-    }
-
-    // connects all inner snout points to each other
-    for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
-        for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
-            var point = sSnoutV[innerBorderPts[i].conn[j].index];
-
-            ctx.beginPath();
-            ctx.moveTo(innerBorderPts[i].x, innerBorderPts[i].y);
-            ctx.lineTo(point.x, point.y);
-            ctx.stroke();
+            var point;
+            if (i < prevLength || i >= prevLength + sSnoutBridgeV.length) {
+                point = mainStagV[innerBorderPts[i].conn[j].index];
+            } else {
+                point = sSnoutV[innerBorderPts[i].conn[j].index];
+            }
+            drawLine(innerBorderPts[i], point, ctx);
         }
-    }
-
-    // connects all border points in order
-    for (var i = 0; i < sBorderV.length - 1; i++) {
-        var dist = distanceBetweenDimTwo(sBorderV[i], sBorderV[i+1]);
-        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-        ctx.beginPath();
-        ctx.moveTo(sBorderV[i].x, sBorderV[i].y);
-        ctx.lineTo(sBorderV[i+1].x, sBorderV[i+1].y);
-        ctx.stroke();
-    }
-
-    // connects all snout vertices in order
-    for (var i = 0; i < sSnoutV.length - 1; i++) {
-        var dist = distanceBetweenDimTwo(sSnoutV[i], sSnoutV[i+1]);
-        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-        ctx.beginPath();
-        ctx.moveTo(sSnoutV[i].x, sSnoutV[i].y);
-        ctx.lineTo(sSnoutV[i+1].x, sSnoutV[i+1].y);
-        ctx.stroke();
-    }
-
-    // connects snoutDetailA vertices in order
-    for (var i = 0; i < sSnoutDetailAV.length - 1; i++) {
-        var dist = distanceBetweenDimTwo(sSnoutDetailAV[i], sSnoutDetailAV[i+1]);
-        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
-        ctx.beginPath();
-        ctx.moveTo(sSnoutDetailAV[i].x, sSnoutDetailAV[i].y);
-        ctx.lineTo(sSnoutDetailAV[i+1].x, sSnoutDetailAV[i+1].y);
-        ctx.stroke();
     }
 
     // connects all inner snout to each other
@@ -863,71 +866,18 @@ function renderStag(ctx) {
         for (var j = 0; j < innerSnoutPts[i].conn.length; j++) {
             ctx.globalAlpha = innerSnoutPts[i].conn[j].alpha;
             var point = innerSnoutPts[innerSnoutPts[i].conn[j].index];
-
-            ctx.beginPath();
-            ctx.moveTo(innerSnoutPts[i].x, innerSnoutPts[i].y);
-            ctx.lineTo(point.x, point.y);
-            ctx.stroke();
+            drawLine(innerSnoutPts[i], point, ctx);
         }
     }
 
     // EARS
     // connect earpoints
-    for (var i = 0; i < leftEarPts.length; i++) {
-        for (var j = i + 1; j < leftEarPts.length; j++) {
-            var dist = distanceBetweenDimTwo(leftEarPts[i], leftEarPts[j]);
-            if (dist < earCloseEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
-                ctx.lineTo(leftEarPts[j].x, leftEarPts[j].y);
-                ctx.stroke();
-            }
-        }
-
-        for (var j = 0; j < sEarLV.length; j++) {
-            var dist = distanceBetweenDimTwo(leftEarPts[i], sEarLV[j]);
-            if (dist < earCloseEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(leftEarPts[i].x, leftEarPts[i].y);
-                ctx.lineTo(sEarLV[j].x, sEarLV[j].y);
-                ctx.stroke();
-            }
-        }
-    }
-
-    for (var i = 0; i < rightEarPts.length; i++) {
-        for (var j = i + 1; j < rightEarPts.length; j++) {
-            var dist = distanceBetweenDimTwo(rightEarPts[i], rightEarPts[j]);
-            if (dist < earCloseEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(rightEarPts[i].x, rightEarPts[i].y);
-                ctx.lineTo(rightEarPts[j].x, rightEarPts[j].y);
-                ctx.stroke();
-            }
-        }
-
-        for (var j = 0; j < sEarRV.length; j++) {
-            var dist = distanceBetweenDimTwo(rightEarPts[i], sEarRV[j]);
-            if (dist < earCloseEnough && true) {
-                ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
-                ctx.beginPath();
-                ctx.moveTo(rightEarPts[i].x, rightEarPts[i].y);
-                ctx.lineTo(sEarRV[j].x, sEarRV[j].y);
-                ctx.stroke();
-            }
-        }
-    }
+    drawEars(leftEarPts, sEarLV, ctx);
+    drawEars(rightEarPts, sEarRV, ctx);
 
     // eye
     ctx.fillStyle = "#1b1b19";
-    tempFill(ctx, sEyeV);
+    fillPolygon(ctx, sEyeV);
     // snout
 }
 
@@ -948,17 +898,6 @@ function tempTriangleDraw(ctx, triObj) {
         ctx.strokeStyle = '#ffff00';
         ctx.stroke();
     }
-}
-
-function tempFill(ctx, modelVertices) {
-    ctx.beginPath();
-    ctx.globalAlpha = 1;
-    for (var i = 0; i < modelVertices.length; i++) {
-        ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
-        // ctx.fillRect(b.x, b.y, 1, 1);
-    }
-    ctx.closePath();
-    ctx.fill();
 }
 
 ////////////////////////////////////////CREATING OBJECTS/////////////////////////////
