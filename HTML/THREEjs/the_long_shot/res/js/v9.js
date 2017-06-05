@@ -129,7 +129,6 @@ function areaOfTriangle(data, tIndexes) {
 function onSeg(a, b, c) {
     // checks if b lies on ac
     return distanceBetweenDimTwo(a,b) + distanceBetweenDimTwo(b,c) == distanceBetweenDimTwo(a,c);
-    // -epsilon < (distance(a, c) + distance(c, b) - distance(a, b)) < epsilon
 }
 
 function orientation(p, q, r) {
@@ -142,34 +141,20 @@ function orientation(p, q, r) {
 
 function doIntersect(p1, q1, p2, q2) { //border first
     // checks for p1-q1 vs p2-q2
-
-    // Find the four orientations needed for general and special cases
     var o1 = orientation(p1, q1, p2);
     var o2 = orientation(p1, q1, q2);
     var o3 = orientation(p2, q2, p1);
     var o4 = orientation(p2, q2, q1);
- 
-    // Special Cases
     // p1, q1 and p2 are colinear and p2 lies on segment p1q1
     if (o1 == 0 && onSeg(p1, p2, q1)) return false;
- 
     // p1, q1 and p2 are colinear and q2 lies on segment p1q1
     if (o2 == 0 && onSeg(p1, q2, q1)) return false;
- 
     // p2, q2 and p1 are colinear and p1 lies on segment p2q2
     if (o3 == 0 && onSeg(p2, p1, q2)) return false;
- 
      // p2, q2 and q1 are colinear and q1 lies on segment p2q2
     if (o4 == 0 && onSeg(p2, q1, q2)) return false;
- 
     // General case
-    if (o1 != o2 && o3 != o4) {
-        
-        return true;
-    }
- 
-    
- 
+    if (o1 != o2 && o3 != o4) return true; 
     return false; // Doesn't fall in any of the above cases
 }
 
@@ -180,7 +165,6 @@ function lineSegExitsPolygn(a, b, polygon) {
 
     // loop thru all line segments of the polygon
     // for (var i = 0; i < polygon.length - 1; i++) {
-        //60
     for (var i = 80; i < 310; i++) {
         var c = polygon[i];
         var d = polygon[i+1];
@@ -189,14 +173,7 @@ function lineSegExitsPolygn(a, b, polygon) {
             return true;
         }
     }
-        // check if line segments intersect
-        
-        // OPTION A
-        // if there are more than 1 intersection, then it intersects
 
-        // if there is an intersection point, check if it's actually one of the endpoints
-            // if it is, it doesn't exit
-            // if it isn't, it exits
     return false;
 }
 
@@ -377,6 +354,9 @@ function drawConnections(distanceThreshold, ctx) {
         }
     }
 }
+
+// !!!
+// function drawConnectionsInOrder()
 
 ////////////////////////////////////////RUNTIME FUNCTIONS////////////////////////////
 
@@ -645,18 +625,15 @@ function setupStag() {
     genTriangles(rightEarTriangles, sEarRV);
     genTriangles(snoutTriangles, sSnoutV);
 
-    headTriangles = {
+    // generate headtriangles
+    var headTriangles = {
         v: baseTriangles.v,
         i: [],
         aR: []
     }
-
     var aRTotal = 0;
-
     for (var j = 0; j < baseTriangles.i.length; j++) {
         // if all 3 points satisfy the conditions, then add it to headTriangles
-        // 360
-        // 530
         var a = baseTriangles.v[baseTriangles.i[j][0]];
         var b = baseTriangles.v[baseTriangles.i[j][1]];
         var c = baseTriangles.v[baseTriangles.i[j][2]];
@@ -668,9 +645,7 @@ function setupStag() {
         }
     }
 
-    // 200
-    // 600
-
+    // generate random inner stag points
     for (var i = 0; i < numInnerStagPts; i++) {
         genRandPtFromTriangles(innerBorderPts, baseTriangles);
         innerBorderPts[i].conn = [];
@@ -686,6 +661,7 @@ function setupStag() {
         }
     }
 
+    // generate random inner stag head points
     for (var i = numInnerStagPts; i < numInnerStagPts + numHeadStagPts; i++) {
         genRandPtFromTriangles(innerBorderPts, headTriangles, aRTotal);
         innerBorderPts[i].conn = [];
@@ -696,10 +672,9 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // add eye detail to inner stag points
     var prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sEyeDetailV);
-    // add proximities and conn array!
     for (var i = prevLength; i < prevLength + sEyeDetailV.length; i++) {
         innerBorderPts[i].conn = [];
         var proximity = Math.random() * finalcloseEnough;
@@ -709,6 +684,7 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
+    // add snout vertices to inner stag points
     prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sSnoutV);
     for (var i = prevLength; i < prevLength + sSnoutV.length; i++) {
@@ -720,23 +696,17 @@ function setupStag() {
         proxThres.push(proximity);
     }
 
-    // add snout bridges
+    // add snout bridge vertices to inner stag points
     // set connections to only snout tip, if they're close enough.
     prevLength = innerBorderPts.length;
     innerBorderPts = innerBorderPts.concat(sSnoutBridgeV);
     for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {   
         innerBorderPts[i].conn = [];
         proximity = 60;
-        // var proximity = Math.random() * finalcloseEnough;
-    //     if (proximity < 25) {
-    //         proximity = 25;
-    //     }
         proxThres.push(proximity);
     }
 
-
-    // INNER SNOUT
-
+    // set connections for inner snout points
     innerSnoutPts = sSnoutDetailBV;
     for (var i = 0; i < innerSnoutPts.length; i++) {
         innerSnoutPts[i].conn = [];
@@ -755,9 +725,8 @@ function setupStag() {
         }
     }
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // generate connections
-    mainStagV = innerBorderPts.concat(sBorderV);//sBorderV.concat(innerBorderPts);
+    // generate connections for innerBorderPoints
+    mainStagV = innerBorderPts.concat(sBorderV);
     for (var i = 0; i < prevLength; i++) {
         for (var j = i + 1; j < mainStagV.length; j++) {
             if (j < prevLength || j > prevLength + sSnoutBridgeV.length) {
@@ -783,6 +752,7 @@ function setupStag() {
         }
     }
 
+    // generate connections for snout bridge points
     for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
         for (var j = 0; j < sSnoutV.length; j++) {
             var dist = distanceBetweenDimTwo(innerBorderPts[i], sSnoutV[j]);
@@ -805,7 +775,7 @@ function setupStag() {
 
 function renderStag(ctx) {
     vertices = [];
-
+    ctx.strokeStyle = '#ffffff';
     // debug start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // tempTriangleDraw(ctx, baseTriangles);
     // tempTriangleDraw(ctx, leftEarTriangles);
@@ -827,12 +797,10 @@ function renderStag(ctx) {
     // for (var i = 0; i < sSnoutBridgeV.length; i++) {
     //     ctx.fillRect(sSnoutBridgeV[i].x, sSnoutBridgeV[i].y, 10, 10);
     // }
-
-
     // debug end !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ctx.strokeStyle = '#ffffff';
+
+    // connects all inner stag points to each other
     for (var i = 0; i < innerBorderPts.length; i++) {
-        // connects all inner points to each other
         for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             var prevLength = 270;
             if (i < prevLength || i > prevLength + sSnoutBridgeV.length) {
@@ -847,6 +815,7 @@ function renderStag(ctx) {
         }
     }
 
+    // connects all inner snout points to each other
     for (var i = prevLength; i < prevLength + sSnoutBridgeV.length; i++) {
         for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
@@ -859,7 +828,7 @@ function renderStag(ctx) {
         }
     }
 
-    // connects all border points together
+    // connects all border points in order
     for (var i = 0; i < sBorderV.length - 1; i++) {
         var dist = distanceBetweenDimTwo(sBorderV[i], sBorderV[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
@@ -869,6 +838,7 @@ function renderStag(ctx) {
         ctx.stroke();
     }
 
+    // connects all snout vertices in order
     for (var i = 0; i < sSnoutV.length - 1; i++) {
         var dist = distanceBetweenDimTwo(sSnoutV[i], sSnoutV[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
@@ -878,6 +848,7 @@ function renderStag(ctx) {
         ctx.stroke();
     }
 
+    // connects snoutDetailA vertices in order
     for (var i = 0; i < sSnoutDetailAV.length - 1; i++) {
         var dist = distanceBetweenDimTwo(sSnoutDetailAV[i], sSnoutDetailAV[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.1);
@@ -887,9 +858,7 @@ function renderStag(ctx) {
         ctx.stroke();
     }
 
-
-
-    // SNOUT
+    // connects all inner snout to each other
     for (var i = 0; i < innerSnoutPts.length; i++) {
         for (var j = 0; j < innerSnoutPts[i].conn.length; j++) {
             ctx.globalAlpha = innerSnoutPts[i].conn[j].alpha;
@@ -966,11 +935,9 @@ function tempTriangleDraw(ctx, triObj) {
     for (var j = 0; j < triObj.i.length; j++) {
         // ctx.fillStyle = "#00000";//triangleColors[j];
         ctx.fillStyle = triangleColors[j];
-
         // if (baseTriangles.v.length === 383 && 360 < j && j < 383) {
         //     ctx.fillStyle = "#ff0000";
         // }
-
         ctx.globalAlpha = 1;
         ctx.beginPath();
         ctx.moveTo(triObj.v[triObj.i[j][0]].x, triObj.v[triObj.i[j][0]].y);
