@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Asda."""
 from __future__ import unicode_literals
 
 from django.contrib import admin
 
+from .models import Question
+
+admin.site.register(Question)
 # Register your models here.
