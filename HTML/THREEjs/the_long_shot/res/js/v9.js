@@ -70,7 +70,8 @@ var _sGoalDistance = [];        // stores the goal distances of the stag border 
 
 // Stag rendering values
 var earCloseEnough = 35;
-var finalcloseEnough = 100;
+var finalcloseEnough = 10;
+var randDistThres = 100;
 var numInnerStagPts = 230;
 var numHeadStagPts = 20;
 var proxThres = [];
@@ -343,7 +344,7 @@ function populateWithRandomPts(amount, target, triangles, upperRandBound) {
     for (var i = prevLength; i < prevLength + amount; i++) {
         genRandPtFromTriangles(target, triangles, upperRandBound);
         target[i].conn = [];
-        var proximity = Math.random() * finalcloseEnough;
+        var proximity = Math.random() * randDistThres;
         if (proximity < 25) {
             proximity = 25;
         }
@@ -359,7 +360,7 @@ function setupPtObj(prevLength, target, payload, overrideProx) {
         if (overrideProx) {
             proximity = 60;
         } else {
-            proximity = Math.random() * finalcloseEnough;
+            proximity = Math.random() * randDistThres;
             if (proximity < 25) {
                 proximity = 25;
             }
@@ -659,7 +660,7 @@ function renderTransitions(ctx) {
             }
             if (closeEnough > finalcloseEnough)
                 closeEnough -= 0.5;
-            if (_sFadeIn <= 1 && closeEnough <= finalcloseEnough + 50)
+            if (_sFadeIn <= 1 && closeEnough - 50 <= finalcloseEnough)
                 _sFadeIn += 0.01;
             break;
     }
