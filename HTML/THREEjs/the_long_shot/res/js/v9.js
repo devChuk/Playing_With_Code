@@ -75,6 +75,7 @@ var randDistThres = 100;
 var numInnerStagPts = 230;
 var numHeadStagPts = 20;
 var proxThres = [];
+var lazyFadeIn = 0;
 
 var baseTriangles = {
     v: [],                      // stores vertices of triangles
@@ -401,6 +402,23 @@ function drawConnectionsInOrder(points, ctx, exceptions) {
             continue;
         }
         var dist = distanceBetweenDimTwo(points[i], points[i+1]);
+        ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.2) * lazyFadeIn;
+        drawLine(points[i], points[i+1], ctx);
+    }
+}
+
+function drawConnectionsInOrderFull(points, ctx, exceptions) {
+    var index;
+    if (exceptions) {
+        index = 0;
+    }
+
+    for (var i = 0; i < points.length - 1; i++) {
+        if (exceptions && index != exceptions.length && i === exceptions[index]) {
+            index++;
+            continue;
+        }
+        var dist = distanceBetweenDimTwo(points[i], points[i+1]);
         ctx.globalAlpha = map_range(dist, 0, 18, 0.8, 0.2);
         drawLine(points[i], points[i+1], ctx);
     }
@@ -412,7 +430,7 @@ function drawEars(innerPts, borderPts, ctx) {
             var dist = distanceBetweenDimTwo(innerPts[i], innerPts[j]);
             if (dist < earCloseEnough && true) {
                 ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0) * lazyFadeIn;
                 drawLine(innerPts[i], innerPts[j], ctx);
             }
         }
@@ -421,7 +439,7 @@ function drawEars(innerPts, borderPts, ctx) {
             var dist = distanceBetweenDimTwo(innerPts[i], borderPts[j]);
             if (dist < earCloseEnough && true) {
                 ctx.strokeStyle = '#ffffff';
-                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0);
+                ctx.globalAlpha = map_range(dist, 0, earCloseEnough, 0.5, 0) * lazyFadeIn;
                 drawLine(innerPts[i], borderPts[j], ctx);
             }
         }
@@ -430,7 +448,7 @@ function drawEars(innerPts, borderPts, ctx) {
 
 function fillPolygon(ctx, modelVertices) {
     ctx.beginPath();
-    ctx.globalAlpha = 1;
+    ctx.globalAlpha = lazyFadeIn;
     for (var i = 0; i < modelVertices.length; i++) {
         ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
         // ctx.fillRect(b.x, b.y, 1, 1);
@@ -840,6 +858,9 @@ function setupStag() {
 }
 
 function renderStag(ctx) {
+    if (lazyFadeIn <= 1) {
+        lazyFadeIn = lazyFadeIn + 0.01;
+    }
     vertices = [];
     ctx.strokeStyle = '#ffffff';
     if (true) {
@@ -874,7 +895,7 @@ function renderStag(ctx) {
     for (var i = 0; i < innerBorderPts.length; i++) {
         for (var j = 0; j < innerBorderPts[i].conn.length; j++) {
             var prevLength = 270;
-            ctx.globalAlpha = innerBorderPts[i].conn[j].alpha;
+            ctx.globalAlpha = innerBorderPts[i].conn[j].alpha * lazyFadeIn;
             var point;
             if (i < prevLength || i >= prevLength + sSnoutBridgeV.length) {
                 point = mainStagV[innerBorderPts[i].conn[j].index];
@@ -888,14 +909,14 @@ function renderStag(ctx) {
     // connects all inner snout to each other
     for (var i = 0; i < innerSnoutPts.length; i++) {
         for (var j = 0; j < innerSnoutPts[i].conn.length; j++) {
-            ctx.globalAlpha = innerSnoutPts[i].conn[j].alpha;
+            ctx.globalAlpha = innerSnoutPts[i].conn[j].alpha * lazyFadeIn;
             var point = innerSnoutPts[innerSnoutPts[i].conn[j].index];
             drawLine(innerSnoutPts[i], point, ctx);
         }
     }
 
     // connects all border points in order
-    drawConnectionsInOrder(sBorderV, ctx);
+    drawConnectionsInOrderFull(sBorderV, ctx);
     drawConnectionsInOrder(sSnoutV, ctx);
     drawConnectionsInOrder(sSnoutDetailAV, ctx);
     drawConnectionsInOrder(sAntlerDetailV, ctx, [23, 46, 62, 67]);
@@ -969,7 +990,9 @@ var render = function () {
 
         case STAGE.STAG:
             renderStag(ctx);
-            cancelAnimationFrame(renderID);
+            if (lazyFadeIn >= 1) {
+                cancelAnimationFrame(renderID);
+            }
             break;
     }
 
