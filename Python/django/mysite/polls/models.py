@@ -11,33 +11,44 @@ from simple_history.models import HistoricalRecords
 
 class ManualHistoricalRecords(HistoricalRecords):
     def contribute_to_class(self, cls, name):
-        self.manager_name = name
-        self.module = cls.__module__
-        self.cls = cls
+        super(ManualHistoricalRecords, self).contribute_to_class(cls, name)
         setattr(cls, 'skip_history_when_saving', True)
-        models.signals.class_prepared.connect(self.finalize, weak=False)
-        self.add_extra_methods(cls)
+
+    def post_save(self, instance, created, **kwargs):
+        if instance.skip_history_when_saving:
+            return
+        if not kwargs.get('raw', False):
+            self.create_historical_record(instance, created and '+' or '~')
+
+    def post_delete(self, instance, **kwargs):
+        pass
 
     def add_extra_methods(self, cls):
         def save_with_historical_record(self, *args, **kwargs):
             """Save model with a historical record."""
-            delattr(self.__class__, 'skip_history_when_saving')
+            self.skip_history_when_saving = False
             try:
                 ret = self.save(*args, **kwargs)
             finally:
-                setattr(self.__class__, 'skip_history_when_saving', True)
+                self.skip_history_when_saving = True
             return ret
         setattr(cls, 'save_with_historical_record',
                 save_with_historical_record)
 
 
+class BaseModel(models.Model):
+    history = ManualHistoricalRecords(inherit=True)
+
+    class Meta:
+        abstract = True
+
+
 @python_2_unicode_compatible
-class Question(models.Model):
+class Question(BaseModel):
     """question."""
 
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
-    history = ManualHistoricalRecords()
 
     def __str__(self):
         """Print function."""
@@ -49,13 +60,12 @@ class Question(models.Model):
 
 
 @python_2_unicode_compatible
-class Choice(models.Model):
+class Choice(BaseModel):
     """choice."""
 
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
-    history = ManualHistoricalRecords()
 
     def __str__(self):
         """Print func."""
