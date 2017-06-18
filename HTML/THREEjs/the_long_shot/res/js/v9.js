@@ -990,7 +990,7 @@ var render = function () {
 
         case STAGE.STAG:
             renderStag(ctx);
-            if (lazyFadeIn >= 1) {
+            if (lazyFadeIn >= .99) {
                 cancelAnimationFrame(renderID);
             }
             break;
