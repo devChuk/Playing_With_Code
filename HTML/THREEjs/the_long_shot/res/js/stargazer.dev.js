@@ -104,9 +104,20 @@ var rightEarPts = [];
 var mainStagV = [];
 var innerSnoutPts = [];
 
+// Interactivity
+var origMouseX = 0, origMouseY = 0;
+var mouseX = 0, mouseY = 0;
+var firstMove = true;
+var sphereX = 0; sphereY = 0;
+
 // DEBUGGING
 var triangleColors = [];
 
+
+////////////////////////////////////////LISTENERS////////////////////////////////////
+
+window.addEventListener('resize', onWindowResize, false);
+// document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 ////////////////////////////////////////HELPER FUNCTIONS/////////////////////////////
 
@@ -117,6 +128,18 @@ function reset() {this.scene = new THREE.Scene(); setup();}
 function distanceBetweenDimTwo(p1, p2) {return sqrt(p(p1.x - p2.x) + p(p1.y - p2.y));}
 function scalarPtMultiply(k, pt) {return {x: k*pt.x,y: k*pt.y};}
 function pointAdd(a, b) {return {x: a.x + b.x,y: a.y + b.y};}
+
+function onDocumentMouseMove(event) {
+    var desensitize = 750;
+    if (firstMove) {
+        origMouseX = ( event.clientX - vw/2 ) / desensitize;
+        origMouseY = ( event.clientY - vh/2 ) / desensitize;
+        firstMove = false;
+    } else {
+        mouseX = ( event.clientX - vw/2 ) / desensitize - origMouseX;
+        mouseY = ( event.clientY - vh/2 ) / desensitize - origMouseY;
+    }
+}
 
 function areaOfTriangle(data, tIndexes) {
     // shoelace theorem
@@ -180,7 +203,6 @@ function lineSegExitsPolygn(a, b, polygon) {
     return false;
 }
 
-window.addEventListener('resize', onWindowResize, false);
 function onWindowResize() {
     vw = window.innerWidth; vh = window.innerHeight;
     camera.aspect = vw / vh;
@@ -485,16 +507,57 @@ function initMeshes() {
     // test1        currently a stagborder.
 
     var stagScale = 200;
-    loader.load('./res/models/sBorder.json', function(geometry) {sBorderM = new THREE.Mesh(geometry);sBorderM.scale.x = sBorderM.scale.y = stagScale;});
-    loader.load('./res/models/sEye.json', function(geometry) {sEyeM = new THREE.Mesh(geometry);sEyeM.scale.x = sEyeM.scale.y = stagScale;});
-    loader.load('./res/models/sEyeDetail.json', function(geometry) {sEyeDetailM = new THREE.Mesh(geometry);sEyeDetailM.scale.x = sEyeDetailM.scale.y = stagScale;});
-    loader.load('./res/models/sEarL.json', function(geometry) {sEarLM = new THREE.Mesh(geometry);sEarLM.scale.x = sEarLM.scale.y = stagScale;});
-    loader.load('./res/models/sEarR.json', function(geometry) {sEarRM = new THREE.Mesh(geometry);sEarRM.scale.x = sEarRM.scale.y = stagScale;});
-    loader.load('./res/models/sSnout.json', function(geometry) {sSnoutM = new THREE.Mesh(geometry);sSnoutM.scale.x = sSnoutM.scale.y = stagScale;});
-    loader.load('./res/models/sSnoutBridge.json', function(geometry) {sSnoutBridgeM = new THREE.Mesh(geometry);sSnoutBridgeM.scale.x = sSnoutBridgeM.scale.y = stagScale;});
-    loader.load('./res/models/sSnoutDetailA.json', function(geometry) {sSnoutDetailAM = new THREE.Mesh(geometry);sSnoutDetailAM.scale.x = sSnoutDetailAM.scale.y = stagScale;});
-    loader.load('./res/models/sSnoutDetailB.json', function(geometry) {sSnoutDetailBM = new THREE.Mesh(geometry);sSnoutDetailBM.scale.x = sSnoutDetailBM.scale.y = stagScale;});
-    loader.load('./res/models/sAntlerDetail.json', function(geometry) {sAntlerDetailM = new THREE.Mesh(geometry);sAntlerDetailM.scale.x = sAntlerDetailM.scale.y = stagScale;});
+    var stagOffset = 400;
+    loader.load('./res/models/sBorder.json', function(geometry) {
+        sBorderM = new THREE.Mesh(geometry);
+        sBorderM.scale.x = sBorderM.scale.y = stagScale;
+        sBorderM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sEye.json', function(geometry) {
+        sEyeM = new THREE.Mesh(geometry);
+        sEyeM.scale.x = sEyeM.scale.y = stagScale;
+        sEyeM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sEyeDetail.json', function(geometry) {
+        sEyeDetailM = new THREE.Mesh(geometry);
+        sEyeDetailM.scale.x = sEyeDetailM.scale.y = stagScale;
+        sEyeDetailM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sEarL.json', function(geometry) {
+        sEarLM = new THREE.Mesh(geometry);
+        sEarLM.scale.x = sEarLM.scale.y = stagScale;
+        sEarLM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sEarR.json', function(geometry) {
+        sEarRM = new THREE.Mesh(geometry);
+        sEarRM.scale.x = sEarRM.scale.y = stagScale;
+        sEarRM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sSnout.json', function(geometry) {
+        sSnoutM = new THREE.Mesh(geometry);
+        sSnoutM.scale.x = sSnoutM.scale.y = stagScale;
+        sSnoutM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sSnoutBridge.json', function(geometry) {
+        sSnoutBridgeM = new THREE.Mesh(geometry);
+        sSnoutBridgeM.scale.x = sSnoutBridgeM.scale.y = stagScale;
+        sSnoutBridgeM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sSnoutDetailA.json', function(geometry) {
+        sSnoutDetailAM = new THREE.Mesh(geometry);
+        sSnoutDetailAM.scale.x = sSnoutDetailAM.scale.y = stagScale;
+        sSnoutDetailAM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sSnoutDetailB.json', function(geometry) {
+        sSnoutDetailBM = new THREE.Mesh(geometry);
+        sSnoutDetailBM.scale.x = sSnoutDetailBM.scale.y = stagScale;
+        sSnoutDetailBM.translateX(stagOffset);
+    });
+    loader.load('./res/models/sAntlerDetail.json', function(geometry) {
+        sAntlerDetailM = new THREE.Mesh(geometry);
+        sAntlerDetailM.scale.x = sAntlerDetailM.scale.y = stagScale;
+        sAntlerDetailM.translateX(stagOffset);
+    });
 }
 
 function startTransition(newStage) {
@@ -690,9 +753,16 @@ function renderSphere(ctx) {
     vertices = [];
     genProjectedVertices(sphereM, vertices);
     drawConnections(closeEnough, ctx);
-    sphereM.rotation.x += 0.001;
-    sphereM.rotation.y += 0.001;
+    sphereM.rotation.x = mouseY;
+    sphereM.rotation.y = mouseX;
+
+    sphereM.rotation.x += sphereX;
+    sphereM.rotation.y += sphereY;
+
+    sphereX += 0.001;
+    sphereY += 0.001;    
     sphereM.rotation.z += 0.001;
+
 }
 
 function renderStarfield(ctx) {
@@ -997,9 +1067,9 @@ var render = function () {
     }
 
     var timeElapsed = Date.now() - startTime;                       //8000, 18000.   1000, 5000.  2000, 7000
-    if (timeElapsed > 2000 && _stage == STAGE.SPHERE)
+    if (timeElapsed > 8000 && _stage == STAGE.SPHERE)
         startTransition(STAGE.STARFIELD);
-    else if (timeElapsed > 7000 && _stage == STAGE.STARFIELD)
+    else if (timeElapsed > 17000 && _stage == STAGE.STARFIELD)
         startTransition(STAGE.STAG);
     renderer.render(scene, camera);
 };
