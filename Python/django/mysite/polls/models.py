@@ -28,7 +28,9 @@ class ManualHistoricalRecords(HistoricalRecords):
             """Save model with a historical record."""
             self.skip_history_when_saving = False
             try:
-                ret = self.save(*args, **kwargs)
+                ret = super(self.__class__, self).save(*args, **kwargs)
+                # we use super().save to not update changed_recently to True
+                # see VersionedModelMixin
             finally:
                 self.skip_history_when_saving = True
             return ret
@@ -49,6 +51,8 @@ class Question(BaseModel):
 
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
+    changed_recently = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         """Print function."""
@@ -57,6 +61,19 @@ class Question(BaseModel):
     def was_published_recently(self):
         """Ay."""
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+
+    def save(self, *args, **kwargs):
+        print(self.pk is None)
+        self.changed_recently = True
+        super(Question, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.changed_recently = True
+        super(Question, self).save(*args, **kwargs)
+
+    def completely_delete(self, *args, **kwargs):
+        super(Question, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
