@@ -19,6 +19,7 @@ camera.position.z = 655;
 var canvas;
 
 // Runtime values
+var animComplete = false;
 var startTime;
 var STAGE = {
     TRANSITION: 0,
@@ -129,16 +130,29 @@ function distanceBetweenDimTwo(p1, p2) {return sqrt(p(p1.x - p2.x) + p(p1.y - p2
 function scalarPtMultiply(k, pt) {return {x: k*pt.x,y: k*pt.y};}
 function pointAdd(a, b) {return {x: a.x + b.x,y: a.y + b.y};}
 
-function onDocumentMouseMove(event) {
-    var desensitize = 750;
-    if (firstMove) {
-        origMouseX = ( event.clientX - vw/2 ) / desensitize;
-        origMouseY = ( event.clientY - vh/2 ) / desensitize;
-        firstMove = false;
-    } else {
-        mouseX = ( event.clientX - vw/2 ) / desensitize - origMouseX;
-        mouseY = ( event.clientY - vh/2 ) / desensitize - origMouseY;
+function onWindowResize() {
+    if (!animComplete) {
+        vw = window.innerWidth; vh = window.innerHeight;
+        camera.aspect = vw / vh;
+        camera.updateProjectionMatrix();
+        renderer.setSize( vw, vh );
+        // container = document.createElement( 'div' );
+        // document.body.appendChild( container );
+        canvas = document.getElementById("twoDimCanvas");
+        canvas.width = vw;
+        canvas.height = vh;
     }
+    // stats = new Stats();                    //Generate FPS counter
+    // container.appendChild( stats.dom );
+    // starFieldM = [];
+    // starVelocities = [];
+    // initMeshes();
+
+    // vw = window.innerWidth; vh = window.innerHeight;
+    // camera.aspect = vw / vh;
+    // camera.updateProjectionMatrix();
+    // renderer.setSize( vw, vh );
+    // reset();
 }
 
 function areaOfTriangle(data, tIndexes) {
@@ -201,14 +215,6 @@ function lineSegExitsPolygn(a, b, polygon) {
     }
 
     return false;
-}
-
-function onWindowResize() {
-    vw = window.innerWidth; vh = window.innerHeight;
-    camera.aspect = vw / vh;
-    camera.updateProjectionMatrix();
-    renderer.setSize( vw, vh );
-    reset();
 }
 
 function projectToScreen(threeDimPoint) {
@@ -470,7 +476,7 @@ function drawEars(innerPts, borderPts, ctx) {
 
 function fillPolygon(ctx, modelVertices) {
     ctx.beginPath();
-    ctx.globalAlpha = lazyFadeIn;
+    ctx.globalAlpha = 1;//lazyFadeIn;
     for (var i = 0; i < modelVertices.length; i++) {
         ctx.lineTo(modelVertices[i].x, modelVertices[i].y);
         // ctx.fillRect(b.x, b.y, 1, 1);
@@ -506,7 +512,7 @@ function initMeshes() {
     // test         this is pretty arbitrary
     // test1        currently a stagborder.
 
-    var stagScale = 200;
+    var stagScale = 200;        // 200
     var stagOffset = 400;
     loader.load('./res/models/sBorder.json', function(geometry) {
         sBorderM = new THREE.Mesh(geometry);
@@ -1030,8 +1036,8 @@ var setup = function () {
     canvas = document.getElementById("twoDimCanvas");
     canvas.width = vw;
     canvas.height = vh;
-    stats = new Stats();                    //Generate FPS counter
-    container.appendChild( stats.dom );
+    // stats = new Stats();                    //Generate FPS counter
+    // container.appendChild( stats.dom );
     starFieldM = [];
     starVelocities = [];
     initMeshes();
@@ -1041,7 +1047,7 @@ var setup = function () {
 
 var render = function () {
     renderID = window.requestAnimationFrame( render );
-    stats.update();    //Update FPS counter.
+    // stats.update();    //Update FPS counter.
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1060,16 +1066,17 @@ var render = function () {
 
         case STAGE.STAG:
             renderStag(ctx);
-            if (lazyFadeIn >= .99) {
-                cancelAnimationFrame(renderID);
-            }
+            // if (lazyFadeIn >= .99) {
+            //     animComplete = true;
+            //     cancelAnimationFrame(renderID);
+            // }
             break;
     }
 
     var timeElapsed = Date.now() - startTime;                       //8000, 18000.   1000, 5000.  2000, 7000
-    if (timeElapsed > 8000 && _stage == STAGE.SPHERE)
+    if (timeElapsed > 1000 && _stage == STAGE.SPHERE)
         startTransition(STAGE.STARFIELD);
-    else if (timeElapsed > 17000 && _stage == STAGE.STARFIELD)
+    else if (timeElapsed > 8000 && _stage == STAGE.STARFIELD)
         startTransition(STAGE.STAG);
     renderer.render(scene, camera);
 };
